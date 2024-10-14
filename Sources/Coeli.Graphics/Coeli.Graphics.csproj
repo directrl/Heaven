@@ -1,0 +1,44 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Silk.NET.OpenGL" Version="2.21.0" />
+    <PackageReference Include="Silk.NET.Windowing.Glfw" Version="2.21.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="..\..\Resources\Coeli\**\*"/>
+    <EmbeddedResource Update="..\..\Resources\Coeli\Resources\Shaders\test.vert">
+      <Link>Resources\Shaders\test.vert</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Update="..\..\Resources\Coeli\Resources\Shaders\test.frag">
+      <Link>Resources\Shaders\test.frag</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Update="..\..\Resources\Coeli\Resources\Shaders\scene2d_singlecolor.frag">
+      <Link>Resources\Shaders\scene2d_singlecolor.frag</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Update="..\..\Resources\Coeli\Resources\Shaders\scene2d_singlecolor.vert">
+      <Link>Resources\Shaders\scene2d_singlecolor.vert</Link>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Coeli.Configuration\Coeli.Configuration.csproj" />
+    <ProjectReference Include="..\Coeli.Debug\Coeli.Debug.csproj" />
+    <ProjectReference Include="..\Coeli.LanguageExtensions\Coeli.LanguageExtensions.csproj" />
+    <ProjectReference Include="..\Coeli.Resources\Coeli.Resources.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Silk.NET.Input.Common">
+      <HintPath>..\..\..\..\..\..\..\home\default\.nuget\packages\silk.net.input.common\2.21.0\lib\net5.0\Silk.NET.Input.Common.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>
