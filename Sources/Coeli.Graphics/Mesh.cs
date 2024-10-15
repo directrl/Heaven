@@ -93,23 +93,4 @@ namespace Coeli.Graphics {
 			VAO.Dispose();
 		}
 	}
-
-	public class InstancedMesh<TObject> : Mesh where TObject : ObjectBase {
-
-		private readonly InstancedObject<TObject> _parent;
-
-		public InstancedMesh(InstancedObject<TObject> parent,
-		                     PrimitiveType type,
-		                     float[] vertices, uint[] indices, float[]? texCoords, float[]? normals)
-			: base(type, vertices, indices, texCoords, normals) {
-			
-			parent = _parent;
-		}
-
-		public unsafe override void Render() {
-			VAO.Bind();
-			_gl.DrawElementsInstanced(Type, VertexCount, DrawElementsType.UnsignedInt, null,
-				(uint) _parent.ObjectCount);
-		}
-	}
 }

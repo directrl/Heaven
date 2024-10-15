@@ -12,7 +12,7 @@ uniform Material material;
 uniform int instanced;
 
 void main() {
-	if(instanced != 1) {
+	if(instanced > 0) {
 		fragColor = outInstanceMaterial.color;
 	} else {
 		fragColor = material.color;

@@ -132,6 +132,8 @@ namespace Coeli.Graphics.Object {
 			var gl = GLManager.Current;
 			uint oc = (uint) ObjectCount;
 			
+			shader.SetUniform("instanced", true);
+			
 			foreach(var mesh in Meshes) {
 				Tests.Assert(mesh._gl == gl);
 				
@@ -139,7 +141,5 @@ namespace Coeli.Graphics.Object {
 				gl.DrawElementsInstanced(mesh.Type, mesh.VertexCount, DrawElementsType.UnsignedInt, null, oc);
 			}
 		}
-
-		public void Render() => Render(null);
 	}
 }

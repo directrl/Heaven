@@ -17,7 +17,7 @@ uniform mat4 model;
 uniform int instanced;
 
 void main() {
-	if(instanced != 1) {
+	if(instanced > 0) {
 		gl_Position = projection * view * instanceModel * vec4(position.x, position.y, position.z, 1.0);
 		outInstanceMaterial = Material(instanceMaterial_color);
 	} else {
