@@ -134,7 +134,7 @@ namespace Coeli.Graphics.Object {
 			_ready = true;
 		}
 
-		public unsafe override void Render() {
+		public unsafe override void Render(ShaderProgram shader) {
 			Tests.Assert(_ready, "Object is not ready! Did you forget to call Build() beforehand?");
 
 			var gl = GLManager.Current;
@@ -147,5 +147,7 @@ namespace Coeli.Graphics.Object {
 				gl.DrawElementsInstanced(mesh.Type, mesh.VertexCount, DrawElementsType.UnsignedInt, null, oc);
 			}
 		}
+
+		public void Render() => Render(null);
 	}
 }

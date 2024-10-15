@@ -9,9 +9,7 @@ namespace Coeli.Graphics.Object {
 
 		public abstract Matrix4x4 ModelMatrix { get; }
 
-		public override void Render() => throw new NotSupportedException();
-
-		public unsafe virtual void Render(ShaderProgram shader) {
+		public unsafe override void Render(ShaderProgram shader) {
 			shader.SetUniform("instanced", true);
 			shader.SetUniform("model", ModelMatrix);
 			/*var gl = GLManager.Current;
@@ -48,7 +46,7 @@ namespace Coeli.Graphics.Object {
 				
 				mesh.Render();
 			}*/
-			base.Render();
+			base.Render(shader);
 		}
 	}
 }
