@@ -138,7 +138,7 @@ namespace Playground.Scenes {
 		public override void OnRender(GL gl, float delta) {
 			base.OnRender(gl, delta);
 			
-			MainShader.SetUniform("color", new Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+			//MainShader.SetUniform("color", new Vector4(1.0f, 1.0f, 1.0f, 1.0f));
 			_object?.Render(MainShader);
 		}
 	}

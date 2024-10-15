@@ -22,7 +22,7 @@ namespace Coeli.Graphics.Object {
 
 		public void Render(ShaderProgram shader) {
 			shader.SetUniform("model", ModelMatrix);
-			base.Render();
+			base.Render(shader);
 		}
 	}
 }
