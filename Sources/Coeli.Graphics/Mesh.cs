@@ -7,7 +7,7 @@ namespace Coeli.Graphics {
 	public class Mesh : IDisposable {
 
 		internal readonly GL _gl;
-		private readonly List<VertexBufferObject> _vbos = new();
+		internal readonly List<VertexBufferObject> _vbos = new();
 
 		public readonly uint VertexCount;
 		public readonly VertexArrayObject VAO;

@@ -15,6 +15,8 @@ namespace Playground.Scenes {
 	
 	public class InstancingTest : Scene3D {
 
+		private static readonly Random RANDOM = new();
+		
 		private DebugUI _overlay;
 		
 		private Mesh? _mesh;
@@ -27,6 +29,7 @@ namespace Playground.Scenes {
 		
 		List<Object3D> objects = new();
 		List<Matrix4x4> models = new();
+		List<Vector4> colors = new();
 
 		public InstancingTest() : base("instancing") {
 			_keyBindings = new(Id);
@@ -93,12 +96,13 @@ namespace Playground.Scenes {
 					};
 					
 					objects.Add(o);
-					models.Add(o.ModelMatrix);
+					//models.Add(o.ModelMatrix);
+					colors.Add(new(RANDOM.NextSingle(), RANDOM.NextSingle(), RANDOM.NextSingle(), 1));
 				}
 				
 				Playground.AppLogger.Information($"Created objects: {objects.Count}");
 
-				_instObject = new(objects.ToArray(), models.ToArray()) {
+				_instObject = new(objects.ToArray(), colors.ToArray()) {
 					Meshes = new[] { _mesh }
 				};
 				
