@@ -14,9 +14,22 @@ namespace Coeli.Graphics.Object {
 		private TObject[] _objects;
 		
 		private Matrix4x4[] _matrices;
-		private Vector4[] _colors;
+		private Material[] _materials;
 
 		public int ObjectCount => _objects.Length;
+		
+		public InstancedObject(TObject[] objects) {
+			_objects = objects;
+			_matrices = new Matrix4x4[objects.Length];
+			_materials = new Material[objects.Length];
+
+			for(int i = 0; i < objects.Length; i++) {
+				
+				var obj = objects[i];
+				_matrices[i] = obj.ModelMatrix;
+				_materials[i] = obj.Material;
+			}
+		}
 
 		/*public InstancedObject() {
 			_objects = new();
@@ -44,17 +57,6 @@ namespace Coeli.Graphics.Object {
 			_objects.Clear();
 			_matrices.Clear();
 		}*/
-
-		public InstancedObject(TObject[] objects, Vector4[] colors) {
-			_objects = objects;
-			_matrices = new Matrix4x4[objects.Length];
-			_colors = colors;
-
-			for(int i = 0; i < objects.Length; i++) {
-				var obj = objects[i];
-				_matrices[i] = obj.ModelMatrix;
-			}
-		}
 
 		public unsafe void Build() {
 			Tests.Assert(ObjectCount > 1);
@@ -101,14 +103,14 @@ namespace Coeli.Graphics.Object {
 			}
 		#endregion
 
-		#region Colors
+		#region Material
 			{
 				var vbo = new VertexBufferObject(gl, BufferTargetARB.ArrayBuffer);
 				vbo.Bind();
 
-				int size = _colors.Length * sizeof(Vector4);
+				int size = _materials.Length * sizeof(Material);
 
-				fixed(void* addr = &_colors[0]) {
+				fixed(void* addr = &_materials[0]) {
 					gl.BufferData(vbo.Target, (nuint) size, addr, GLEnum.StaticDraw);
 				}
 
@@ -118,13 +120,12 @@ namespace Coeli.Graphics.Object {
 					mesh._vbos.Add(vbo);
 					mesh.VAO.Bind();
 
-					var type = VertexAttribPointerType.Float;
-					size = sizeof(Vector4);
-				
+				#region Color
 					gl.EnableVertexAttribArray(7);
-					gl.VertexAttribPointer(7, 4, type, false, (uint) size, null);
-				
+					gl.VertexAttribPointer(7, 4, VertexAttribPointerType.Float, false,
+						(uint) sizeof(Vector4), null);
 					gl.VertexAttribDivisor(7, 1);
+				#endregion
 				
 					gl.BindVertexArray(0);
 				}

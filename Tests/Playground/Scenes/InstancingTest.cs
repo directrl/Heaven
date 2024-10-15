@@ -28,8 +28,6 @@ namespace Playground.Scenes {
 		private bool _instancing = true;
 		
 		List<Object3D> objects = new();
-		List<Matrix4x4> models = new();
-		List<Vector4> colors = new();
 
 		public InstancingTest() : base("instancing") {
 			_keyBindings = new(Id);
@@ -92,17 +90,18 @@ namespace Playground.Scenes {
 				for(int x = 0; x < (wall * 2); x += 2)
 				for(int z = 0; z < (wall * 2); z += 2) {
 					var o = new Object3D {
-						Position = new(x, y, z)
+						Position = new(x, y, z),
+						Material = new Material {
+							Color = new(RANDOM.NextSingle(), RANDOM.NextSingle(), RANDOM.NextSingle(), 1)
+						}
 					};
 					
 					objects.Add(o);
-					//models.Add(o.ModelMatrix);
-					colors.Add(new(RANDOM.NextSingle(), RANDOM.NextSingle(), RANDOM.NextSingle(), 1));
 				}
 				
 				Playground.AppLogger.Information($"Created objects: {objects.Count}");
 
-				_instObject = new(objects.ToArray(), colors.ToArray()) {
+				_instObject = new(objects.ToArray()) {
 					Meshes = new[] { _mesh }
 				};
 				
@@ -156,11 +155,8 @@ namespace Playground.Scenes {
 			base.OnRender(gl, delta);
 
 			if(_instancing) {
-				MainShader.SetUniform("color", new Vector4(1.0f, 1.0f, 1.0f, 1.0f));
 				_instObject?.Render();
 			} else {
-				MainShader.SetUniform("color", new Vector4(1.0f, 1.0f, 1.0f, 1.0f));
-
 				foreach(var o in objects) {
 					o.Render(MainShader);
 				}

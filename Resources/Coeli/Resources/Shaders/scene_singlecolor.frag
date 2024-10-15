@@ -4,7 +4,7 @@ struct Material {
 	vec4 color;
 };
 
-in vec4 outInstanceColor;
+in Material outInstanceMaterial;
 
 out vec4 fragColor;
 
@@ -13,7 +13,7 @@ uniform int instanced;
 
 void main() {
 	if(instanced != 1) {
-		fragColor = outInstanceColor;
+		fragColor = outInstanceMaterial.color;
 	} else {
 		fragColor = material.color;
 	}
