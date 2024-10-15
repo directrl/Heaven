@@ -10,7 +10,7 @@ namespace Coeli.Graphics {
 			Meshes = meshes;
 		}
 
-		public void Render() {
+		public virtual void Render() {
 			foreach(var mesh in Meshes) {
 				mesh.Render();
 			}

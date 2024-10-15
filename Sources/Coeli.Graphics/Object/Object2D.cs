@@ -19,10 +19,5 @@ namespace Coeli.Graphics.Object {
 				return scaleMatrix * positionMatrix * rotationMatrix;
 			}
 		}
-
-		public void Render(ShaderProgram shader) {
-			shader.SetUniform("model", ModelMatrix);
-			base.Render();
-		}
 	}
 }

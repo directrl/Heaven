@@ -10,7 +10,7 @@ namespace Coeli.Graphics.OpenGL {
 		public BufferTargetARB Target { get; }
 		
 		public VertexBufferObject(GL gl, BufferTargetARB target) {
-			this._gl = gl;
+			_gl = gl;
 			Id = gl.GenBuffer();
 			Target = target;
 		}
