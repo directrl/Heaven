@@ -8,7 +8,7 @@ namespace Coeli.Input {
 		public GameOptions Options { get; }
 		public Dictionary<string, KeyBinding> Bindings { get; } = new();
 
-		private readonly List<Key> combo = new();
+		private readonly List<Key> _combo = new();
 
 		public KeyBindings(string id) {
 			Options = new(Path.Join(
@@ -49,10 +49,10 @@ namespace Coeli.Input {
 
 			switch(action) {
 				case KeyAction.Press:
-					combo.Add(key);
+					_combo.Add(key);
 					break;
 				case KeyAction.Release:
-					combo.Remove(key);
+					_combo.Remove(key);
 					break;
 			}
 
@@ -61,7 +61,7 @@ namespace Coeli.Input {
 					if(binding.Keys.Length == 1) {
 						binding.Pressed = (key == binding.Keys[0]);
 					} else {
-						binding.Pressed = binding.Keys.SequenceEqual(combo);
+						binding.Pressed = binding.Keys.SequenceEqual(_combo);
 					}
 				}
 			}

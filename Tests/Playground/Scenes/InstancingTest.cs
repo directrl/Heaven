@@ -34,6 +34,8 @@ namespace Playground.Scenes {
 		public InstancingTest() : base("instancing") {
 			_keyBindings = new(Id);
 			_freeCamera = new(_keyBindings);
+			
+			this.SetupKeyBindings(_keyBindings);
 		}
 
 		public override void OnLoad(Window window) {
@@ -86,7 +88,7 @@ namespace Playground.Scenes {
 			}
 
 			if(_instObject == null && _mesh != null) {
-				int wall = 128;
+				int wall = 32;
 
 				_instObject = new((int) Math.Pow(wall, 3)) {
 					Meshes = new[] { _mesh }
@@ -139,23 +141,9 @@ namespace Playground.Scenes {
 				}
 			};
 
-			window.Input.Keyboards[0].KeyUp += (kb, k, sc) => {
-				_keyBindings.Input(KeyAction.Release, k);
-			};
-			
-			window.Input.Keyboards[0].KeyDown += (kb, k, sc) => {
-				_keyBindings.Input(KeyAction.Press, k);
-			};
-
-			window.Input.Mice[0].MouseMove += (mouse, pos) => {
+			window.GetMice()[0].MouseMove += (mouse, pos) => {
 				_freeCamera.CameraMove(Camera, pos);
 			};
-		}
-
-		public override void OnUnload() {
-			base.OnUnload();
-			
-			_keyBindings.Dispose();
 		}
 
 		public override void OnUpdate(float delta) {
@@ -164,7 +152,7 @@ namespace Playground.Scenes {
 			var mouse = Window.Input.Mice[0];
 			_freeCamera.Update(Camera, ref mouse, delta);
 			
-			_keyBindings.Update(Window.Input.Keyboards[0]);
+			this.UpdateKeyBindings(_keyBindings);
 		}
 
 		public override void OnRender(GL gl, float delta) {

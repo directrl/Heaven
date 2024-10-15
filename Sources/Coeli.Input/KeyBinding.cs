@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using Coeli.Debug;
 using Silk.NET.Input;
 
 namespace Coeli.Input {
@@ -14,7 +15,7 @@ namespace Coeli.Input {
 		private bool _down;
 		public bool Down {
 			get {
-				Debug.Assert(Keys.Length <= 1, "KeyBinding.Down supported only for single-key inputs");
+				Tests.Assert(Keys.Length <= 1, "KeyBinding.Down is supported only for single-key inputs");
 				return _down;
 			}
 			internal set => _down = value;
