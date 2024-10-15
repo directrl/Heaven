@@ -24,7 +24,7 @@ namespace Coeli.Resources {
 			this._namespace = _namespace;
 			_name = name;
 
-			FullPath = _namespace + "/" + type.Path + "/" + name;
+			FullPath = _namespace + "/" + type.Path + "/" + name + type.Extension;
 		}
 
 		public Stream? GetStream() {
@@ -34,11 +34,11 @@ namespace Coeli.Resources {
 				stream = _assembly
 					.GetManifestResourceStream($"{_namespace}.{_type.Path}.{_name}{_type.Extension}");
 			} catch(Exception e) {
-				Log.Logger.Warning($"Failed to get stream for resource {this}", e);
+				Log.Logger.Warning($"Failed to get stream for resource [{this}]", e);
 				return null;
 			}
 
-			if(stream == null) Log.Logger.Warning($"Failed to get stream for resource {this}");
+			if(stream == null) Log.Logger.Warning($"Failed to get stream for resource [{this}]");
 			return stream;
 		}
 

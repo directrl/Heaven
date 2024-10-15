@@ -25,6 +25,8 @@ namespace Coeli.Graphics.Scene {
 		}
 		
 		public override void OnRender(GL gl, float delta) {
+			gl.Disable(EnableCap.CullFace);
+			
 			base.OnRender(gl, delta);
 			
 			MainShader.Bind();

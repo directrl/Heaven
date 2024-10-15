@@ -1,6 +1,8 @@
 using Coeli.Debug;
 using Coeli.Graphics.OpenGL;
 using Coeli.Graphics.Scene;
+using Coeli.Graphics.Texture;
+using Coeli.Resources;
 using Silk.NET.GLFW;
 using Silk.NET.Input;
 using Silk.NET.OpenGL;
@@ -43,6 +45,9 @@ namespace Coeli.Graphics {
 			SilkImpl.Load += () => {
 				GL = SilkImpl.CreateOpenGL();
 				GL.Viewport(SilkImpl.FramebufferSize);
+
+				TextureManager.Load("default",
+					Module.RESOURCES[Resource.Type.TEXTURE, "default"].ReadBytes(), GL);
 
 				if(Debugging.Enabled) {
 					GLManager.EnableDebugOutput(GL);

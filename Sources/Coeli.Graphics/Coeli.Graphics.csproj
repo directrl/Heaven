@@ -10,6 +10,7 @@
   <ItemGroup>
     <PackageReference Include="Silk.NET.OpenGL" Version="2.21.0" />
     <PackageReference Include="Silk.NET.Windowing.Glfw" Version="2.21.0" />
+    <PackageReference Include="SixLabors.ImageSharp" Version="3.1.5" />
   </ItemGroup>
 
   <ItemGroup>
@@ -39,6 +40,12 @@
     <Reference Include="Silk.NET.Input.Common">
       <HintPath>..\..\..\..\..\..\..\home\default\.nuget\packages\silk.net.input.common\2.21.0\lib\net5.0\Silk.NET.Input.Common.dll</HintPath>
     </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="..\..\Resources\Coeli\Resources\Textures\">
+      <Link>Resources\Textures</Link>
+    </Folder>
   </ItemGroup>
 
 </Project>
