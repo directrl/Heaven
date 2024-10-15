@@ -2,6 +2,7 @@ using System.Numerics;
 using System.Reflection.Metadata;
 using Coeli.Debug;
 using Coeli.Graphics.OpenGL;
+using Coeli.LanguageExtensions;
 using Silk.NET.OpenGL;
 
 namespace Coeli.Graphics.Object {
@@ -9,54 +10,44 @@ namespace Coeli.Graphics.Object {
 	public class InstancedObject<TObject> : Model where TObject : ObjectBase {
 
 		private bool _ready = false;
-		/*private List<TObject> _objects;
-		private List<Matrix4x4> _matrices;*/
-		private TObject[] _objects;
-		
-		private Matrix4x4[] _matrices;
-		private Material[] _materials;
 
-		public int ObjectCount => _objects.Length;
+		private List<TObject> _objects;
 		
-		public InstancedObject(TObject[] objects) {
+		private List<Matrix4x4> _models;
+		private List<Material> _materials;
+
+		public int ObjectCount => _objects.Count;
+
+		public InstancedObject(int capacity = 0) {
+			_objects = new(capacity);
+			_models = new(capacity);
+			_materials = new(capacity);
+		}
+		
+		public InstancedObject(List<TObject> objects) {
 			_objects = objects;
-			_matrices = new Matrix4x4[objects.Length];
-			_materials = new Material[objects.Length];
+			_models = new(objects.Count);
+			_materials = new(objects.Count);
 
-			for(int i = 0; i < objects.Length; i++) {
-				
+			for(int i = 0; i < objects.Count; i++) {
 				var obj = objects[i];
-				_matrices[i] = obj.ModelMatrix;
+				
+				_models[i] = obj.ModelMatrix;
 				_materials[i] = obj.Material;
 			}
 		}
-
-		/*public InstancedObject() {
-			_objects = new();
-			_matrices = new();
-		}
-
-		public InstancedObject(int capacity) {
-			_objects = new(capacity);
-			_matrices = new(capacity);
-		}
-
-		public InstancedObject(TObject[] objects) {
-			_objects = new();
-			_objects.AddRange(objects);
-
-			_matrices = new(_objects.Count);
-		}
 		
-		public void Add(TObject o) {
-			_objects.Add(o);
-			_matrices.Add(o.ModelMatrix);
+		public void Add(TObject obj) {
+			_objects.Add(obj);
+			_models.Add(obj.ModelMatrix);
+			_materials.Add(obj.Material);
 		}
 
 		public void Clear() {
 			_objects.Clear();
-			_matrices.Clear();
-		}*/
+			_models.Clear();
+			_materials.Clear();
+		}
 
 		public unsafe void Build() {
 			Tests.Assert(ObjectCount > 1);
@@ -69,9 +60,9 @@ namespace Coeli.Graphics.Object {
 				var vbo = new VertexBufferObject(gl, BufferTargetARB.ArrayBuffer);
 				vbo.Bind();
 
-				int size = _matrices.Length * sizeof(Matrix4x4);
+				int size = _models.Count * sizeof(Matrix4x4);
 			
-				fixed(void* addr = &_matrices[0]) {
+				fixed(void* addr = &_models.ToArrayNoCopy()[0]) {
 					gl.BufferData(vbo.Target, (nuint) size, addr, GLEnum.StaticDraw);
 				}
 			
@@ -108,9 +99,9 @@ namespace Coeli.Graphics.Object {
 				var vbo = new VertexBufferObject(gl, BufferTargetARB.ArrayBuffer);
 				vbo.Bind();
 
-				int size = _materials.Length * sizeof(Material);
+				int size = _materials.Count * sizeof(Material);
 
-				fixed(void* addr = &_materials[0]) {
+				fixed(void* addr = &_materials.ToArrayNoCopy()[0]) {
 					gl.BufferData(vbo.Target, (nuint) size, addr, GLEnum.StaticDraw);
 				}
 

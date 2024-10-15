@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Numerics;
 using Coeli.Debug;
 using Coeli.Graphics;
@@ -6,6 +7,7 @@ using Coeli.Graphics.Object;
 using Coeli.Graphics.OpenGL;
 using Coeli.Graphics.Scene;
 using Coeli.Input;
+using Coeli.LanguageExtensions;
 using Coeli.UI;
 using ImGuiNET;
 using Silk.NET.Input;
@@ -85,29 +87,43 @@ namespace Playground.Scenes {
 
 			if(_instObject == null && _mesh != null) {
 				int wall = 128;
+
+				_instObject = new((int) Math.Pow(wall, 3)) {
+					Meshes = new[] { _mesh }
+				};
+
+				var sw = Stopwatch.StartNew();
 				
 				for(int y = 0; y < (wall * 2); y += 2)
 				for(int x = 0; x < (wall * 2); x += 2)
 				for(int z = 0; z < (wall * 2); z += 2) {
-					var o = new Object3D {
+					var o1 = new Object3D {
 						Position = new(x, y, z),
 						Material = new Material {
 							Color = new(RANDOM.NextSingle(), RANDOM.NextSingle(), RANDOM.NextSingle(), 1)
 						}
 					};
+
+					var o2 = new Object3D {
+						Position = o1.Position,
+						Material = o1.Material,
+						Meshes = new[] { _mesh }
+					};
 					
-					objects.Add(o);
+					_instObject.Add(o1);
+					objects.Add(o2);
 				}
 				
-				Playground.AppLogger.Information($"Created objects: {objects.Count}");
-
-				_instObject = new(objects.ToArray()) {
-					Meshes = new[] { _mesh }
-				};
+				sw.Stop();
+				
+				Playground.AppLogger.Information($"Created objects: {_instObject.ObjectCount}" +
+					$" in {sw.ElapsedMilliseconds}ms");
 				
 				Playground.AppLogger.Information("Building instances");
+				sw.Restart();
 				_instObject.Build();
-				Playground.AppLogger.Information($"OK: {_instObject.ObjectCount}");
+				sw.Stop();
+				Playground.AppLogger.Information($"Done in {sw.ElapsedMilliseconds}ms");
 			}
 			
 			_overlay = new(this);
@@ -155,7 +171,7 @@ namespace Playground.Scenes {
 			base.OnRender(gl, delta);
 
 			if(_instancing) {
-				_instObject?.Render();
+				_instObject?.Render(MainShader);
 			} else {
 				foreach(var o in objects) {
 					o.Render(MainShader);
