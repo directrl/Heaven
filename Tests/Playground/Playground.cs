@@ -10,7 +10,7 @@ namespace Playground {
 		public Playground() : base("playground") { }
 
 		public override void Setup() {
-			var scene = new VoxelSpaceScene();
+			var scene = new InstancingTest();
 			var window = Window.Create(debug: true);
 			window.Scene = scene;
 			

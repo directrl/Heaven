@@ -97,7 +97,7 @@ namespace Coeli.Graphics.Object {
 			//}
 		}
 
-		public unsafe void Render(ShaderProgram shader) {
+		public unsafe override void Render() {
 			Tests.Assert(_ready, "Object is not ready! Did you forget to call Build() beforehand?");
 
 			var gl = GLManager.Current;
