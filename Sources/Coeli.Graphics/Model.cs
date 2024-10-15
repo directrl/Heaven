@@ -12,7 +12,7 @@ namespace Coeli.Graphics {
 			Meshes = meshes;
 		}
 
-		public void Render(ShaderProgram shader) {
+		public virtual void Render(ShaderProgram shader) {
 			Material.Load(shader);
 			
 			foreach(var mesh in Meshes) {

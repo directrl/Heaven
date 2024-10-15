@@ -10,7 +10,7 @@ namespace Coeli.Graphics.OpenGL {
 		public unsafe static void SetDefaults(GL? gl = null) {
 			if(gl == null) gl = Current;
 			
-			// gl.Enable(EnableCap.DepthTest);
+			gl.Enable(EnableCap.DepthTest);
 			gl.Enable(EnableCap.CullFace);
 			
 			gl.CullFace(TriangleFace.Back);

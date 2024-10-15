@@ -126,7 +126,7 @@ namespace Playground.Scenes {
 			};*/
 
 			_debugOverlay.AdditionalInfo += (delta, args) => {
-				ImGui.Text($"Objects drawn: {Renderer.ObjectCount}");
+				ImGui.Text($"Object count: {Renderer.ObjectCount}");
 			};
 			
 			window.Input.Keyboards[0].KeyUp += (kb, k, sc) => {
@@ -175,7 +175,7 @@ namespace Playground.Scenes {
 
 		public override void OnRender(GL gl, float delta) {
 			base.OnRender(gl, delta);
-
+			
 			Renderer.Render(Window,
 				_pos, _phi, _height, _horizon, VS_SCALE_HEIGHT, VS_DISTANCE,
 				ref _colorMap, ref _heightMap,
