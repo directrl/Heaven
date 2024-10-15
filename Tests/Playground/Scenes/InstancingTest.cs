@@ -23,6 +23,11 @@ namespace Playground.Scenes {
 		private KeyBindings _keyBindings;
 		private FreeCamera _freeCamera;
 
+		private bool _instancing = true;
+		
+		List<Object3D> objects = new();
+		List<Matrix4x4> models = new();
+
 		public InstancingTest() : base("instancing") {
 			_keyBindings = new(Id);
 			_freeCamera = new(_keyBindings);
@@ -78,9 +83,6 @@ namespace Playground.Scenes {
 			}
 
 			if(_instObject == null && _mesh != null) {
-				List<Object3D> objects = new();
-				List<Matrix4x4> models = new();
-
 				int wall = 128;
 				
 				for(int y = 0; y < (wall * 2); y += 2)
@@ -112,6 +114,8 @@ namespace Playground.Scenes {
 					ImGui.Text($"Camera pitch: {Camera?.Pitch.ToString() ?? "Unknown"}");
 					ImGui.Text($"Camera yaw: {Camera?.Yaw.ToString() ?? "Unknown"}");
 					ImGui.Text($"Object count: {_instObject?.ObjectCount.ToString() ?? "Unknown"}");
+					ImGui.Text($"Using instancing: {_instancing}");
+					ImGui.Checkbox("Use instancing", ref _instancing);
 					ImGui.End();
 				}
 			};
@@ -146,9 +150,17 @@ namespace Playground.Scenes {
 
 		public override void OnRender(GL gl, float delta) {
 			base.OnRender(gl, delta);
-			
-			MainShader.SetUniform("color", new Vector4(1.0f, 1.0f, 1.0f, 1.0f));
-			_instObject?.Render();
+
+			if(_instancing) {
+				MainShader.SetUniform("color", new Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+				_instObject?.Render();
+			} else {
+				MainShader.SetUniform("color", new Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+
+				foreach(var o in objects) {
+					o.Render(MainShader);
+				}
+			}
 		}
 	}
 }
