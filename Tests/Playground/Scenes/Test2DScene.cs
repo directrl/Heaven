@@ -53,11 +53,17 @@ namespace Playground.Scenes {
 				_object = new Object2D {
 					Meshes = new[] { _mesh },
 					Position = new(-50f, -50f),
+					Material = new Material {
+						Color = new(1.0f, 0.0f, 0.0f, 1.0f)
+					}
 				};
 
 				_object2 = new Object2D {
 					Meshes = new[] { _mesh },
 					Position = new(50f, 50f),
+					Material = new Material {
+						Color = new(0.0f, 0.0f, 1.0f, 1.0f)
+					}
 				};
 			}
 			
@@ -116,10 +122,10 @@ namespace Playground.Scenes {
 		public override void OnRender(GL gl, float delta) {
 			base.OnRender(gl, delta);
 			
-			MainShader.SetUniform("color", new Vector4(1.0f, 0.0f, 0.0f, 1.0f));
+			//MainShader.SetUniform("color", new Vector4(1.0f, 0.0f, 0.0f, 1.0f));
 			_object?.Render(MainShader);
 			
-			MainShader.SetUniform("color", new Vector4(0.0f, 0.0f, 1.0f, 1.0f));
+			//MainShader.SetUniform("color", new Vector4(0.0f, 0.0f, 1.0f, 1.0f));
 			_object2?.Render(MainShader);
 		}
 	}
