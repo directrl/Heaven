@@ -1,18 +1,23 @@
+using System.Numerics;
+using Coeli.Graphics.OpenGL;
+using Serilog;
 using Silk.NET.OpenGL;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Coeli.Graphics.Texture {
 	
 	public class Texture<TSize> : IDisposable {
 
-		private readonly GL _gl;
-		private readonly TextureTarget _target;
+		protected GL GL { get; }
+		protected TextureTarget Target { get; }
 
 		public uint Id { get; init; }
 		public TSize Size { get; init; }
 
-		public Texture(GL gl, TextureTarget target, TSize size) {
-			_gl = gl;
-			_target = target;
+		protected Texture(GL gl, TextureTarget target, TSize size) {
+			GL = gl;
+			Target = target;
 
 			Id = gl.GenTexture();
 			Size = size;
@@ -20,13 +25,14 @@ namespace Coeli.Graphics.Texture {
 			Bind();
 		}
 
-		public void Bind() {
-			_gl.ActiveTexture(TextureUnit.Texture0);
-			_gl.BindTexture(_target, Id);
+		public virtual void Bind() {
+			GL.ActiveTexture(TextureUnit.Texture0);
+			GL.BindTexture(Target, Id);
 		}
 
 		public void Dispose() {
-			_gl.DeleteTexture(Id);
+			GC.SuppressFinalize(this);
+			GL.DeleteTexture(Id);
 		}
 	}
 }

@@ -27,6 +27,12 @@
     <EmbeddedResource Update="..\..\Resources\Coeli\Resources\Shaders\scene2d_singlecolor.vert">
       <Link>Resources\Shaders\scene2d_singlecolor.vert</Link>
     </EmbeddedResource>
+    <EmbeddedResource Update="..\..\Resources\Coeli\Resources\Shaders\texture_array.vert">
+      <Link>Resources\Shaders\texture_array.vert</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Update="..\..\Resources\Coeli\Resources\Shaders\texture_array.frag">
+      <Link>Resources\Shaders\texture_array.frag</Link>
+    </EmbeddedResource>
   </ItemGroup>
 
   <ItemGroup>

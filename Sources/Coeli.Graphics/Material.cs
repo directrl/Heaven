@@ -8,11 +8,12 @@ namespace Coeli.Graphics {
 
 		public static readonly Material DEFAULT_MATERIAL = new Material {
 			Color = new(1.0f, 1.0f, 1.0f, 1.0f),
-			Texture = TextureManager.DefaultTexture
+			Texture = Texture2D.DefaultTexture
 		};
 		
 		public Vector4 Color { get; set; }
-		public Texture<Vector2> Texture { get; set; } // TODO texture instancing
+		public Texture<Vector2> Texture { get; set; } // TODO texture instancing update: i dont think thats possible
+		// TODO blending and transparency
 
 		public void Load(ShaderProgram shader) {
 			shader.SetUniform("material.color", Color);

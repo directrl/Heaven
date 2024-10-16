@@ -1,61 +1,32 @@
 using System.Numerics;
+using Coeli.LanguageExtensions;
 using Serilog;
 using Silk.NET.OpenGL;
 
 namespace Coeli.Graphics.Texture {
 	
-	class TextureCache {
+	class TextureCacheBase<TTexture> : CacheBase<TextureCacheBase<TTexture>.Entry, TTexture> {
 
-		private static readonly Dictionary<GL, TextureCache> LOCAL_CACHES = new();
+		public readonly struct Entry : IEquatable<Entry> {
+				
+			public GL GL { get; init; }
+			public string UID { get; init; }
 
-		private readonly Dictionary<string, Texture<Vector2>> _textures = new();
-
-		public static Texture<Vector2>? Get(GL gl, string name) {
-			if(LOCAL_CACHES.ContainsKey(gl)) {
-				Log.Verbose($"Getting texture for [{name}] from cache");
-				return LOCAL_CACHES[gl]._textures[name];
+			public override string ToString() {
+				return $"TextureCacheBase.Entry{{{UID}}}";
 			}
 
-			return null;
-		}
-
-		public static void Set(GL? gl, string name, Texture<Vector2> texture) {
-			Log.Verbose($"Caching texture for [{name}]");
-			
-			if(LOCAL_CACHES.ContainsKey(gl)) {
-				LOCAL_CACHES[gl]._textures[name] = texture;
+			public bool Equals(Entry other) {
+				return UID == other.UID;
 			}
 
-			var cache = new TextureCache();
-			cache._textures[name] = texture;
-
-			LOCAL_CACHES[gl] = cache;
-		}
-	}
-
-	unsafe class TextureDataCache {
-
-		private static readonly Dictionary<string, TextureData> TEXTURES = new();
-
-		public static TextureData? Get(string name) {
-			if(TEXTURES.ContainsKey(name)) {
-				Log.Verbose($"Getting texture data for [{name}] from cache");
-				return TEXTURES[name];
+			public static bool operator==(Entry e1, Entry e2) {
+				return e1.Equals(e2);
 			}
-			
-			return null;
-		}
-
-		public static void Set(string name, TextureData data) {
-			Log.Verbose($"Caching texture data for [{name}]");
-			TEXTURES[name] = data;
-		}
-
-		public readonly struct TextureData {
-
-			public int Width { get; init; }
-			public int Height { get; init; }
-			public void*[] Data { get; init; }
+		
+			public static bool operator!=(Entry e1, Entry e2) {
+				return !e1.Equals(e2);
+			}
 		}
 	}
 }

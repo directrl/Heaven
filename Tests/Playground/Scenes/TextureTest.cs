@@ -7,6 +7,7 @@ using Coeli.Graphics.OpenGL;
 using Coeli.Graphics.Scene;
 using Coeli.Graphics.Texture;
 using Coeli.Input;
+using Coeli.Resources;
 using Coeli.UI;
 using ImGuiNET;
 using Silk.NET.Input;
@@ -20,6 +21,7 @@ namespace Playground.Scenes {
 		
 		private Mesh? _mesh;
 		private Object3D? _object;
+		private InstancedObject<Object3D>? _instObject;
 
 		private KeyBindings _keyBindings;
 		private FreeCamera _freeCamera;
@@ -139,15 +141,59 @@ namespace Playground.Scenes {
 					}, null);
 			}
 
-			if(_object == null && _mesh != null) {
+			if(_instObject == null && _mesh != null) {
 				_object = new Object3D {
 					Meshes = new[] { _mesh },
 					Position = new(0, 0, 0),
-					Material = new Material {
-						Color = new(0.7f, 0.4f, 0.6f, 1.0f),
-						Texture = TextureManager.DefaultTexture
+					Material = new() {
+						Texture = Texture2D.Load(Playground.AppResources[Resource.Type.TEXTURE, "one"]),
+						Color = new(1, 1, 1, 1)
 					}
 				};
+				
+				/*int wall = 32;
+
+				_instObject = new((int) Math.Pow(wall, 3)) {
+					Meshes = new Mesh[] { _mesh }
+				};
+
+				var tex1 = Texture2D.Load(Playground.AppResources[Resource.Type.TEXTURE, "one"]);
+				var tex2 = Texture2D.Load(Playground.AppResources[Resource.Type.TEXTURE, "two"]);
+				var tex3 = Texture2D.Load(Playground.AppResources[Resource.Type.TEXTURE, "three"]);
+				var tex4 = Texture2D.Load(Playground.AppResources[Resource.Type.TEXTURE, "four"]);
+				
+				for(int y = 0; y < (wall * 2); y += 2)
+				for(int x = 0; x < (wall * 2); x += 2)
+				for(int z = 0; z < (wall * 2); z += 2) {
+					var o = new Object3D {
+						Meshes = new[] { _mesh },
+						Position = new(x, y, z)
+					};
+
+					int i = x + y + z;
+
+					if(i % 4 == 0) {
+						o.Material = new Material {
+							Color = new(1, 1, 1, 1),
+							Texture = tex1
+						};
+					} else if(i % 4 == 1) {
+						o.Material = new Material {
+							Color = new(1, 1, 1, 1),
+							Texture = tex2
+						};
+					} else if(i % 4 == 2) {
+						o.Material = new Material {
+							Color = new(1, 1, 1, 1),
+							Texture = tex3
+						};
+					} else if(i % 4 == 3) {
+						o.Material = new Material {
+							Color = new(1, 1, 1, 1),
+							Texture = tex4
+						};
+					}
+				}*/
 			}
 			
 			_overlay = new(this);

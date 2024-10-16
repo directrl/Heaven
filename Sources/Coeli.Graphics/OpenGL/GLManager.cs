@@ -29,8 +29,6 @@ namespace Coeli.Graphics.OpenGL {
 				(uint) TextureWrapMode.Repeat);
 			gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT,
 				(uint) TextureWrapMode.Repeat);
-			
-			if(EngineOptions.Texture.Mipmapping) gl.GenerateMipmap(TextureTarget.Texture2D);
 		}
 		
 		public unsafe static void EnableDebugOutput(GL? gl = null) {

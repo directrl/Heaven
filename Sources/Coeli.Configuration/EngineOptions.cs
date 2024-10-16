@@ -10,10 +10,11 @@ namespace Coeli.Configuration {
 
 		public static class Texture {
 
-			public static int MinFilter { get; set; } = (int) TextureMinFilter.NearestMipmapLinear;
-			public static int MagFilter { get; set; } = (int) TextureMagFilter.Nearest;
+			public static uint MinFilter { get; set; } = (int) TextureMinFilter.NearestMipmapLinear;
+			public static uint MagFilter { get; set; } = (int) TextureMagFilter.Nearest;
 
 			public static bool Mipmapping { get; set; } = true;
+			public static uint MipmapLevel { get; set; } = 5;
 		}
 	}
 }

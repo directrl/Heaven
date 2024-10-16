@@ -46,9 +46,6 @@ namespace Coeli.Graphics {
 				GL = SilkImpl.CreateOpenGL();
 				GL.Viewport(SilkImpl.FramebufferSize);
 
-				TextureManager.Load("default",
-					Module.RESOURCES[Resource.Type.TEXTURE, "default"].ReadBytes(), GL);
-
 				if(Debugging.Enabled) {
 					GLManager.EnableDebugOutput(GL);
 				}
