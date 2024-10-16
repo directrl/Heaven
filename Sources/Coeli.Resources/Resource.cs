@@ -41,11 +41,11 @@ namespace Coeli.Resources {
 				stream = _assembly
 					.GetManifestResourceStream($"{_namespace}.{_type.Path}.{_name}{_type.Extension}");
 			} catch(Exception e) {
-				Log.Logger.Warning($"Failed to get stream for resource [{this}]", e);
+				Log.Logger.Error($"Failed to get stream for resource [{this}]", e);
 				return null;
 			}
 
-			if(stream == null) Log.Logger.Warning($"Failed to get stream for resource [{this}]");
+			if(stream == null) Log.Logger.Error($"Failed to get stream for resource [{this}]");
 			return stream;
 		}
 

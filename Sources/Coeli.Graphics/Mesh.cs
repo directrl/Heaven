@@ -14,7 +14,7 @@ namespace Coeli.Graphics {
 
 		public readonly PrimitiveType Type;
 		
-		public unsafe Mesh(PrimitiveType type,
+		public Mesh(PrimitiveType type,
 		            float[] vertices, uint[] indices, float[]? texCoords, float[]? normals) {
 			
 			_gl = GLManager.Current;

@@ -17,18 +17,18 @@ namespace Coeli.Graphics.OpenGL {
 			gl.CullFace(TriangleFace.Back);
 		}
 		
-		public static void SetDefaultsForTextureCreation(GL? gl = null) {
+		public static void SetDefaultsForTextureCreation(TextureTarget target, GL? gl = null) {
 			if(gl == null) gl = Current;
 
-			gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter,
+			gl.TexParameter(target, TextureParameterName.TextureMinFilter,
 				EngineOptions.Texture.MinFilter);
-			gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter,
+			gl.TexParameter(target, TextureParameterName.TextureMagFilter,
 				EngineOptions.Texture.MagFilter);
 			
-			gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS,
-				(uint) TextureWrapMode.Repeat);
-			gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT,
-				(uint) TextureWrapMode.Repeat);
+			gl.TexParameter(target, TextureParameterName.TextureWrapS,
+			                (uint) TextureWrapMode.Repeat);
+			gl.TexParameter(target, TextureParameterName.TextureWrapT,
+			                (uint) TextureWrapMode.Repeat);
 		}
 		
 		public unsafe static void EnableDebugOutput(GL? gl = null) {

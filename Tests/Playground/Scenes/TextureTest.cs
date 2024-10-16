@@ -16,12 +16,26 @@ using Silk.NET.OpenGL;
 namespace Playground.Scenes {
 	
 	public class TextureTest : Scene3D {
+		
+		private static readonly Random RANDOM = new();
 
 		private ImGuiOverlay _overlay;
 		
 		private Mesh? _mesh;
-		private Object3D? _object;
+		
+		/*private Material? _mat1;
+		private Material? _mat2;
+		private Material? _mat3;
+		private Material? _mat4;
+		
+		private Object3D? _object1;
+		private Object3D? _object2;
+		private Object3D? _object3;
+		private Object3D? _object4;*/
+
+		private List<Object3D>? _objects;
 		private InstancedObject<Object3D>? _instObject;
+		private TextureArray? _texArray;
 
 		private KeyBindings _keyBindings;
 		private FreeCamera _freeCamera;
@@ -141,59 +155,92 @@ namespace Playground.Scenes {
 					}, null);
 			}
 
-			if(_instObject == null && _mesh != null) {
-				_object = new Object3D {
-					Meshes = new[] { _mesh },
-					Position = new(0, 0, 0),
-					Material = new() {
-						Texture = Texture2D.Load(Playground.AppResources[Resource.Type.TEXTURE, "one"]),
-						Color = new(1, 1, 1, 1)
-					}
+			if(_texArray == null) {
+				var textures = new Resource[] {
+					Playground.AppResources[Resource.Type.TEXTURE, "one"],
+					Playground.AppResources[Resource.Type.TEXTURE, "two"],
+					Playground.AppResources[Resource.Type.TEXTURE, "three"],
+					Playground.AppResources[Resource.Type.TEXTURE, "four"]
 				};
 				
-				/*int wall = 32;
+				_texArray = TextureArray.Create(null, textures);
+			}
+
+			if(_instObject == null && _mesh != null) {
+				_objects = new();
+				
+				/*_mat1 = new() {
+					//Texture = Texture2D.Load(Playground.AppResources[Resource.Type.TEXTURE, "one"]),
+					TextureLayer = 0,
+					Color = new(1, 1, 1, 1)
+				};
+				_mat2 = new() {
+					//Texture = Texture2D.Load(Playground.AppResources[Resource.Type.TEXTURE, "two"]),
+					TextureLayer = 1,
+					Color = new(1, 1, 1, 1)
+				};
+				_mat3 = new() {
+					//Texture = Texture2D.Load(Playground.AppResources[Resource.Type.TEXTURE, "three"]),
+					TextureLayer = 2,
+					Color = new(1, 1, 1, 1)
+				};
+				_mat4 = new() {
+					//Texture = Texture2D.Load(Playground.AppResources[Resource.Type.TEXTURE, "four"]),
+					TextureLayer = 3,
+					Color = new(1, 1, 1, 1)
+				};*/
+				
+				/*_object1 = new Object3D {
+					Meshes = new[] { _mesh },
+					Position = new(0, 0, 0),
+					Material = _mat1.Value
+				};
+				_object2 = new Object3D {
+					Meshes = new[] { _mesh },
+					Position = new(0, 2, 0),
+					Material = _mat2.Value
+				};
+				_object3 = new Object3D {
+					Meshes = new[] { _mesh },
+					Position = new(0, 4, 0),
+					Material = _mat3.Value
+				};
+				_object4 = new Object3D {
+					Meshes = new[] { _mesh },
+					Position = new(0, 6, 0),
+					Material = _mat4.Value
+				};*/
+				
+				int wall = 4;
 
 				_instObject = new((int) Math.Pow(wall, 3)) {
 					Meshes = new Mesh[] { _mesh }
 				};
 
-				var tex1 = Texture2D.Load(Playground.AppResources[Resource.Type.TEXTURE, "one"]);
-				var tex2 = Texture2D.Load(Playground.AppResources[Resource.Type.TEXTURE, "two"]);
-				var tex3 = Texture2D.Load(Playground.AppResources[Resource.Type.TEXTURE, "three"]);
-				var tex4 = Texture2D.Load(Playground.AppResources[Resource.Type.TEXTURE, "four"]);
+				// var tex1 = Texture2D.Load();
+				// var tex2 = Texture2D.Load(Playground.AppResources[Resource.Type.TEXTURE, "two"]);
+				// var tex3 = Texture2D.Load(Playground.AppResources[Resource.Type.TEXTURE, "three"]);
+				// var tex4 = Texture2D.Load(Playground.AppResources[Resource.Type.TEXTURE, "four"]);
 				
 				for(int y = 0; y < (wall * 2); y += 2)
 				for(int x = 0; x < (wall * 2); x += 2)
 				for(int z = 0; z < (wall * 2); z += 2) {
+					int random = RANDOM.Next(0, 4);
+					
 					var o = new Object3D {
 						Meshes = new[] { _mesh },
-						Position = new(x, y, z)
+						Position = new(x, y, z),
+						Material = new() {
+							Color = new(1, 1, 1, 1),
+							TextureLayer = random
+						}
 					};
-
-					int i = x + y + z;
-
-					if(i % 4 == 0) {
-						o.Material = new Material {
-							Color = new(1, 1, 1, 1),
-							Texture = tex1
-						};
-					} else if(i % 4 == 1) {
-						o.Material = new Material {
-							Color = new(1, 1, 1, 1),
-							Texture = tex2
-						};
-					} else if(i % 4 == 2) {
-						o.Material = new Material {
-							Color = new(1, 1, 1, 1),
-							Texture = tex3
-						};
-					} else if(i % 4 == 3) {
-						o.Material = new Material {
-							Color = new(1, 1, 1, 1),
-							Texture = tex4
-						};
-					}
-				}*/
+					
+					_instObject.Add(o);
+					_objects.Add(o);
+				}
+				
+				_instObject.Build();
 			}
 			
 			_overlay = new(this);
@@ -230,7 +277,18 @@ namespace Playground.Scenes {
 			base.OnRender(gl, delta);
 			gl.Disable(EnableCap.CullFace);
 			
-			_object?.Render(MainShader);
+			_texArray?.Bind();
+			
+			// _object1?.Render(MainShader);
+			// _object2?.Render(MainShader);
+			// _object3?.Render(MainShader);
+			// _object4?.Render(MainShader);
+
+			// foreach(var o in _objects) {
+			// 	o.Render(MainShader);
+			// }
+			
+			_instObject?.Render(MainShader);
 		}
 	}
 }

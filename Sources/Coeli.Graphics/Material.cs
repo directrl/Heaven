@@ -1,22 +1,29 @@
 using System.Numerics;
+using System.Runtime.InteropServices;
 using Coeli.Graphics.OpenGL;
 using Coeli.Graphics.Texture;
 
 namespace Coeli.Graphics {
 	
+	[StructLayout(LayoutKind.Explicit, Pack = 1)]
 	public struct Material {
 
-		public static readonly Material DEFAULT_MATERIAL = new Material {
-			Color = new(1.0f, 1.0f, 1.0f, 1.0f),
-			Texture = Texture2D.DefaultTexture
-		};
+		[FieldOffset(0)] public Vector4 Color;
 		
-		public Vector4 Color { get; set; }
-		public Texture<Vector2> Texture { get; set; } // TODO texture instancing update: i dont think thats possible
+		[FieldOffset(16)] public Texture<Vector2> Texture;
+		[FieldOffset(24)] public int TextureLayer;
+		
 		// TODO blending and transparency
+
+		public Material() {
+			Color = new(1, 1, 1, 1);
+			Texture = Texture2D.DefaultTexture;
+			TextureLayer = -1;
+		}
 
 		public void Load(ShaderProgram shader) {
 			shader.SetUniform("material.color", Color);
+			shader.SetUniform("material.texLayer", TextureLayer);
 			
 			Texture.Bind();
 		}

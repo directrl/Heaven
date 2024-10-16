@@ -1,5 +1,6 @@
 using System.Numerics;
 using Coeli.Configuration;
+using Coeli.Debug;
 using Coeli.Graphics.OpenGL;
 using Coeli.Resources;
 using Silk.NET.OpenGL;
@@ -10,9 +11,6 @@ namespace Coeli.Graphics.Texture {
 
 	public class TextureArray : Texture<Vector2> {
 
-		private readonly List<Texture2D> _textures;
-		private bool _mipmapsReady;
-
 		public int Layers { get; }
 		public int LayerIndex { get; private set; }
 
@@ -21,14 +19,14 @@ namespace Coeli.Graphics.Texture {
 
 			Layers = layers;
 			
+			GLManager.SetDefaultsForTextureCreation(Target, GL);
+			
 			gl.TexStorage3D(
 				Target,
-				EngineOptions.Texture.MipmapLevel,
+				EngineOptions.Texture.TexStorage3DLevels,
 				SizedInternalFormat.Rgba8,
 				(uint) size.X, (uint) size.Y, (uint) Layers
 			);
-			
-			GLManager.SetDefaultsForTextureCreation(gl);
 		}
 
 		public void Add(Resource resource) {
@@ -40,14 +38,8 @@ namespace Coeli.Graphics.Texture {
 		}
 
 		public override void Bind() {
-			base.Bind();
-			
-			if(!_mipmapsReady && EngineOptions.Texture.Mipmapping) {
-				GLManager.SetDefaultsForTextureCreation(GL);
-				GL.GenerateMipmap(Target);
-
-				_mipmapsReady = true;
-			}
+			GL.ActiveTexture(TextureUnit.Texture1);
+			GL.BindTexture(Target, Id);
 		}
 
 		public static TextureArray Create(GL? gl, params Resource[] resources) {
@@ -74,6 +66,8 @@ namespace Coeli.Graphics.Texture {
 		}
 
 		private static bool LoadImage(Resource resource, Action<Image<Rgba32>> callback) {
+			resource.Cache = false; // textures should not be cached as they're uploaded to the GPU
+			
 			var data = resource.ReadBytes();
 			if(data == null) return false;
 
@@ -86,30 +80,31 @@ namespace Coeli.Graphics.Texture {
 		
 		private unsafe static bool LoadTexture(TextureArray texture, Resource resource, GL gl) {
 			return LoadImage(resource, image => {
-				gl.TexSubImage3D(
-					texture.Target,
-					0,
-					0, 0, texture.LayerIndex,
-					(uint) image.Width, (uint) image.Height, 1,
-					PixelFormat.Rgb, PixelType.UnsignedByte,
-					null
-				);
-					
+				texture.Bind();
+				
 				image.ProcessPixelRows(accessor => {
+					Tests.Assert(image.Width == (int) texture.Size.X, "All textures must have the same size");
+					Tests.Assert(image.Height == (int) texture.Size.Y, "All textures must have the same size");
+					
+					var data = new void*[image.Height];
+					
 					for(int y = 0; y < accessor.Height; y++) {
 						fixed(void* addr = accessor.GetRowSpan(y)) {
-							gl.TexSubImage2D(
-								texture.Target,
-								0,
-								0, y,
-								(uint) accessor.Width, 1,
-								PixelFormat.Rgba, PixelType.UnsignedByte,
-								addr
-							);
+							data[y] = addr;
 						}
 					}
+					
+					gl.TexSubImage3D(
+						texture.Target,
+						0,
+						0, 0, texture.LayerIndex,
+						(uint) image.Width, (uint) image.Height, 1,
+						PixelFormat.Rgba, PixelType.UnsignedByte,
+						data[0]
+					);
 				});
 
+				if(EngineOptions.Texture.Mipmapping) gl.GenerateMipmap(texture.Target);
 				texture.LayerIndex++;
 			});
 		}

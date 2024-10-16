@@ -62,29 +62,24 @@ namespace Coeli.Graphics.Texture {
 			Log.Debug($"Creating texture for [{name}]");
 
 			Texture2D texture;
-			
-			GLManager.SetDefaultsForTextureCreation(gl);
 
 			using(var image = Image.Load<Rgba32>(data)) {
 				texture = new(gl, new(image.Width, image.Height));
-					
-				gl.TexImage2D(texture.Target, 0, InternalFormat.Rgba8,
-					(uint) image.Width, (uint) image.Height, 0,
-					PixelFormat.Rgba, PixelType.UnsignedByte, null);
+				
+				GLManager.SetDefaultsForTextureCreation(texture.Target, gl);
 					
 				image.ProcessPixelRows(accessor => {
+					var data = new void*[image.Height];
+					
 					for(int y = 0; y < accessor.Height; y++) {
 						fixed(void* addr = accessor.GetRowSpan(y)) {
-							gl.TexSubImage2D(
-								texture.Target,
-								0,
-				                 0, y,
-				                 (uint) accessor.Width, 1,
-				                 PixelFormat.Rgba, PixelType.UnsignedByte,
-				                 addr
-							);
+							data[y] = addr;
 						}
 					}
+					
+					gl.TexImage2D(texture.Target, 0, InternalFormat.Rgba8,
+					              (uint) image.Width, (uint) image.Height, 0,
+					              PixelFormat.Rgba, PixelType.UnsignedByte, data[0]);
 				});
 			}
 			

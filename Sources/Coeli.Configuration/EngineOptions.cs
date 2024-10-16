@@ -14,7 +14,8 @@ namespace Coeli.Configuration {
 			public static uint MagFilter { get; set; } = (int) TextureMagFilter.Nearest;
 
 			public static bool Mipmapping { get; set; } = true;
-			public static uint MipmapLevel { get; set; } = 5;
+			
+			public static uint TexStorage3DLevels { get; set; } = 1;
 		}
 	}
 }
