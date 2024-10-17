@@ -11,10 +11,12 @@ namespace Coeli.Graphics.OpenGL {
 
 		private readonly GL _gl;
 		private readonly Shader[] _program;
+		private readonly List<Shader.Overlay> _overlays = new();
 		
 		private readonly ResourceManager? _preprocessorResources;
 		
 		private bool _ready;
+		private bool _bound;
 		
 		public uint Id { get; }
 
@@ -29,6 +31,27 @@ namespace Coeli.Graphics.OpenGL {
 			}
 
 			_program = program;
+		}
+
+		public void AddOverlay(Shader.Overlay overlay, ResourceManager resourceManager) {
+			Tests.Assert(!_ready);
+			_overlays.Add(overlay);
+
+			foreach(var shader in _program) {
+				if(shader.Type == overlay.Type) {
+					// TODO do preprocessing stuff
+				}
+			}
+		}
+
+		public void EnableOverlay(Shader.Overlay overlay) {
+			Tests.Assert(_bound);
+			SetUniform($"overlay_{overlay.Name}", true);
+		}
+		
+		public void DisableOverlay(Shader.Overlay overlay) {
+			Tests.Assert(_bound);
+			SetUniform($"overlay_{overlay.Name}", false);
 		}
 
 		public void Build() {
@@ -70,6 +93,7 @@ namespace Coeli.Graphics.OpenGL {
 		public void Bind() {
 			if(!_ready) Build();
 			_gl.UseProgram(Id);
+			_bound = true;
 		}
 		
 		public int GetUniformLocation(string name) {

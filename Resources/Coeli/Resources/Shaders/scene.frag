@@ -1,5 +1,5 @@
 #version 330
-//$include material.glsl
+//$include Structures.material.glsl
 
 in vec2 outTexCoords;
 flat in Material outInstanceMaterial;

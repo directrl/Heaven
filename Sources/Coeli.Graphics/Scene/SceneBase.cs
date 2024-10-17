@@ -16,7 +16,7 @@ namespace Coeli.Graphics.Scene {
 		public delegate void UpdateEventHandler(float delta);
 		public delegate void RenderEventHandler(GL gl, float delta);
 
-		public delegate void ShaderSetupEventHandler(GL gl, ShaderProgram shader);
+		public delegate void ShaderSetupEventHandler(GL gl, string id, ShaderProgram shader);
 	#endregion
 
 	#region Events
@@ -37,7 +37,7 @@ namespace Coeli.Graphics.Scene {
 		public GameOptions Options { get; }
 
 		public ShaderProgram PrimaryShader { get; protected set; }
-		public List<ShaderProgram> SecondaryShaders { get; } = new();
+		public Dictionary<string, ShaderProgram> OverlayShaders { get; } = new();
 		
 		public string Id { get; }
 
@@ -75,13 +75,16 @@ namespace Coeli.Graphics.Scene {
 		public virtual void OnRender(GL gl, float delta) {
 			gl.ClearColor(ClearColor);
 
-			foreach(var shader in SecondaryShaders) {
+			foreach(var kv in OverlayShaders) {
+				var id = kv.Key;
+				var shader = kv.Value;
+				
 				shader.Bind();
-				SecondaryShaderSetup?.Invoke(gl, shader);
+				SecondaryShaderSetup?.Invoke(gl, id, shader);
 			}
 			
 			PrimaryShader.Bind();
-			PrimaryShaderSetup?.Invoke(gl, PrimaryShader);
+			PrimaryShaderSetup?.Invoke(gl, "", PrimaryShader);
 			
 			Render?.Invoke(gl, delta);
 		}

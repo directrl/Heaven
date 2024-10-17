@@ -7,10 +7,11 @@ using Serilog;
 using Silk.NET.OpenGL;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
+using Shader = Coeli.Graphics.OpenGL.Shader;
 
 namespace Coeli.Graphics.Texture {
 	
-	public class Texture2D : Texture<Vector2> {
+	public class Texture2D : Texture<Vector2>, IOverlayShaderLoadable {
 		
 		public static Texture2D DefaultTexture {
 			get {
@@ -43,6 +44,21 @@ namespace Coeli.Graphics.Texture {
 		}
 		
 		public Texture2D(GL gl, Vector2 size) : base(gl, TextureTarget.Texture2D, size) { }
+
+		public override void Bind() {
+			GL.ActiveTexture(TextureUnit.Texture1);
+			GL.BindTexture(Target, Id);
+		}
+
+		public void Load(ShaderProgram shader) {
+			shader.SetUniform("overlay_texture2d", true);
+			shader.SetUniform("tex2DSampler", 1);
+			Bind();
+		}
+
+		public static void SetupOverlays(ShaderProgram shader) {
+			shader.AddOverlay(new FragmentShaderOverlay(), Module.RESOURCES);
+		}
 
 		public static Texture2D Load(Resource resource, GL? gl = null) {
 			gl ??= GLManager.Current;
@@ -91,5 +107,9 @@ namespace Coeli.Graphics.Texture {
 
 			public static readonly Cache GLOBAL = new();
 		}
+
+		record FragmentShaderOverlay()
+			: Shader.Overlay("texture2D", "Overlays.Texture2D",
+			                 ShaderType.FragmentShader, ShaderPass.Pre);
 	}
 }

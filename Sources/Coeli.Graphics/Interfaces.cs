@@ -1,4 +1,5 @@
 using Coeli.Graphics.OpenGL;
+using Coeli.Resources;
 
 namespace Coeli.Graphics {
 	
@@ -19,4 +20,11 @@ namespace Coeli.Graphics {
 			Render();
 		}
 	}
+
+	public interface IOverlayShaderLoadable : IShaderLoadable {
+
+		//public static void SetupOverlays(ShaderProgram shader);
+	}
+	
+	public interface IOverlayShaderRenderable : IOverlayShaderLoadable, IRenderable { }
 }

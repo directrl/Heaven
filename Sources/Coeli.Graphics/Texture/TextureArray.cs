@@ -9,7 +9,7 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Coeli.Graphics.Texture {
 
-	public class TextureArray : Texture<Vector2> {
+	public class TextureArray : Texture<Vector2>, IOverlayShaderLoadable {
 
 		public int Layers { get; }
 		public int LayerIndex { get; private set; }
@@ -38,8 +38,22 @@ namespace Coeli.Graphics.Texture {
 		}
 
 		public override void Bind() {
-			GL.ActiveTexture(TextureUnit.Texture1);
+			GL.ActiveTexture(TextureUnit.Texture2);
 			GL.BindTexture(Target, Id);
+		}
+
+		public ShaderProgram CreateShader() {
+			return new(Module.RESOURCES,
+			           new(ShaderType.VertexShader,
+				           Module.RESOURCES[Resource.Type.SHADER, "scene_new.vert"]),
+			           new(ShaderType.FragmentShader,
+			               Module.RESOURCES[Resource.Type.SHADER, "texture_array.frag"]));
+		}
+
+		public void Load(ShaderProgram shader) {
+			shader.SetUniform("overlay_textureArray", true);
+			shader.SetUniform("texArraySampler", 2);
+			Bind();
 		}
 
 		public static TextureArray Create(GL? gl, params Resource[] resources) {

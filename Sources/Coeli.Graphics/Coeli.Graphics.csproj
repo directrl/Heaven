@@ -42,6 +42,45 @@
     <EmbeddedResource Update="..\..\Resources\Coeli\Resources\Shaders\instancing.vert">
       <Link>Resources\Shaders\instancing.vert</Link>
     </EmbeddedResource>
+    <EmbeddedResource Update="..\..\Resources\Coeli\Resources\Shaders\Structs\material.glsl">
+      <Link>Resources\Shaders\Structs\material.glsl</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Update="..\..\Resources\Coeli\Resources\Shaders\Defaults\vertex,glsl">
+      <Link>Resources\Shaders\Defaults\vertex,glsl</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Update="..\..\Resources\Coeli\Resources\Shaders\scene_new.frag">
+      <Link>Resources\Shaders\scene_new.frag</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Update="..\..\Resources\Coeli\Resources\Shaders\scene_new.vert">
+      <Link>Resources\Shaders\scene_new.vert</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Update="..\..\Resources\Coeli\Resources\Shaders\Structs\vertex.glsl">
+      <Link>Resources\Shaders\Structs\vertex.glsl</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Update="..\..\Resources\Coeli\Resources\Shaders\Structures\model_matrices.glsl">
+      <Link>Resources\Shaders\Structures\model_matrices.glsl</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Update="..\..\Resources\Coeli\Resources\Shaders\Defaults\textures.glsl">
+      <Link>Resources\Shaders\Defaults\textures.glsl</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Update="..\..\Resources\Coeli\Resources\Shaders\Defaults\model_matrices.glsl">
+      <Link>Resources\Shaders\Defaults\model_matrices.glsl</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Update="..\..\Resources\Coeli\Resources\Shaders\Snippets\textures.glsl">
+      <Link>Resources\Shaders\Snippets\textures.glsl</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Update="..\..\Resources\Coeli\Resources\Shaders\Overlays\TextureArray\overlay_header.glsl">
+      <Link>Resources\Shaders\Overlays\TextureArray\overlay_header.glsl</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Update="..\..\Resources\Coeli\Resources\Shaders\Overlays\TextureArray\call.frag">
+      <Link>Resources\Shaders\Overlays\TextureArray\call.frag</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Update="..\..\Resources\Coeli\Resources\Shaders\Overlays\Texture\call.frag">
+      <Link>Resources\Shaders\Overlays\Texture\call.frag</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Update="..\..\Resources\Coeli\Resources\Shaders\Overlays\Texture\header.frag">
+      <Link>Resources\Shaders\Overlays\Texture\header.frag</Link>
+    </EmbeddedResource>
   </ItemGroup>
 
   <ItemGroup>

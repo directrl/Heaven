@@ -80,5 +80,22 @@ namespace Coeli.Graphics.OpenGL {
 			public PreprocessingException(string message)
 				: base($"Error occured during shader preprocessing: {message}") { }
 		}
+
+		// public class Overlay {
+		// 	
+		// 	public string Name { get; }
+		// 	public ShaderType Type { get; }
+		// 	public ShaderPass Pass { get; }
+		// 	
+		// 	public Overlay()
+		// }
+
+		public record Overlay(string Name, string Path, ShaderType Type, ShaderPass Pass);
+	}
+
+	public enum ShaderPass {
+		
+		Pre,
+		Post
 	}
 }

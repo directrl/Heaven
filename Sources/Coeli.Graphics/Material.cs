@@ -10,7 +10,7 @@ namespace Coeli.Graphics {
 
 		[FieldOffset(0)] public Vector4 Color;
 		
-		[FieldOffset(16)] public Texture<Vector2> Texture;
+		[FieldOffset(16)] public Texture2D Texture;
 		[FieldOffset(24)] public int TextureLayer;
 
 		public Material() {
@@ -23,7 +23,7 @@ namespace Coeli.Graphics {
 			shader.SetUniform("material.color", Color);
 			shader.SetUniform("material.texLayer", TextureLayer);
 			
-			Texture.Bind();
+			if(TextureLayer < 0) Texture.Load(shader);
 		}
 	}
 }
