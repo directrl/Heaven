@@ -1,9 +1,5 @@
 #version 330
-
-flat struct Material {
-	vec4 color;
-	int texLayer;
-};
+//$include material.glsl
 
 layout (location = 0) in vec3 position;
 layout (location = 1) in vec2 texCoords;

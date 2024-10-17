@@ -1,9 +1,5 @@
 #version 330
-
-flat struct Material {
-	vec4 color;
-	int texLayer;
-};
+//$include material.glsl
 
 in vec2 outTexCoords;
 flat in Material outInstanceMaterial;

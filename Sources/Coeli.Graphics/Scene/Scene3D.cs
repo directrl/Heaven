@@ -15,7 +15,7 @@ namespace Coeli.Graphics.Scene {
 		public override void OnLoad(Window window) {
 			base.OnLoad(window);
 
-			MainShader = new(
+			MainShader = new(Module.RESOURCES,
 				new(ShaderType.FragmentShader,
 					Module.RESOURCES[Resource.Type.SHADER, "scene.frag"].ReadString()),
 				new(ShaderType.VertexShader,

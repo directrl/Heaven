@@ -33,6 +33,9 @@
     <EmbeddedResource Update="..\..\Resources\Coeli\Resources\Shaders\texture_array.frag">
       <Link>Resources\Shaders\texture_array.frag</Link>
     </EmbeddedResource>
+    <EmbeddedResource Update="..\..\Resources\Coeli\Resources\Shaders\material.glsl">
+      <Link>Resources\Shaders\material.glsl</Link>
+    </EmbeddedResource>
   </ItemGroup>
 
   <ItemGroup>

@@ -1,5 +1,6 @@
 using System.Numerics;
 using Coeli.Debug;
+using Coeli.Resources;
 using Serilog;
 using Silk.NET.Core;
 using Silk.NET.OpenGL;
@@ -11,12 +12,15 @@ namespace Coeli.Graphics.OpenGL {
 		private readonly GL _gl;
 		private readonly Shader[] _program;
 		
+		private readonly ResourceManager? _preprocessorResources;
+		
 		private bool _ready;
-		private int _oid;
 		
 		public uint Id { get; }
 
-		public ShaderProgram(params Shader[] program) {
+		public ShaderProgram(ResourceManager? preprocessorResources, params Shader[] program) {
+			_preprocessorResources = preprocessorResources;
+			
 			_gl = GLManager.Current;
 			Id = _gl.CreateProgram();
 
@@ -31,6 +35,7 @@ namespace Coeli.Graphics.OpenGL {
 			List<uint> shaderIds = new();
 
 			foreach(var shader in _program) {
+				if(_preprocessorResources != null) shader.Preprocess(_preprocessorResources);
 				var shaderId = shader.Compile(_gl);
 
 				if(shaderId != 0) {
