@@ -159,10 +159,12 @@ namespace Playground.Scenes {
 			base.OnRender(gl, delta);
 
 			if(_instancing) {
-				_instObject?.Render(MainShader);
+				_instObject?.Load(PrimaryShader);
+				_instObject?.Render(PrimaryShader);
 			} else {
 				foreach(var o in objects) {
-					o.Render(MainShader);
+					o.Load(PrimaryShader);
+					o.Render();
 				}
 			}
 		}

@@ -180,7 +180,7 @@ namespace Playground.Scenes {
 				_pos, _phi, _height, _horizon, VS_SCALE_HEIGHT, VS_DISTANCE,
 				ref _colorMap, ref _heightMap,
 				ref _cMw, ref _cMh, ref _hMw, ref _hMh,
-				MainShader, ref _pixel);
+				PrimaryShader, ref _pixel);
 			
 			// MainShader.SetUniform("color", new Vector4(1.0f, 1.0f, 0.0f, 1.0f));
 			//
@@ -189,8 +189,9 @@ namespace Playground.Scenes {
 			// }
 
 			foreach(var kv in Renderer.Objects) {
-				MainShader.SetUniform("color", kv.Value);
-				kv.Key.Render(MainShader);
+				PrimaryShader.SetUniform("color", kv.Value);
+				kv.Key.Load(PrimaryShader);
+				kv.Key.Render();
 			}
 		}
 	}

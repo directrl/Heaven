@@ -6,7 +6,7 @@ using Coeli.Graphics.Texture;
 namespace Coeli.Graphics {
 	
 	[StructLayout(LayoutKind.Explicit, Pack = 1)]
-	public struct Material {
+	public struct Material : IShaderLoadable {
 
 		[FieldOffset(0)] public Vector4 Color;
 		

@@ -1,5 +1,7 @@
 using System.Drawing;
 using Coeli.Configuration;
+using Coeli.Debug;
+using Coeli.Graphics.OpenGL;
 using Silk.NET.OpenGL;
 
 namespace Coeli.Graphics.Scene {
@@ -13,6 +15,8 @@ namespace Coeli.Graphics.Scene {
 		public delegate void FixedUpdateEventHandler(float delta);
 		public delegate void UpdateEventHandler(float delta);
 		public delegate void RenderEventHandler(GL gl, float delta);
+
+		public delegate void ShaderSetupEventHandler(GL gl, ShaderProgram shader);
 	#endregion
 
 	#region Events
@@ -22,12 +26,18 @@ namespace Coeli.Graphics.Scene {
 		public event FixedUpdateEventHandler? FixedUpdate;
 		public event UpdateEventHandler? Update;
 		public event RenderEventHandler? Render;
+
+		public event ShaderSetupEventHandler? PrimaryShaderSetup;
+		public event ShaderSetupEventHandler? SecondaryShaderSetup;
 	#endregion
 
 		public Color ClearColor { get; protected set; } = Color.Black;
 		
 		public Window? Window { get; private set; }
 		public GameOptions Options { get; }
+
+		public ShaderProgram PrimaryShader { get; protected set; }
+		public List<ShaderProgram> SecondaryShaders { get; } = new();
 		
 		public string Id { get; }
 
@@ -42,6 +52,9 @@ namespace Coeli.Graphics.Scene {
 		}
 
 		public virtual void OnLoad(Window window) {
+			Tests.Assert(PrimaryShader != null);
+			PrimaryShader.Validate();
+			
 			Window = window;
 			Load?.Invoke(window);
 		}
@@ -61,6 +74,15 @@ namespace Coeli.Graphics.Scene {
 		
 		public virtual void OnRender(GL gl, float delta) {
 			gl.ClearColor(ClearColor);
+
+			foreach(var shader in SecondaryShaders) {
+				shader.Bind();
+				SecondaryShaderSetup?.Invoke(gl, shader);
+			}
+			
+			PrimaryShader.Bind();
+			PrimaryShaderSetup?.Invoke(gl, PrimaryShader);
+			
 			Render?.Invoke(gl, delta);
 		}
 	}

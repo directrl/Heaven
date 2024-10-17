@@ -136,13 +136,18 @@ namespace Coeli.Graphics.Object {
 			_ready = true;
 		}
 
-		public unsafe override void Render(ShaderProgram shader) {
+		public override void Load(ShaderProgram shader) {
+			Tests.Assert(_ready, "Object is not ready! Did you forget to call Build() beforehand?");
+			
+			base.Load(shader);
+			shader.SetUniform("instanced", true);
+		}
+
+		public unsafe override void Render() {
 			Tests.Assert(_ready, "Object is not ready! Did you forget to call Build() beforehand?");
 
 			var gl = GLManager.Current;
 			uint oc = (uint) ObjectCount;
-			
-			shader.SetUniform("instanced", true);
 			
 			foreach(var mesh in Meshes) {
 				Tests.Assert(mesh._gl == gl);

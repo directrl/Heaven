@@ -36,6 +36,12 @@
     <EmbeddedResource Update="..\..\Resources\Coeli\Resources\Shaders\material.glsl">
       <Link>Resources\Shaders\material.glsl</Link>
     </EmbeddedResource>
+    <EmbeddedResource Update="..\..\Resources\Coeli\Resources\Shaders\instancing.frag">
+      <Link>Resources\Shaders\instancing.frag</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Update="..\..\Resources\Coeli\Resources\Shaders\instancing.vert">
+      <Link>Resources\Shaders\instancing.vert</Link>
+    </EmbeddedResource>
   </ItemGroup>
 
   <ItemGroup>

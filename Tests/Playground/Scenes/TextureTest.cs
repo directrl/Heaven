@@ -288,7 +288,7 @@ namespace Playground.Scenes {
 			// 	o.Render(MainShader);
 			// }
 			
-			_instObject?.Render(MainShader);
+			_instObject?.Render(PrimaryShader);
 		}
 	}
 }

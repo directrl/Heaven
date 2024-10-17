@@ -139,7 +139,8 @@ namespace Playground.Scenes {
 			base.OnRender(gl, delta);
 			
 			//MainShader.SetUniform("color", new Vector4(1.0f, 1.0f, 1.0f, 1.0f));
-			_object?.Render(MainShader);
+			_object?.Load(PrimaryShader);
+			_object?.Render();
 		}
 	}
 }

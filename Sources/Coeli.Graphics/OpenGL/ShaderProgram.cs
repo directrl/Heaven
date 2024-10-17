@@ -59,9 +59,12 @@ namespace Coeli.Graphics.OpenGL {
 			_ready = true;
 		}
 
-		public bool Validate() {
+		public void Validate() {
 			_gl.ValidateProgram(Id);
-			return _gl.GetProgram(Id, GLEnum.ValidateStatus) != 0;
+
+			if(_gl.GetProgram(Id, GLEnum.ValidateStatus) != 0) {
+				throw new ValidationException(_gl, Id);
+			}
 		}
 
 		public void Bind() {
@@ -136,6 +139,12 @@ namespace Coeli.Graphics.OpenGL {
 			
 			public LinkingException(GL gl, uint id)
 				: base($"Error occured during program linking: {gl.GetProgramInfoLog(id)}") { }
+		}
+		
+		public class ValidationException : Exception {
+			
+			public ValidationException(GL gl, uint id)
+				: base($"Shader validation failed: {gl.GetProgramInfoLog(id)}") { }
 		}
 	}
 }

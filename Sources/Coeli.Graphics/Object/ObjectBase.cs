@@ -9,9 +9,9 @@ namespace Coeli.Graphics.Object {
 
 		public abstract Matrix4x4 ModelMatrix { get; }
 
-		public unsafe override void Render(ShaderProgram shader) {
+		public override void Load(ShaderProgram shader) {
+			base.Load(shader);
 			shader.SetUniform("model", ModelMatrix);
-			base.Render(shader);
 		}
 	}
 }
