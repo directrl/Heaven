@@ -12,9 +12,12 @@ namespace Coeli.Graphics.OpenGL {
 			if(gl == null) gl = Current;
 			
 			gl.Enable(EnableCap.DepthTest);
-			gl.Enable(EnableCap.CullFace);
 			
+			gl.Enable(EnableCap.CullFace);
 			gl.CullFace(TriangleFace.Back);
+			
+			gl.Enable(EnableCap.Blend);
+			gl.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
 		}
 		
 		public static void SetDefaultsForTextureCreation(TextureTarget target, GL? gl = null) {

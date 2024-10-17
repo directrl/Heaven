@@ -17,24 +17,30 @@ uniform Material material;
 uniform int instanced;
 
 void main() {
+	vec4 texColor = vec4(1.0, 1.0, 1.0, 1.0);
+	vec4 matColor = vec4(1.0, 1.0, 1.0, 1.0);
+	
 	if(instanced > 0) {
 		if(outInstanceMaterial.texLayer >= 0) {
-			fragColor = outInstanceMaterial.color
-				* texture(texArraySampler, vec3(outTexCoords.xy, outInstanceMaterial.texLayer));
-		} else {
-			fragColor = outInstanceMaterial.color;
+			texColor = texture(texArraySampler, vec3(outTexCoords.xy, outInstanceMaterial.texLayer));
 		}
+		
+		matColor = outInstanceMaterial.color;
 	} else {
 		if(outTexCoords.x > 0 || outTexCoords.y > 0) {
 			if(material.texLayer >= 0) {
-				fragColor = material.color
-					* texture(texArraySampler, vec3(outTexCoords.xy, material.texLayer));
+				texColor = texture(texArraySampler, vec3(outTexCoords.xy, material.texLayer));
 			} else {
-				fragColor = material.color
-					* texture(texSampler, outTexCoords);
+				texColor = texture(texSampler, outTexCoords);
 			}
-		} else {
-			fragColor = material.color;
 		}
+		
+		matColor = material.color;
 	}
+	
+	if(texColor.a < 0.01) {
+		discard;
+	}
+	
+	fragColor = matColor * texColor;
 }

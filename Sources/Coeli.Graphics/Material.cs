@@ -12,8 +12,6 @@ namespace Coeli.Graphics {
 		
 		[FieldOffset(16)] public Texture<Vector2> Texture;
 		[FieldOffset(24)] public int TextureLayer;
-		
-		// TODO blending and transparency
 
 		public Material() {
 			Color = new(1, 1, 1, 1);
