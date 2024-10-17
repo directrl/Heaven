@@ -12,6 +12,7 @@ namespace Coeli.Graphics.OpenGL {
 		private readonly Shader[] _program;
 		
 		private bool _ready;
+		private int _oid;
 		
 		public uint Id { get; }
 
@@ -26,6 +27,43 @@ namespace Coeli.Graphics.OpenGL {
 			_program = program;
 		}
 
+		public void Build() {
+			List<uint> shaderIds = new();
+
+			foreach(var shader in _program) {
+				var shaderId = shader.Compile(_gl);
+
+				if(shaderId != 0) {
+					_gl.AttachShader(Id, shaderId);
+					shaderIds.Add(shaderId);
+				}
+			}
+
+			_gl.LinkProgram(Id);
+
+			if(_gl.GetProgram(Id, GLEnum.LinkStatus) == 0) {
+				throw new LinkingException(_gl, Id);
+			}
+			
+			// cleanup
+			foreach(var shaderId in shaderIds) {
+				_gl.DetachShader(Id, shaderId);
+				_gl.DeleteShader(shaderId);
+			}
+
+			_ready = true;
+		}
+
+		public bool Validate() {
+			_gl.ValidateProgram(Id);
+			return _gl.GetProgram(Id, GLEnum.ValidateStatus) != 0;
+		}
+
+		public void Bind() {
+			if(!_ready) Build();
+			_gl.UseProgram(Id);
+		}
+		
 		public int GetUniformLocation(string name) {
 			int location = _gl.GetUniformLocation(Id, name);
 
@@ -80,43 +118,6 @@ namespace Coeli.Graphics.OpenGL {
 			if(location < 0) return;
 			
 			_gl.Uniform1(location, 1, &value);
-		}
-
-		public void Build() {
-			List<uint> shaderIds = new();
-
-			foreach(var shader in _program) {
-				var shaderId = shader.Compile(_gl);
-
-				if(shaderId != 0) {
-					_gl.AttachShader(Id, shaderId);
-					shaderIds.Add(shaderId);
-				}
-			}
-
-			_gl.LinkProgram(Id);
-
-			if(_gl.GetProgram(Id, GLEnum.LinkStatus) == 0) {
-				throw new LinkingException(_gl, Id);
-			}
-			
-			// cleanup
-			foreach(var shaderId in shaderIds) {
-				_gl.DetachShader(Id, shaderId);
-				_gl.DeleteShader(shaderId);
-			}
-
-			_ready = true;
-		}
-
-		public bool Validate() {
-			_gl.ValidateProgram(Id);
-			return _gl.GetProgram(Id, GLEnum.ValidateStatus) != 0;
-		}
-
-		public void Bind() {
-			if(!_ready) Build();
-			_gl.UseProgram(Id);
 		}
 
 		public void Dispose() {

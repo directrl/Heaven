@@ -17,14 +17,16 @@ namespace Coeli.Graphics.Scene {
 			
 			MainShader = new(
 				new(ShaderType.FragmentShader,
-					Module.RESOURCES[Resource.Type.SHADER, "scene_singlecolor.frag"].ReadString()),
+					Module.RESOURCES[Resource.Type.SHADER, "scene.frag"].ReadString()),
 				new(ShaderType.VertexShader,
-					Module.RESOURCES[Resource.Type.SHADER, "scene_singlecolor.vert"].ReadString())
+					Module.RESOURCES[Resource.Type.SHADER, "scene.vert"].ReadString())
 			);
 			MainShader.Validate();
 		}
 		
 		public override void OnRender(GL gl, float delta) {
+			gl.Disable(EnableCap.CullFace);
+			
 			base.OnRender(gl, delta);
 			
 			MainShader.Bind();

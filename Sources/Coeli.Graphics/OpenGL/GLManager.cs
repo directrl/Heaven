@@ -1,4 +1,5 @@
 using System.Text;
+using Coeli.Configuration;
 using Silk.NET.OpenGL;
 
 namespace Coeli.Graphics.OpenGL {
@@ -11,9 +12,26 @@ namespace Coeli.Graphics.OpenGL {
 			if(gl == null) gl = Current;
 			
 			gl.Enable(EnableCap.DepthTest);
-			gl.Enable(EnableCap.CullFace);
 			
+			gl.Enable(EnableCap.CullFace);
 			gl.CullFace(TriangleFace.Back);
+			
+			gl.Enable(EnableCap.Blend);
+			gl.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
+		}
+		
+		public static void SetDefaultsForTextureCreation(TextureTarget target, GL? gl = null) {
+			if(gl == null) gl = Current;
+
+			gl.TexParameter(target, TextureParameterName.TextureMinFilter,
+				EngineOptions.Texture.MinFilter);
+			gl.TexParameter(target, TextureParameterName.TextureMagFilter,
+				EngineOptions.Texture.MagFilter);
+			
+			gl.TexParameter(target, TextureParameterName.TextureWrapS,
+			                (uint) TextureWrapMode.Repeat);
+			gl.TexParameter(target, TextureParameterName.TextureWrapT,
+			                (uint) TextureWrapMode.Repeat);
 		}
 		
 		public unsafe static void EnableDebugOutput(GL? gl = null) {

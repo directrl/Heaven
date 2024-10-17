@@ -1,6 +1,8 @@
 using Coeli.Debug;
 using Coeli.Graphics.OpenGL;
 using Coeli.Graphics.Scene;
+using Coeli.Graphics.Texture;
+using Coeli.Resources;
 using Silk.NET.GLFW;
 using Silk.NET.Input;
 using Silk.NET.OpenGL;

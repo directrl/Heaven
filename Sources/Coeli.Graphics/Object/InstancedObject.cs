@@ -2,6 +2,7 @@ using System.Numerics;
 using System.Reflection.Metadata;
 using Coeli.Debug;
 using Coeli.Graphics.OpenGL;
+using Coeli.Graphics.Texture;
 using Coeli.LanguageExtensions;
 using Silk.NET.OpenGL;
 
@@ -50,8 +51,8 @@ namespace Coeli.Graphics.Object {
 		}
 
 		public unsafe void Build() {
-			Tests.Assert(ObjectCount > 1);
-			Tests.Assert(!_ready);
+			Tests.Assert(ObjectCount > 1, "ObjectCount > 1");
+			Tests.Assert(!_ready, "!_ready");
 			
 			var gl = GLManager.Current;
 
@@ -89,6 +90,7 @@ namespace Coeli.Graphics.Object {
 					gl.VertexAttribDivisor(5, 1);
 					gl.VertexAttribDivisor(6, 1);
 				
+					gl.BindBuffer(BufferTargetARB.ArrayBuffer, 0);
 					gl.BindVertexArray(0);
 				}
 			}
@@ -114,10 +116,18 @@ namespace Coeli.Graphics.Object {
 				#region Color
 					gl.EnableVertexAttribArray(7);
 					gl.VertexAttribPointer(7, 4, VertexAttribPointerType.Float, false,
-						(uint) sizeof(Vector4), null);
+						(uint) sizeof(Material), null);
 					gl.VertexAttribDivisor(7, 1);
 				#endregion
+
+				#region Texture Layer
+					gl.EnableVertexAttribArray(8);
+					gl.VertexAttribIPointer(8, 1, VertexAttribIType.Int,
+						(uint) sizeof(Material), 24);
+					gl.VertexAttribDivisor(8, 1);
+				#endregion
 				
+					gl.BindBuffer(BufferTargetARB.ArrayBuffer, 0);
 					gl.BindVertexArray(0);
 				}
 			}

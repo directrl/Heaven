@@ -12,4 +12,8 @@
       </Reference>
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Coeli.LanguageExtensions\Coeli.LanguageExtensions.csproj" />
+    </ItemGroup>
+
 </Project>
