@@ -12,9 +12,6 @@ namespace Coeli.Graphics.Scene {
 
 		protected Scene3D(string id) : base(id) {
 			PrimaryShaderSetup += (gl, _, shader) => {
-				//shader.SetUniform("texSampler", 0);
-				//shader.SetUniform("texArraySampler", 1);
-				
 				Camera?.Load(shader);
 			};
 		}
@@ -23,9 +20,9 @@ namespace Coeli.Graphics.Scene {
 			PrimaryShader = new(
 				Module.RESOURCES,
 				new(ShaderType.FragmentShader,
-				    Module.RESOURCES[Resource.Type.SHADER, "scene_new.frag"]),
+				    Module.RESOURCES[Resource.Type.SHADER, "scene.frag"]),
 				new(ShaderType.VertexShader,
-				    Module.RESOURCES[Resource.Type.SHADER, "scene_new.vert"])
+				    Module.RESOURCES[Resource.Type.SHADER, "scene.vert"])
 			);
 			
 			base.OnLoad(window);

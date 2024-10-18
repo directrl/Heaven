@@ -11,9 +11,6 @@ namespace Coeli.Graphics.Scene {
 
 		protected Scene2D(string id) : base(id) {
 			PrimaryShaderSetup += (gl, _, shader) => {
-				// shader.SetUniform("texSampler", 0);
-				// shader.SetUniform("texArraySampler", 1);
-				
 				Camera?.Load(shader);
 			};
 		}

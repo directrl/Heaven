@@ -16,7 +16,7 @@ using Silk.NET.OpenGL;
 namespace Playground.Scenes {
 	
 	public class VoxelSpaceScene : Scene2D {
-
+ 
 		private readonly KeyBindings _keyBindings;
 
 	#region KeyBindings
