@@ -21,11 +21,4 @@ namespace Coeli.Graphics {
 			Render();
 		}
 	}
-
-	public interface IOverlayShaderLoadable : IShaderLoadable {
-
-		public static abstract void SetupOverlays(ShaderProgram shader);
-	}
-	
-	public interface IOverlayShaderRenderable : IOverlayShaderLoadable, IRenderable { }
 }

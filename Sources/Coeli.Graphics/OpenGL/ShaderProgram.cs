@@ -12,7 +12,7 @@ namespace Coeli.Graphics.OpenGL {
 
 		private readonly GL _gl;
 		private readonly Shader[] _program;
-		private readonly List<Shader.Overlay> _overlays = new();
+		private readonly List<IShaderOverlay> _overlays = new();
 		
 		private readonly ResourceManager? _preprocessorResources;
 		
@@ -34,23 +34,32 @@ namespace Coeli.Graphics.OpenGL {
 			_program = program;
 		}
 
-		public void AddOverlay(Shader.Overlay overlay) {
+		public void AddOverlays(params IShaderOverlay[] overlays) {
 			Tests.Assert(!_ready);
-			_overlays.Add(overlay);
+
+			foreach(var overlay in overlays) {
+				_overlays.Add(overlay);
+			}
 		}
 
-		public void EnableOverlay(Shader.Overlay overlay) {
+		public void EnableOverlays(params IShaderOverlay[] overlays) {
 			Tests.Assert(_bound);
-			Tests.Assert(SetUniform($"overlay_{overlay.Name}", true),
-			             $"Overlay [{overlay.Name}] not included in shader");
+
+			foreach(var overlay in overlays) {
+				Tests.Assert(SetUniform($"overlay_{overlay.Name}", true),
+				             $"Overlay [{overlay.Name}] not included in shader");
 			
-			overlay.Load(this);
+				overlay.Load(this);
+			}
 		}
 		
-		public void DisableOverlay(Shader.Overlay overlay) {
+		public void DisableOverlays(params IShaderOverlay[] overlays) {
 			Tests.Assert(_bound);
-			Tests.Assert(SetUniform($"overlay_{overlay.Name}", false),
-				$"Overlay [{overlay.Name}] not included in shader");
+
+			foreach(var overlay in overlays) {
+				Tests.Assert(SetUniform($"overlay_{overlay.Name}", false),
+				             $"Overlay [{overlay.Name}] not included in shader");
+			}
 		}
 
 		public void Build() {

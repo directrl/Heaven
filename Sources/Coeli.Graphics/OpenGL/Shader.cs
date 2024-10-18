@@ -10,7 +10,7 @@ namespace Coeli.Graphics.OpenGL {
 		public ShaderType Type { get; }
 		public string Code { get; internal set; }
 		
-		public Overlay[] Overlays { get; internal set; }
+		public IShaderOverlay[] Overlays { get; internal set; }
 
 		public Shader(ShaderType type, string code) {
 			Type = type;
@@ -55,24 +55,6 @@ namespace Coeli.Graphics.OpenGL {
 			
 			public PreprocessingException(string message)
 				: base($"Error occured during shader preprocessing: {message}") { }
-		}
-
-		public record Overlay(string Name, string Path,
-		                      ShaderType Type, ShaderPass Pass,
-		                      ResourceManager resources) {
-			
-			public virtual void Load(ShaderProgram shader) { }
-
-			public string GetExtension() {
-				switch(Type) {
-					case ShaderType.FragmentShader:
-						return "frag";
-					case ShaderType.VertexShader:
-						return "vert";
-					default:
-						throw new ArgumentException($"Unknown shader overlay type {Type}");
-				}
-			}
 		}
 	}
 

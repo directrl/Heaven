@@ -3,6 +3,7 @@ using System.Runtime.Versioning;
 using Coeli.Configuration;
 using Coeli.Debug;
 using Coeli.Graphics.OpenGL;
+using Coeli.LanguageExtensions;
 using Coeli.Resources;
 using Silk.NET.OpenGL;
 using SixLabors.ImageSharp;
@@ -11,7 +12,7 @@ using Shader = Coeli.Graphics.OpenGL.Shader;
 
 namespace Coeli.Graphics.Texture {
 
-	public class TextureArray : Texture<Vector2>, IOverlayShaderLoadable {
+	public class TextureArray : Texture<Vector2>, IShaderLoadable {
 
 		public int Layers { get; }
 		public int LayerIndex { get; private set; }
@@ -53,12 +54,8 @@ namespace Coeli.Graphics.Texture {
 		}
 
 		public void Load(ShaderProgram shader) {
-			shader.EnableOverlay(new FragmentShaderOverlay());
+			shader.EnableOverlays(OVERLAYS);
 			Bind();
-		}
-
-		public static void SetupOverlays(ShaderProgram shader) {
-			shader.AddOverlay(new FragmentShaderOverlay());
 		}
 
 		public static TextureArray Create(GL? gl, params Resource[] resources) {
@@ -127,13 +124,24 @@ namespace Coeli.Graphics.Texture {
 				texture.LayerIndex++;
 			});
 		}
-		
-		record FragmentShaderOverlay()
-			: Shader.Overlay("textureArray", "Overlays.TextureArray",
-			                 ShaderType.FragmentShader, ShaderPass.COLOR_PRE,
-			                 Module.RESOURCES) {
 
-			public override void Load(ShaderProgram shader) {
+		public static readonly IShaderOverlay[] OVERLAYS = [
+			FragmentShaderOverlay.OVERLAY
+		];
+		
+		public class FragmentShaderOverlay : IShaderOverlay, ILazySingleton<FragmentShaderOverlay> {
+
+			//public static readonly FragmentShaderOverlay GLOBAL = new();
+			public static FragmentShaderOverlay OVERLAY
+				=> ILazySingleton<FragmentShaderOverlay>._instance.Value;
+
+			public string Name => "textureArray";
+			public string Path => "Overlays.TextureArray";
+			public ShaderType Type => ShaderType.FragmentShader;
+			public ShaderPass Pass => ShaderPass.COLOR_PRE;
+			public ResourceManager ResourceManager => Module.RESOURCES;
+
+			public void Load(ShaderProgram shader) {
 				shader.SetUniform("texArraySampler", 2);
 			}
 		}

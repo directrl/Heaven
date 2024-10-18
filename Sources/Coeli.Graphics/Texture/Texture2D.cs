@@ -12,7 +12,7 @@ using Shader = Coeli.Graphics.OpenGL.Shader;
 
 namespace Coeli.Graphics.Texture {
 	
-	public class Texture2D : Texture<Vector2>, IOverlayShaderLoadable {
+	public class Texture2D : Texture<Vector2>, IShaderLoadable {
 		
 		public static Texture2D DefaultTexture {
 			get {
@@ -52,12 +52,8 @@ namespace Coeli.Graphics.Texture {
 		}
 
 		public void Load(ShaderProgram shader) {
-			shader.EnableOverlay(new FragmentShaderOverlay());
+			shader.EnableOverlays(OVERLAYS);
 			Bind();
-		}
-
-		public static void SetupOverlays(ShaderProgram shader) {
-			shader.AddOverlay(new FragmentShaderOverlay());
 		}
 
 		public static Texture2D Load(Resource resource, GL? gl = null) {
@@ -103,17 +99,27 @@ namespace Coeli.Graphics.Texture {
 			return texture;
 		}
 		
-		class Cache : TextureCacheBase<Texture2D> {
+		private class Cache : TextureCacheBase<Texture2D> {
 
 			public static readonly Cache GLOBAL = new();
 		}
+		
+		public static readonly IShaderOverlay[] OVERLAYS = [
+			FragmentShaderOverlay.OVERLAY
+		];
 
-		record FragmentShaderOverlay()
-			: Shader.Overlay("texture2D", "Overlays.Texture2D",
-			                 ShaderType.FragmentShader, ShaderPass.COLOR_PRE,
-			                 Module.RESOURCES) {
+		public class FragmentShaderOverlay : IShaderOverlay, ILazySingleton<FragmentShaderOverlay> {
 
-			public override void Load(ShaderProgram shader) {
+			public static FragmentShaderOverlay OVERLAY
+				=> ILazySingleton<FragmentShaderOverlay>._instance.Value;
+
+			public string Name => "texture2D";
+			public string Path => "Overlays.Texture2D";
+			public ShaderType Type => ShaderType.FragmentShader;
+			public ShaderPass Pass => ShaderPass.COLOR_PRE;
+			public ResourceManager ResourceManager => Module.RESOURCES;
+
+			public void Load(ShaderProgram shader) {
 				shader.SetUniform("tex2DSampler", 1);
 			}
 		}
