@@ -1,1 +1,1 @@
-uniform sampler2D tex2DSampler;
+uniform sampler2D u_tex2d_sampler;

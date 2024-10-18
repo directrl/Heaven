@@ -13,7 +13,7 @@ namespace Playground {
 		}
 
 		public override void Setup() {
-			var scene = new TextureTest();
+			var scene = new Test3DScene();
 			var window = Window.Create(debug: true);
 			window.Scene = scene;
 			

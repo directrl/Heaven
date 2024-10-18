@@ -1,1 +1,1 @@
-uniform sampler2DArray texArraySampler;
+uniform sampler2DArray u_texArray_sampler;

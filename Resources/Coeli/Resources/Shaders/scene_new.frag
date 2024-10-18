@@ -1,33 +1,27 @@
 #version 330
 //$include Structures.material.glsl
 
-in vec2 outTexCoords;
+out vec4 out_frag_color;
 
-out vec4 fragColor;
+uniform Material u_material;
 
-uniform Material material;
-
-//-$include Overlays.Texture2D.header.frag
-//-$include Overlays.TextureArray.header.frag
+in VERT_OUT
+//$include Interfaces.scene.vert.out
+vert_in;
 
 //$overlay_headers
 
 void main() {
-	vec4 texColor = vec4(1.0, 1.0, 1.0, 1.0);
-	vec4 matColor = vec4(1.0, 1.0, 1.0, 1.0);
-	
-//-$include Overlays.Texture2D.call.frag
-//-$include Overlays.TextureArray.call.frag
+	vec4 tex_color = vec4(1.0, 1.0, 1.0, 1.0);
+	vec4 mat_color = vec4(1.0, 1.0, 1.0, 1.0);
 	
 	//$overlay_call COLOR_PRE
-
-	matColor = material.color;
+	mat_color = u_material.color;
+	//$overlay_call COLOR_POST
 	
-	if(texColor.a < 0.01) {
+	if(tex_color.a < 0.01) {
 		discard;
 	}
 	
-	//$overlay_call COLOR_POST
-	
-	fragColor = matColor * texColor;
+	out_frag_color = mat_color * tex_color;
 }

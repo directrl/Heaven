@@ -5,6 +5,7 @@ using Coeli.Graphics.Camera;
 using Coeli.Graphics.Object;
 using Coeli.Graphics.OpenGL;
 using Coeli.Graphics.Scene;
+using Coeli.Graphics.Texture;
 using Coeli.Input;
 using Coeli.UI;
 using ImGuiNET;
@@ -27,6 +28,8 @@ namespace Playground.Scenes {
 		public Test2DScene() : base("test") {
 			_keyBindings = new(Id);
 			//_freeCamera = new(_keyBindings);
+			
+			ShaderOverlays.AddRange(Texture2D.OVERLAYS);
 		}
 
 		public override void OnLoad(Window window) {

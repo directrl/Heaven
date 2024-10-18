@@ -1,1 +1,1 @@
-texColor = texture(tex2DSampler, outTexCoords);
+tex_color = texture(u_tex2d_sampler, vert_in.tex_coords);

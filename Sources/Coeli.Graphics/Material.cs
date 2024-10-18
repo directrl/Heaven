@@ -21,9 +21,9 @@ namespace Coeli.Graphics {
 
 		public void Load(ShaderProgram shader) {
 			shader.SetUniform("material.color", Color);
-			shader.SetUniform("material.texLayer", TextureLayer);
+			shader.SetUniform("material.tex_layer", TextureLayer);
 			
-			if(TextureLayer < 0) Texture.Load(shader);
+			if(TextureLayer < 0) Texture.Bind();
 		}
 	}
 }

@@ -40,14 +40,14 @@ namespace Coeli.Graphics.OpenGL {
 				string shaderDumpDir = Path.Combine(Directories.DataRoot, "shader_dump");
 				Directory.CreateDirectory(shaderDumpDir);
 
-				string dumpFilename = $"{new Random().NextInt64()}.glsl";
+				string dumpFilename = $"{new Random().NextInt64()}.{shader.Type}.glsl";
 				
 				File.WriteAllText(
 					Path.Combine(shaderDumpDir, dumpFilename),
 					shader.Code
 				);
 				
-				Console.WriteLine($"Dumped shader to {dumpFilename}");
+				Console.WriteLine($"Dumped {shader.Type} shader to {dumpFilename}");
 			}
 		}
 
@@ -86,7 +86,7 @@ namespace Coeli.Graphics.OpenGL {
 			switch(args[0]) {
 				case tokenHeader:
 					foreach(var overlay in shader.Overlays) {
-						result += $"uniform bool overlay_{overlay.Name};\n";
+						result += $"uniform bool u_overlay_{overlay.Name};\n";
 						result += Include(
 							shader,
 							$"//$include {overlay.Path}.header.{overlay.GetExtension()}",
@@ -102,7 +102,7 @@ namespace Coeli.Graphics.OpenGL {
 
 					foreach(var overlay in shader.Overlays) {
 						if(overlay.Pass.Name == pass.Name) {
-							result += $"if(overlay_{overlay.Name}) {{\n";
+							result += $"if(u_overlay_{overlay.Name}) {{\n";
 							result += Include(
 								shader,
 								$"//$include {overlay.Path}.call.{overlay.GetExtension()}",

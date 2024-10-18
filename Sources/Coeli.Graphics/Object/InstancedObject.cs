@@ -4,6 +4,7 @@ using Coeli.Debug;
 using Coeli.Graphics.OpenGL;
 using Coeli.Graphics.Texture;
 using Coeli.LanguageExtensions;
+using Coeli.Resources;
 using Silk.NET.OpenGL;
 
 namespace Coeli.Graphics.Object {
@@ -55,6 +56,7 @@ namespace Coeli.Graphics.Object {
 			Tests.Assert(!_ready, "!_ready");
 			
 			var gl = GLManager.Current;
+			uint i = 10;
 
 		#region Model
 			{
@@ -76,25 +78,27 @@ namespace Coeli.Graphics.Object {
 					var type = VertexAttribPointerType.Float;
 					size = sizeof(Matrix4x4);
 				
-					gl.EnableVertexAttribArray(3);
-					gl.VertexAttribPointer(3, 4, type, false, (uint) size, null);
-					gl.EnableVertexAttribArray(4);
-					gl.VertexAttribPointer(4, 4, type, false, (uint) size, sizeof(Vector4));
-					gl.EnableVertexAttribArray(5);
-					gl.VertexAttribPointer(5, 4, type, false, (uint) size, 2 * sizeof(Vector4));
-					gl.EnableVertexAttribArray(6);
-					gl.VertexAttribPointer(6, 4, type, false, (uint) size, 3 * sizeof(Vector4));
+					gl.EnableVertexAttribArray(i);
+					gl.VertexAttribPointer(i, 4, type, false, (uint) size, null);
+					gl.EnableVertexAttribArray(i + 1);
+					gl.VertexAttribPointer(i + 1, 4, type, false, (uint) size, sizeof(Vector4));
+					gl.EnableVertexAttribArray(i + 2);
+					gl.VertexAttribPointer(i + 2, 4, type, false, (uint) size, 2 * sizeof(Vector4));
+					gl.EnableVertexAttribArray(i + 3);
+					gl.VertexAttribPointer(i + 3, 4, type, false, (uint) size, 3 * sizeof(Vector4));
 				
-					gl.VertexAttribDivisor(3, 1);
-					gl.VertexAttribDivisor(4, 1);
-					gl.VertexAttribDivisor(5, 1);
-					gl.VertexAttribDivisor(6, 1);
+					gl.VertexAttribDivisor(i, 1);
+					gl.VertexAttribDivisor(++i, 1);
+					gl.VertexAttribDivisor(++i, 1);
+					gl.VertexAttribDivisor(++i, 1);
 				
 					gl.BindBuffer(BufferTargetARB.ArrayBuffer, 0);
 					gl.BindVertexArray(0);
 				}
 			}
 		#endregion
+
+			i++;
 
 		#region Material
 			{
@@ -114,17 +118,19 @@ namespace Coeli.Graphics.Object {
 					mesh.VAO.Bind();
 
 				#region Color
-					gl.EnableVertexAttribArray(7);
-					gl.VertexAttribPointer(7, 4, VertexAttribPointerType.Float, false,
+					gl.EnableVertexAttribArray(i);
+					gl.VertexAttribPointer(i, 4, VertexAttribPointerType.Float, false,
 						(uint) sizeof(Material), null);
-					gl.VertexAttribDivisor(7, 1);
+					gl.VertexAttribDivisor(i, 1);
 				#endregion
 
+					i++;
+
 				#region Texture Layer
-					gl.EnableVertexAttribArray(8);
-					gl.VertexAttribIPointer(8, 1, VertexAttribIType.Int,
+					gl.EnableVertexAttribArray(i);
+					gl.VertexAttribIPointer(i, 1, VertexAttribIType.Int,
 						(uint) sizeof(Material), 24);
-					gl.VertexAttribDivisor(8, 1);
+					gl.VertexAttribDivisor(i, 1);
 				#endregion
 				
 					gl.BindBuffer(BufferTargetARB.ArrayBuffer, 0);
@@ -140,7 +146,7 @@ namespace Coeli.Graphics.Object {
 			Tests.Assert(_ready, "Object is not ready! Did you forget to call Build() beforehand?");
 			
 			base.Load(shader);
-			shader.SetUniform("instanced", true);
+			shader.SetUniform("instance", true);
 		}
 
 		public unsafe override void Render() {
@@ -155,6 +161,39 @@ namespace Coeli.Graphics.Object {
 				mesh.VAO.Bind();
 				gl.DrawElementsInstanced(mesh.Type, mesh.VertexCount, DrawElementsType.UnsignedInt, null, oc);
 			}
+		}
+		
+		public static readonly IShaderOverlay[] OVERLAYS = [
+			VertexShaderOverlay.OVERLAY,
+			FragmentShaderOverlay.OVERLAY
+		];
+		
+		public class VertexShaderOverlay : IShaderOverlay, ILazySingleton<VertexShaderOverlay> {
+
+			public static VertexShaderOverlay OVERLAY
+				=> ILazySingleton<VertexShaderOverlay>._instance.Value;
+
+			public string Name => "instancing";
+			public string Path => "Overlays.Instancing";
+			public ShaderType Type => ShaderType.FragmentShader;
+			public ShaderPass Pass => ShaderPass.COLOR_POST;
+			public ResourceManager ResourceManager => Module.RESOURCES;
+
+			public void Load(ShaderProgram shader) { }
+		}
+		
+		public class FragmentShaderOverlay : IShaderOverlay, ILazySingleton<FragmentShaderOverlay> {
+
+			public static FragmentShaderOverlay OVERLAY
+				=> ILazySingleton<FragmentShaderOverlay>._instance.Value;
+
+			public string Name => "instancing";
+			public string Path => "Overlays.Instancing";
+			public ShaderType Type => ShaderType.VertexShader;
+			public ShaderPass Pass => ShaderPass.POSITION_POST;
+			public ResourceManager ResourceManager => Module.RESOURCES;
+
+			public void Load(ShaderProgram shader) { }
 		}
 	}
 }

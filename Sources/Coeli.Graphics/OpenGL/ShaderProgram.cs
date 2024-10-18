@@ -21,6 +21,9 @@ namespace Coeli.Graphics.OpenGL {
 		
 		public uint Id { get; }
 
+		public string UniformPrefix { get; set; } = "u_";
+		public string UniformSuffix { get; set; } = "";
+
 		public ShaderProgram(ResourceManager? preprocessorResources, params Shader[] program) {
 			_preprocessorResources = preprocessorResources;
 			
@@ -33,8 +36,11 @@ namespace Coeli.Graphics.OpenGL {
 
 			_program = program;
 		}
+		
+		public void AddOverlays(params IShaderOverlay[] overlays)
+			=> EnableOverlays((IEnumerable<IShaderOverlay>) overlays);
 
-		public void AddOverlays(params IShaderOverlay[] overlays) {
+		public void AddOverlays(IEnumerable<IShaderOverlay> overlays) {
 			Tests.Assert(!_ready);
 
 			foreach(var overlay in overlays) {
@@ -42,7 +48,10 @@ namespace Coeli.Graphics.OpenGL {
 			}
 		}
 
-		public void EnableOverlays(params IShaderOverlay[] overlays) {
+		public void EnableOverlays(params IShaderOverlay[] overlays)
+			=> EnableOverlays((IEnumerable<IShaderOverlay>) overlays);
+		
+		public void EnableOverlays(IEnumerable<IShaderOverlay> overlays) {
 			Tests.Assert(_bound);
 
 			foreach(var overlay in overlays) {
@@ -53,7 +62,10 @@ namespace Coeli.Graphics.OpenGL {
 			}
 		}
 		
-		public void DisableOverlays(params IShaderOverlay[] overlays) {
+		public void DisableOverlays(params IShaderOverlay[] overlays)
+			=> DisableOverlays((IEnumerable<IShaderOverlay>) overlays);
+		
+		public void DisableOverlays(IEnumerable<IShaderOverlay> overlays) {
 			Tests.Assert(_bound);
 
 			foreach(var overlay in overlays) {
@@ -68,7 +80,9 @@ namespace Coeli.Graphics.OpenGL {
 			var sw = Stopwatch.StartNew();
 
 			foreach(var shader in _program) {
-				var overlays = _overlays.Where(overlay => overlay.Type == shader.Type).ToArray();
+				var overlays = _overlays
+				               .Where(overlay => overlay != null && overlay.Type == shader.Type)
+				               .ToArray();
 				shader.Overlays = overlays;
 
 				if(_preprocessorResources != null) {
@@ -119,7 +133,7 @@ namespace Coeli.Graphics.OpenGL {
 		}
 		
 		public int GetUniformLocation(string name) {
-			int location = _gl.GetUniformLocation(Id, name);
+			int location = _gl.GetUniformLocation(Id, UniformPrefix + name + UniformSuffix);
 
 			if(location < 0) {
 				if(Debugging.Enabled && Debugging.IgnoreMissingShaderUniforms) {

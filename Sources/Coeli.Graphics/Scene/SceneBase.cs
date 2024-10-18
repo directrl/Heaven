@@ -2,6 +2,7 @@ using System.Drawing;
 using Coeli.Configuration;
 using Coeli.Debug;
 using Coeli.Graphics.OpenGL;
+using Coeli.LanguageExtensions;
 using Silk.NET.OpenGL;
 
 namespace Coeli.Graphics.Scene {
@@ -37,7 +38,7 @@ namespace Coeli.Graphics.Scene {
 		public GameOptions Options { get; }
 
 		public ShaderProgram PrimaryShader { get; protected set; }
-		public Dictionary<string, ShaderProgram> OverlayShaders { get; } = new();
+		public List<IShaderOverlay> ShaderOverlays { get; } = new();
 		
 		public string Id { get; }
 
@@ -54,6 +55,7 @@ namespace Coeli.Graphics.Scene {
 		public virtual void OnLoad(Window window) {
 			Tests.Assert(PrimaryShader != null);
 			PrimaryShader.Validate();
+			PrimaryShader.AddOverlays(ShaderOverlays);
 			
 			Window = window;
 			Load?.Invoke(window);
@@ -74,17 +76,11 @@ namespace Coeli.Graphics.Scene {
 		
 		public virtual void OnRender(GL gl, float delta) {
 			gl.ClearColor(ClearColor);
-
-			foreach(var kv in OverlayShaders) {
-				var id = kv.Key;
-				var shader = kv.Value;
-				
-				shader.Bind();
-				SecondaryShaderSetup?.Invoke(gl, id, shader);
-			}
 			
 			PrimaryShader.Bind();
 			PrimaryShaderSetup?.Invoke(gl, "", PrimaryShader);
+			
+			PrimaryShader.EnableOverlays(ShaderOverlays);
 			
 			Render?.Invoke(gl, delta);
 		}

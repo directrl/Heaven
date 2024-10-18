@@ -1,4 +1,4 @@
 flat struct Material {
 	vec4 color;
-	int texLayer;
+	int tex_layer;
 };

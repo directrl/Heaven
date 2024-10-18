@@ -12,7 +12,7 @@ using Shader = Coeli.Graphics.OpenGL.Shader;
 
 namespace Coeli.Graphics.Texture {
 
-	public class TextureArray : Texture<Vector2>, IShaderLoadable {
+	public class TextureArray : Texture<Vector2> {
 
 		public int Layers { get; }
 		public int LayerIndex { get; private set; }
@@ -40,22 +40,10 @@ namespace Coeli.Graphics.Texture {
 			}
 		}
 
+		[Obsolete("Not supported. Use Bind(ShaderProgram) instead", true)]
 		public override void Bind() {
 			GL.ActiveTexture(TextureUnit.Texture2);
 			GL.BindTexture(Target, Id);
-		}
-
-		public ShaderProgram CreateShader() {
-			return new(Module.RESOURCES,
-			           new(ShaderType.VertexShader,
-				           Module.RESOURCES[Resource.Type.SHADER, "scene_new.vert"]),
-			           new(ShaderType.FragmentShader,
-			               Module.RESOURCES[Resource.Type.SHADER, "texture_array.frag"]));
-		}
-
-		public void Load(ShaderProgram shader) {
-			shader.EnableOverlays(OVERLAYS);
-			Bind();
 		}
 
 		public static TextureArray Create(GL? gl, params Resource[] resources) {
@@ -142,7 +130,7 @@ namespace Coeli.Graphics.Texture {
 			public ResourceManager ResourceManager => Module.RESOURCES;
 
 			public void Load(ShaderProgram shader) {
-				shader.SetUniform("texArraySampler", 2);
+				shader.SetUniform("texArray_sampler", 2);
 			}
 		}
 	}

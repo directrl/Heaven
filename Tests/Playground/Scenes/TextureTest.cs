@@ -46,13 +46,14 @@ namespace Playground.Scenes {
 			_freeCamera = new(_keyBindings);
 			
 			this.SetupKeyBindings(_keyBindings);
+			
+			ShaderOverlays.AddRange(Texture2D.OVERLAYS);
+			ShaderOverlays.AddRange(TextureArray.OVERLAYS);
+			ShaderOverlays.AddRange(InstancedObject<Object3D>.OVERLAYS);
 		}
 
 		public override void OnLoad(Window window) {
 			base.OnLoad(window);
-			
-			PrimaryShader.AddOverlays(Texture2D.OVERLAYS);
-			PrimaryShader.AddOverlays(TextureArray.OVERLAYS);
 
 			if(Camera == null) {
 				Camera = new PerspectiveCamera(window) {
@@ -224,7 +225,7 @@ namespace Playground.Scenes {
 					}
 				};
 				
-				int wall = 4;
+				int wall = 64;
 
 				_instObject = new((int) Math.Pow(wall, 3)) {
 					Meshes = new Mesh[] { _mesh }
@@ -290,15 +291,15 @@ namespace Playground.Scenes {
 			base.OnRender(gl, delta);
 			gl.Disable(EnableCap.CullFace);
 			
-			_texArray?.Load(PrimaryShader);
+			_texArray?.Bind();
 			
-			 foreach(var o in _objects) {
-			 	o.Render(PrimaryShader);
-			 }
+			// foreach(var o in _objects) {
+			// 	o.Render(PrimaryShader);
+			// }
 			
-			//_instObject?.Render(PrimaryShader);
+			_instObject?.Render(PrimaryShader);
 			
-			_object?.Render(PrimaryShader);
+			//_object?.Render(PrimaryShader);
 		}
 	}
 }

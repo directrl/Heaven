@@ -2,11 +2,22 @@
 //$include Structures.material.glsl
 //$include Structures.vertex.glsl
 
-out vec2 outTexCoords;
-
+//$include Uniforms.camera_matrices.glsl
 //$include Uniforms.model_matrices.glsl
 
+out VERT_OUT
+//$include Interfaces.scene.vert.out
+vert_out;
+
+//$overlay_headers
+
 void main() {
-	gl_Position = projection * view * model * vec4(vertex_pos.x, vertex_pos.y, vertex_pos.z, 1.0);
-	outTexCoords = vertex_tex;
+	vec4 position = vec4(0.0, 0.0, 0.0, 0.0);
+	
+	//$overlay_call POSITION_PRE
+	position = u_projection * u_view * u_model * vec4(vertex_pos.x, vertex_pos.y, vertex_pos.z, 1.0);
+	//$overlay_call POSITION_POST
+	
+	gl_Position = position;
+	vert_out.tex_coords = vertex_tex;
 }

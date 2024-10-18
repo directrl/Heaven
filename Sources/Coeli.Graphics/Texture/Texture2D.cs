@@ -12,7 +12,7 @@ using Shader = Coeli.Graphics.OpenGL.Shader;
 
 namespace Coeli.Graphics.Texture {
 	
-	public class Texture2D : Texture<Vector2>, IShaderLoadable {
+	public class Texture2D : Texture<Vector2> {
 		
 		public static Texture2D DefaultTexture {
 			get {
@@ -46,14 +46,10 @@ namespace Coeli.Graphics.Texture {
 		
 		public Texture2D(GL gl, Vector2 size) : base(gl, TextureTarget.Texture2D, size) { }
 
+		[Obsolete("Not supported. Use Bind(ShaderProgram) instead", true)]
 		public override void Bind() {
 			GL.ActiveTexture(TextureUnit.Texture1);
 			GL.BindTexture(Target, Id);
-		}
-
-		public void Load(ShaderProgram shader) {
-			shader.EnableOverlays(OVERLAYS);
-			Bind();
 		}
 
 		public static Texture2D Load(Resource resource, GL? gl = null) {
@@ -120,7 +116,7 @@ namespace Coeli.Graphics.Texture {
 			public ResourceManager ResourceManager => Module.RESOURCES;
 
 			public void Load(ShaderProgram shader) {
-				shader.SetUniform("tex2DSampler", 1);
+				shader.SetUniform("tex2d_sampler", 1);
 			}
 		}
 	}

@@ -63,6 +63,9 @@ namespace Coeli.Graphics.OpenGL {
 		public static readonly ShaderPass COLOR_PRE = new("COLOR_PRE");
 		public static readonly ShaderPass COLOR_POST = new("COLOR_POST");
 		
+		public static readonly ShaderPass POSITION_PRE = new("POSITION_PRE");
+		public static readonly ShaderPass POSITION_POST = new("POSITION_POST");
+		
 		internal string Name { get; }
 
 		internal ShaderPass(string name) {
