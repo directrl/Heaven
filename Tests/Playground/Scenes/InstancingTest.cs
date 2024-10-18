@@ -6,6 +6,7 @@ using Coeli.Graphics.Camera;
 using Coeli.Graphics.Object;
 using Coeli.Graphics.OpenGL;
 using Coeli.Graphics.Scene;
+using Coeli.Graphics.Texture;
 using Coeli.Input;
 using Coeli.LanguageExtensions;
 using Coeli.UI;
@@ -36,6 +37,10 @@ namespace Playground.Scenes {
 			_freeCamera = new(_keyBindings);
 			
 			this.SetupKeyBindings(_keyBindings);
+			
+			ShaderOverlays.AddRange(Texture2D.OVERLAYS);
+			ShaderOverlays.AddRange(TextureArray.OVERLAYS);
+			ShaderOverlays.AddRange(InstancedObject<Object3D>.OVERLAYS);
 		}
 
 		public override void OnLoad(Window window) {
@@ -159,10 +164,12 @@ namespace Playground.Scenes {
 			base.OnRender(gl, delta);
 
 			if(_instancing) {
-				_instObject?.Render(MainShader);
+				_instObject?.Load(PrimaryShader);
+				_instObject?.Render(PrimaryShader);
 			} else {
 				foreach(var o in objects) {
-					o.Render(MainShader);
+					o.Load(PrimaryShader);
+					o.Render();
 				}
 			}
 		}

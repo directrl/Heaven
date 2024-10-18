@@ -92,7 +92,8 @@ namespace Coeli.Resources {
 		}
 
 		public sealed class Type {
-		
+
+			public static readonly Type CUSTOM = new("", "");
 			public static readonly Type SHADER = new("Shaders", "");
 			public static readonly Type TEXTURE = new("Textures", ".png");
 			public static readonly Type MODEL = new("Models", "");

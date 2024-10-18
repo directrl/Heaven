@@ -33,6 +33,7 @@ namespace Playground.Scenes {
 		private Object3D? _object3;
 		private Object3D? _object4;*/
 
+		private Object3D? _object;
 		private List<Object3D>? _objects;
 		private InstancedObject<Object3D>? _instObject;
 		private TextureArray? _texArray;
@@ -45,6 +46,10 @@ namespace Playground.Scenes {
 			_freeCamera = new(_keyBindings);
 			
 			this.SetupKeyBindings(_keyBindings);
+			
+			ShaderOverlays.AddRange(Texture2D.OVERLAYS);
+			ShaderOverlays.AddRange(TextureArray.OVERLAYS);
+			ShaderOverlays.AddRange(InstancedObject<Object3D>.OVERLAYS);
 		}
 
 		public override void OnLoad(Window window) {
@@ -210,6 +215,15 @@ namespace Playground.Scenes {
 					Position = new(0, 6, 0),
 					Material = _mat4.Value
 				};*/
+
+				_object = new Object3D {
+					Meshes = new[] { _mesh },
+					Position = new(0, 20, 0),
+					Material = new() {
+						Color = new(1, 1, 1, 1),
+						Texture = Texture2D.Load(Playground.AppResources[Resource.Type.TEXTURE, "two"])
+					}
+				};
 				
 				int wall = 64;
 
@@ -279,16 +293,13 @@ namespace Playground.Scenes {
 			
 			_texArray?.Bind();
 			
-			// _object1?.Render(MainShader);
-			// _object2?.Render(MainShader);
-			// _object3?.Render(MainShader);
-			// _object4?.Render(MainShader);
-
 			// foreach(var o in _objects) {
-			// 	o.Render(MainShader);
+			// 	o.Render(PrimaryShader);
 			// }
 			
-			_instObject?.Render(MainShader);
+			_instObject?.Render(PrimaryShader);
+			
+			//_object?.Render(PrimaryShader);
 		}
 	}
 }

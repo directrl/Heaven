@@ -1,22 +1,41 @@
+using Coeli.Resources;
+using Serilog;
 using Silk.NET.Core;
 using Silk.NET.OpenGL;
 
 namespace Coeli.Graphics.OpenGL {
 	
-	public record Shader(ShaderType type, string code) {
+	public class Shader {
+		
+		public ShaderType Type { get; }
+		public string Code { get; internal set; }
+		
+		public IShaderOverlay[] Overlays { get; internal set; }
 
+		public Shader(ShaderType type, string code) {
+			Type = type;
+			Code = code;
+		}
+		
+		public Shader(ShaderType type, Resource resource) {
+			Type = type;
+
+			string? code = resource.ReadString();
+			Code = code ?? throw new ArgumentException("Invalid shader resource", nameof(resource));
+		}
+		
 		public uint Compile(GL gl) {
-			if(string.IsNullOrEmpty(code)) {
+			if(string.IsNullOrEmpty(Code)) {
 				throw new ArgumentNullException("code", "Cannot compile an empty shader!");
 			}
 			
-			uint id = gl.CreateShader(type);
+			uint id = gl.CreateShader(Type);
 
 			if(id == 0) {
 				throw new PlatformException("Could not create a GL shader");
 			}
 			
-			gl.ShaderSource(id, code);
+			gl.ShaderSource(id, Code);
 			gl.CompileShader(id);
 
 			if(gl.GetShader(id, GLEnum.CompileStatus) == 0) {
@@ -30,6 +49,27 @@ namespace Coeli.Graphics.OpenGL {
 
 			public CompilationException(GL gl, uint id)
 				: base($"Error occured during shader compilation: {gl.GetShaderInfoLog(id)}") { }
+		}
+
+		public class PreprocessingException : Exception {
+			
+			public PreprocessingException(string message)
+				: base($"Error occured during shader preprocessing: {message}") { }
+		}
+	}
+
+	public class ShaderPass {
+
+		public static readonly ShaderPass COLOR_PRE = new("COLOR_PRE");
+		public static readonly ShaderPass COLOR_POST = new("COLOR_POST");
+		
+		public static readonly ShaderPass POSITION_PRE = new("POSITION_PRE");
+		public static readonly ShaderPass POSITION_POST = new("POSITION_POST");
+		
+		internal string Name { get; }
+
+		internal ShaderPass(string name) {
+			Name = name;
 		}
 	}
 }

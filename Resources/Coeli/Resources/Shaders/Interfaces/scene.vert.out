@@ -1,0 +1,3 @@
+{
+	vec2 tex_coords;
+}

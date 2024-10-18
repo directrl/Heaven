@@ -1,11 +1,14 @@
 using System.Numerics;
+using System.Runtime.Versioning;
 using Coeli.Configuration;
 using Coeli.Debug;
 using Coeli.Graphics.OpenGL;
+using Coeli.LanguageExtensions;
 using Coeli.Resources;
 using Silk.NET.OpenGL;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
+using Shader = Coeli.Graphics.OpenGL.Shader;
 
 namespace Coeli.Graphics.Texture {
 
@@ -37,8 +40,9 @@ namespace Coeli.Graphics.Texture {
 			}
 		}
 
+		[Obsolete("Not supported. Use Bind(ShaderProgram) instead", true)]
 		public override void Bind() {
-			GL.ActiveTexture(TextureUnit.Texture1);
+			GL.ActiveTexture(TextureUnit.Texture2);
 			GL.BindTexture(Target, Id);
 		}
 
@@ -107,6 +111,27 @@ namespace Coeli.Graphics.Texture {
 				if(EngineOptions.Texture.Mipmapping) gl.GenerateMipmap(texture.Target);
 				texture.LayerIndex++;
 			});
+		}
+
+		public static readonly IShaderOverlay[] OVERLAYS = [
+			FragmentShaderOverlay.OVERLAY
+		];
+		
+		public class FragmentShaderOverlay : IShaderOverlay, ILazySingleton<FragmentShaderOverlay> {
+
+			//public static readonly FragmentShaderOverlay GLOBAL = new();
+			public static FragmentShaderOverlay OVERLAY
+				=> ILazySingleton<FragmentShaderOverlay>._instance.Value;
+
+			public string Name => "textureArray";
+			public string Path => "Overlays.TextureArray";
+			public ShaderType Type => ShaderType.FragmentShader;
+			public ShaderPass Pass => ShaderPass.COLOR_PRE;
+			public ResourceManager ResourceManager => Module.RESOURCES;
+
+			public void Load(ShaderProgram shader) {
+				shader.SetUniform("texArray_sampler", 2);
+			}
 		}
 	}
 }

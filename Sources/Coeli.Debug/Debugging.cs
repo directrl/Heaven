@@ -5,6 +5,9 @@ namespace Coeli.Debug {
 		public static bool Enabled { get; set; }
 		public static bool Verbose { get; set; }
 		
+		public static bool DumpShaders { get; set; }
+		public static bool IgnoreMissingShaderUniforms { get; set; }
+		
 	#if DEBUG
 		public static bool CheatEnabled { get; private set; }
 	#else
@@ -22,6 +25,7 @@ namespace Coeli.Debug {
 			}
 
 			if(args.Contains("--verbose")) Verbose = true;
+			if(args.Contains("--dump-shaders")) DumpShaders = true;
 		}
 	}
 }

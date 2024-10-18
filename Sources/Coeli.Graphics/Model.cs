@@ -3,7 +3,7 @@ using Silk.NET.OpenGL;
 
 namespace Coeli.Graphics {
 	
-	public class Model {
+	public class Model : IShaderRenderable {
 
 		public Mesh[] Meshes { get; init; }
 		public Material Material { get; set; } = new();
@@ -12,12 +12,19 @@ namespace Coeli.Graphics {
 			Meshes = meshes;
 		}
 
-		public virtual void Render(ShaderProgram shader) {
+		public virtual void Load(ShaderProgram shader) {
 			Material.Load(shader);
-			
+		}
+
+		public virtual void Render() {
 			foreach(var mesh in Meshes) {
 				mesh.Render();
 			}
+		}
+
+		public void Render(ShaderProgram shader) {
+			Load(shader);
+			Render();
 		}
 	}
 }

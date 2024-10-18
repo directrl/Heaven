@@ -1,4 +1,5 @@
 using System.Numerics;
+using System.Runtime.Versioning;
 using Coeli.Configuration;
 using Coeli.Graphics.OpenGL;
 using Coeli.LanguageExtensions;
@@ -7,6 +8,7 @@ using Serilog;
 using Silk.NET.OpenGL;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
+using Shader = Coeli.Graphics.OpenGL.Shader;
 
 namespace Coeli.Graphics.Texture {
 	
@@ -43,6 +45,12 @@ namespace Coeli.Graphics.Texture {
 		}
 		
 		public Texture2D(GL gl, Vector2 size) : base(gl, TextureTarget.Texture2D, size) { }
+
+		[Obsolete("Not supported. Use Bind(ShaderProgram) instead", true)]
+		public override void Bind() {
+			GL.ActiveTexture(TextureUnit.Texture1);
+			GL.BindTexture(Target, Id);
+		}
 
 		public static Texture2D Load(Resource resource, GL? gl = null) {
 			gl ??= GLManager.Current;
@@ -87,9 +95,29 @@ namespace Coeli.Graphics.Texture {
 			return texture;
 		}
 		
-		class Cache : TextureCacheBase<Texture2D> {
+		private class Cache : TextureCacheBase<Texture2D> {
 
 			public static readonly Cache GLOBAL = new();
+		}
+		
+		public static readonly IShaderOverlay[] OVERLAYS = [
+			FragmentShaderOverlay.OVERLAY
+		];
+
+		public class FragmentShaderOverlay : IShaderOverlay, ILazySingleton<FragmentShaderOverlay> {
+
+			public static FragmentShaderOverlay OVERLAY
+				=> ILazySingleton<FragmentShaderOverlay>._instance.Value;
+
+			public string Name => "texture2D";
+			public string Path => "Overlays.Texture2D";
+			public ShaderType Type => ShaderType.FragmentShader;
+			public ShaderPass Pass => ShaderPass.COLOR_PRE;
+			public ResourceManager ResourceManager => Module.RESOURCES;
+
+			public void Load(ShaderProgram shader) {
+				shader.SetUniform("tex2d_sampler", 1);
+			}
 		}
 	}
 }

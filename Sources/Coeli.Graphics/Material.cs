@@ -6,11 +6,11 @@ using Coeli.Graphics.Texture;
 namespace Coeli.Graphics {
 	
 	[StructLayout(LayoutKind.Explicit, Pack = 1)]
-	public struct Material {
+	public struct Material : IShaderLoadable {
 
 		[FieldOffset(0)] public Vector4 Color;
 		
-		[FieldOffset(16)] public Texture<Vector2> Texture;
+		[FieldOffset(16)] public Texture2D Texture;
 		[FieldOffset(24)] public int TextureLayer;
 
 		public Material() {
@@ -21,9 +21,9 @@ namespace Coeli.Graphics {
 
 		public void Load(ShaderProgram shader) {
 			shader.SetUniform("material.color", Color);
-			shader.SetUniform("material.texLayer", TextureLayer);
+			shader.SetUniform("material.tex_layer", TextureLayer);
 			
-			Texture.Bind();
+			if(TextureLayer < 0) Texture.Bind();
 		}
 	}
 }

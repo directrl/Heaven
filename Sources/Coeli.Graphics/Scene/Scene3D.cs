@@ -1,3 +1,4 @@
+using System.Runtime.InteropServices.ComTypes;
 using Coeli.Graphics.Camera;
 using Coeli.Graphics.OpenGL;
 using Coeli.Resources;
@@ -7,31 +8,27 @@ namespace Coeli.Graphics.Scene {
 	
 	public class Scene3D : SceneBase {
 		
-		protected ShaderProgram MainShader { get; set; }
 		public Camera3D? Camera { get; set; }
-		
-		protected Scene3D(string id) : base(id) { }
 
-		public override void OnLoad(Window window) {
-			base.OnLoad(window);
-
-			MainShader = new(
-				new(ShaderType.FragmentShader,
-					Module.RESOURCES[Resource.Type.SHADER, "scene.frag"].ReadString()),
-				new(ShaderType.VertexShader,
-					Module.RESOURCES[Resource.Type.SHADER, "scene.vert"].ReadString())
-			);
-			MainShader.Validate();
+		protected Scene3D(string id) : base(id) {
+			PrimaryShaderSetup += (gl, _, shader) => {
+				//shader.SetUniform("texSampler", 0);
+				//shader.SetUniform("texArraySampler", 1);
+				
+				Camera?.Load(shader);
+			};
 		}
 
-		public override void OnRender(GL gl, float delta) {
-			base.OnRender(gl, delta);
+		public override void OnLoad(Window window) {
+			PrimaryShader = new(
+				Module.RESOURCES,
+				new(ShaderType.FragmentShader,
+				    Module.RESOURCES[Resource.Type.SHADER, "scene_new.frag"]),
+				new(ShaderType.VertexShader,
+				    Module.RESOURCES[Resource.Type.SHADER, "scene_new.vert"])
+			);
 			
-			MainShader.Bind();
-			MainShader.SetUniform("texSampler", 0);
-			MainShader.SetUniform("texArraySampler", 1);
-			
-			Camera?.Load(MainShader);
+			base.OnLoad(window);
 		}
 	}
 }
