@@ -9,9 +9,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Sources\Coeli.Core\Coeli.Core.csproj" />
-    <ProjectReference Include="..\..\Sources\Coeli.Graphics\Coeli.Graphics.csproj" />
-    <ProjectReference Include="..\..\Sources\Coeli.UI\Coeli.UI.csproj" />
+    <ProjectReference Include="..\..\Sources\Coelum.Core\Coelum.Core.csproj" />
+    <ProjectReference Include="..\..\Sources\Coelum.Graphics\Coelum.Graphics.csproj" />
+    <ProjectReference Include="..\..\Sources\Coelum.UI\Coelum.UI.csproj" />
   </ItemGroup>
   
   <ItemGroup>

@@ -1,7 +1,7 @@
-using Coeli.Core;
-using Coeli.Core.Logging;
-using Coeli.Debug;
-using Coeli.Graphics;
+using Coelum.Core;
+using Coelum.Core.Logging;
+using Coelum.Debug;
+using Coelum.Graphics;
 using Playground.Scenes;
 
 namespace Playground {

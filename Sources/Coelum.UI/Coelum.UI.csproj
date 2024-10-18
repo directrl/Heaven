@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Coelum.Graphics\Coelum.Graphics.csproj" />
+      <ProjectReference Include="..\Coelum.Input\Coelum.Input.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Reference Include="Silk.NET.OpenGL.Extensions.ImGui">
+        <HintPath>..\..\..\..\..\..\..\home\default\.nuget\packages\silk.net.opengl.extensions.imgui\2.21.0\lib\net5.0\Silk.NET.OpenGL.Extensions.ImGui.dll</HintPath>
+      </Reference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Silk.NET.OpenGL.Extensions.ImGui" Version="2.21.0" />
+    </ItemGroup>
+
+</Project>

@@ -1,7 +1,7 @@
 using System.Numerics;
-using Coeli.Graphics;
-using Coeli.Graphics.Object;
-using Coeli.Graphics.OpenGL;
+using Coelum.Graphics;
+using Coelum.Graphics.Object;
+using Coelum.Graphics.OpenGL;
 
 namespace Playground.Scenes.VoxelSpace {
 	
