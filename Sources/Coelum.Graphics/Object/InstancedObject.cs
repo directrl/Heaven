@@ -161,10 +161,10 @@ namespace Coelum.Graphics.Object {
 			}
 		}
 		
-		public static readonly IShaderOverlay[] OVERLAYS = [
+		public static readonly IShaderOverlay[] OVERLAYS = {
 			VertexShaderOverlay.OVERLAY,
 			FragmentShaderOverlay.OVERLAY
-		];
+		};
 		
 		public class VertexShaderOverlay : IShaderOverlay, ILazySingleton<VertexShaderOverlay> {
 

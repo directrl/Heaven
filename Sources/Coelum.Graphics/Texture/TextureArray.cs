@@ -111,9 +111,9 @@ namespace Coelum.Graphics.Texture {
 			});
 		}
 
-		public static readonly IShaderOverlay[] OVERLAYS = [
+		public static readonly IShaderOverlay[] OVERLAYS = {
 			FragmentShaderOverlay.OVERLAY
-		];
+		};
 		
 		public class FragmentShaderOverlay : IShaderOverlay, ILazySingleton<FragmentShaderOverlay> {
 
