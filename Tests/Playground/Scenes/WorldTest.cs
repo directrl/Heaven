@@ -20,7 +20,7 @@ namespace Playground.Scenes {
 
 		private static readonly Random RANDOM = new();
 
-		private World<Entity3D> _world;
+		private World _world;
 		
 		private KeyBindings _keyBindings;
 		private FreeCamera _freeCamera;
@@ -97,7 +97,7 @@ namespace Playground.Scenes {
 			}
 
 			if(_interactKeybind.Pressed) {
-				EntityQueries.QueryByComponentAll<Entity3D, IInteractable>(_world, entity => {
+				EntityQueries.QueryByComponentAll<IInteractable>(_world, entity => {
 					((IInteractable) entity).Interact();
 				});
 			}

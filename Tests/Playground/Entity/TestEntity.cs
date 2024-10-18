@@ -6,7 +6,7 @@ using Silk.NET.OpenGL;
 
 namespace Playground.Entity {
 
-	public class TestEntity : Entity3D, IInteractable, ITickable {
+	public class TestEntity : WorldEntity, IInteractable, ITickable {
 
 		private static readonly Random RANDOM = new();
 		
