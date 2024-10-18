@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Numerics;
 using Coeli.Debug;
 using Coeli.Resources;
@@ -33,32 +34,41 @@ namespace Coeli.Graphics.OpenGL {
 			_program = program;
 		}
 
-		public void AddOverlay(Shader.Overlay overlay, ResourceManager resourceManager) {
+		public void AddOverlay(Shader.Overlay overlay) {
 			Tests.Assert(!_ready);
 			_overlays.Add(overlay);
-
-			foreach(var shader in _program) {
-				if(shader.Type == overlay.Type) {
-					// TODO do preprocessing stuff
-				}
-			}
 		}
 
 		public void EnableOverlay(Shader.Overlay overlay) {
 			Tests.Assert(_bound);
-			SetUniform($"overlay_{overlay.Name}", true);
+			Tests.Assert(SetUniform($"overlay_{overlay.Name}", true),
+			             $"Overlay [{overlay.Name}] not included in shader");
+			
+			overlay.Load(this);
 		}
 		
 		public void DisableOverlay(Shader.Overlay overlay) {
 			Tests.Assert(_bound);
-			SetUniform($"overlay_{overlay.Name}", false);
+			Tests.Assert(SetUniform($"overlay_{overlay.Name}", false),
+				$"Overlay [{overlay.Name}] not included in shader");
 		}
 
 		public void Build() {
 			List<uint> shaderIds = new();
 
+			var sw = Stopwatch.StartNew();
+
 			foreach(var shader in _program) {
-				if(_preprocessorResources != null) shader.Preprocess(_preprocessorResources);
+				var overlays = _overlays.Where(overlay => overlay.Type == shader.Type).ToArray();
+				shader.Overlays = overlays;
+
+				if(_preprocessorResources != null) {
+					shader.Preprocess(_preprocessorResources);
+				} else {
+					Log.Warning("[SHADER PROGRAM] " +
+					            "Skipping preprocessing on shader due to no ResourceManager provided");
+				}
+				
 				var shaderId = shader.Compile(_gl);
 
 				if(shaderId != 0) {
@@ -80,6 +90,9 @@ namespace Coeli.Graphics.OpenGL {
 			}
 
 			_ready = true;
+			
+			sw.Stop();
+			Log.Information($"[SHADER PROGRAM] Building took {sw.ElapsedMilliseconds}ms");
 		}
 
 		public void Validate() {
@@ -100,8 +113,9 @@ namespace Coeli.Graphics.OpenGL {
 			int location = _gl.GetUniformLocation(Id, name);
 
 			if(location < 0) {
-				if(Debugging.Enabled) {
-					Log.Warning($"Could not find the uniform location for [{name}]");
+				if(Debugging.Enabled && Debugging.IgnoreMissingShaderUniforms) {
+					Log.Warning($"[SHADER PROGRAM] " +
+					            $"Could not find the uniform location for [{name}]");
 				} else {
 					throw new PlatformException($"Could not find the uniform location for [{name}]");
 				}
@@ -110,46 +124,52 @@ namespace Coeli.Graphics.OpenGL {
 			return location;
 		}
 		
-		public unsafe void SetUniform(string name, Matrix4x4 value) {
+		public unsafe bool SetUniform(string name, Matrix4x4 value) {
 			int location = GetUniformLocation(name);
-			if(location < 0) return;
+			if(location < 0) return false;
 			
 			_gl.UniformMatrix4(location, 1, false, (float*) &value);
+			return true;
 		}
 		
-		public unsafe void SetUniform(string name, Vector3 value) {
+		public unsafe bool SetUniform(string name, Vector3 value) {
 			int location = GetUniformLocation(name);
-			if(location < 0) return;
+			if(location < 0) return false;
 			
 			_gl.Uniform3(location, 1, (float*) &value);
+			return true;
 		}
 		
-		public unsafe void SetUniform(string name, Vector4 value) {
+		public unsafe bool SetUniform(string name, Vector4 value) {
 			int location = GetUniformLocation(name);
-			if(location < 0) return;
+			if(location < 0) return false;
 			
 			_gl.Uniform4(location, 1, (float*) &value);
+			return true;
 		}
 		
-		public unsafe void SetUniform(string name, bool value) {
+		public unsafe bool SetUniform(string name, bool value) {
 			int location = GetUniformLocation(name);
-			if(location < 0) return;
+			if(location < 0) return false;
 			
 			_gl.Uniform1(location, 1, (int*) &value);
+			return true;
 		}
 		
-		public unsafe void SetUniform(string name, int value) {
+		public unsafe bool SetUniform(string name, int value) {
 			int location = GetUniformLocation(name);
-			if(location < 0) return;
+			if(location < 0) return false;
 			
 			_gl.Uniform1(location, 1, &value);
+			return true;
 		}
 		
-		public unsafe void SetUniform(string name, float value) {
+		public unsafe bool SetUniform(string name, float value) {
 			int location = GetUniformLocation(name);
-			if(location < 0) return;
+			if(location < 0) return false;
 			
 			_gl.Uniform1(location, 1, &value);
+			return true;
 		}
 
 		public void Dispose() {

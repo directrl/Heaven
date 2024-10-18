@@ -1,4 +1,5 @@
 using System.Numerics;
+using System.Runtime.Versioning;
 using Coeli.Configuration;
 using Coeli.Debug;
 using Coeli.Graphics.OpenGL;
@@ -6,6 +7,7 @@ using Coeli.Resources;
 using Silk.NET.OpenGL;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
+using Shader = Coeli.Graphics.OpenGL.Shader;
 
 namespace Coeli.Graphics.Texture {
 
@@ -51,9 +53,12 @@ namespace Coeli.Graphics.Texture {
 		}
 
 		public void Load(ShaderProgram shader) {
-			shader.SetUniform("overlay_textureArray", true);
-			shader.SetUniform("texArraySampler", 2);
+			shader.EnableOverlay(new FragmentShaderOverlay());
 			Bind();
+		}
+
+		public static void SetupOverlays(ShaderProgram shader) {
+			shader.AddOverlay(new FragmentShaderOverlay());
 		}
 
 		public static TextureArray Create(GL? gl, params Resource[] resources) {
@@ -121,6 +126,16 @@ namespace Coeli.Graphics.Texture {
 				if(EngineOptions.Texture.Mipmapping) gl.GenerateMipmap(texture.Target);
 				texture.LayerIndex++;
 			});
+		}
+		
+		record FragmentShaderOverlay()
+			: Shader.Overlay("textureArray", "Overlays.TextureArray",
+			                 ShaderType.FragmentShader, ShaderPass.COLOR_PRE,
+			                 Module.RESOURCES) {
+
+			public override void Load(ShaderProgram shader) {
+				shader.SetUniform("texArraySampler", 2);
+			}
 		}
 	}
 }

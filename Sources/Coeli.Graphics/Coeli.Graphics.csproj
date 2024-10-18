@@ -5,6 +5,11 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <LangVersion>preview</LangVersion>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <NoWarn>CA2252</NoWarn> <!-- because EnablePreviewFeatures is not working -->
   </PropertyGroup>
 
   <ItemGroup>

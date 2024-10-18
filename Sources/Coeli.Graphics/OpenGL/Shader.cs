@@ -8,7 +8,9 @@ namespace Coeli.Graphics.OpenGL {
 	public class Shader {
 		
 		public ShaderType Type { get; }
-		public string Code { get; private set; }
+		public string Code { get; internal set; }
+		
+		public Overlay[] Overlays { get; internal set; }
 
 		public Shader(ShaderType type, string code) {
 			Type = type;
@@ -20,32 +22,6 @@ namespace Coeli.Graphics.OpenGL {
 
 			string? code = resource.ReadString();
 			Code = code ?? throw new ArgumentException("Invalid shader resource", nameof(resource));
-		}
-
-		public void Preprocess(ResourceManager resourceManager) {
-			Log.Verbose("Starting shader preprocessing");
-			PreprocessIncludes(resourceManager);
-			Log.Verbose("Finished preprocessing");
-		}
-
-		private void PreprocessIncludes(ResourceManager resourceManager) {
-			foreach(string line in Code.Replace("\r\n", "\n").Split('\n')) {
-				const string includeToken = "//$include ";
-
-				if(line.StartsWith(includeToken)) {
-					string includeName = line.Replace(includeToken, "");
-					var resource = resourceManager[Resource.Type.SHADER, includeName];
-
-					string? code = resource.ReadString();
-					if(code == null) {
-						throw new PreprocessingException("Could not read resource for included shader");
-					}
-
-					Code = Code.Replace(line, code);
-					
-					Log.Verbose($"Included shader [{includeName}]");
-				}
-			}
 		}
 		
 		public uint Compile(GL gl) {
@@ -81,21 +57,34 @@ namespace Coeli.Graphics.OpenGL {
 				: base($"Error occured during shader preprocessing: {message}") { }
 		}
 
-		// public class Overlay {
-		// 	
-		// 	public string Name { get; }
-		// 	public ShaderType Type { get; }
-		// 	public ShaderPass Pass { get; }
-		// 	
-		// 	public Overlay()
-		// }
+		public record Overlay(string Name, string Path,
+		                      ShaderType Type, ShaderPass Pass,
+		                      ResourceManager resources) {
+			
+			public virtual void Load(ShaderProgram shader) { }
 
-		public record Overlay(string Name, string Path, ShaderType Type, ShaderPass Pass);
+			public string GetExtension() {
+				switch(Type) {
+					case ShaderType.FragmentShader:
+						return "frag";
+					case ShaderType.VertexShader:
+						return "vert";
+					default:
+						throw new ArgumentException($"Unknown shader overlay type {Type}");
+				}
+			}
+		}
 	}
 
-	public enum ShaderPass {
+	public class ShaderPass {
+
+		public static readonly ShaderPass COLOR_PRE = new("COLOR_PRE");
+		public static readonly ShaderPass COLOR_POST = new("COLOR_POST");
 		
-		Pre,
-		Post
+		internal string Name { get; }
+
+		internal ShaderPass(string name) {
+			Name = name;
+		}
 	}
 }

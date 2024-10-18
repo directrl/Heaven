@@ -1,3 +1,4 @@
+using System.Runtime.Versioning;
 using Coeli.Graphics.OpenGL;
 using Coeli.Resources;
 
@@ -23,7 +24,7 @@ namespace Coeli.Graphics {
 
 	public interface IOverlayShaderLoadable : IShaderLoadable {
 
-		//public static void SetupOverlays(ShaderProgram shader);
+		public static abstract void SetupOverlays(ShaderProgram shader);
 	}
 	
 	public interface IOverlayShaderRenderable : IOverlayShaderLoadable, IRenderable { }

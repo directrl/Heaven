@@ -52,6 +52,7 @@ namespace Playground.Scenes {
 			base.OnLoad(window);
 			
 			Texture2D.SetupOverlays(PrimaryShader);
+			TextureArray.SetupOverlays(PrimaryShader);
 
 			if(Camera == null) {
 				Camera = new PerspectiveCamera(window) {

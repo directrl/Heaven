@@ -1,4 +1,5 @@
 using System.Numerics;
+using System.Runtime.Versioning;
 using Coeli.Configuration;
 using Coeli.Graphics.OpenGL;
 using Coeli.LanguageExtensions;
@@ -51,13 +52,12 @@ namespace Coeli.Graphics.Texture {
 		}
 
 		public void Load(ShaderProgram shader) {
-			shader.SetUniform("overlay_texture2d", true);
-			shader.SetUniform("tex2DSampler", 1);
+			shader.EnableOverlay(new FragmentShaderOverlay());
 			Bind();
 		}
 
 		public static void SetupOverlays(ShaderProgram shader) {
-			shader.AddOverlay(new FragmentShaderOverlay(), Module.RESOURCES);
+			shader.AddOverlay(new FragmentShaderOverlay());
 		}
 
 		public static Texture2D Load(Resource resource, GL? gl = null) {
@@ -110,6 +110,12 @@ namespace Coeli.Graphics.Texture {
 
 		record FragmentShaderOverlay()
 			: Shader.Overlay("texture2D", "Overlays.Texture2D",
-			                 ShaderType.FragmentShader, ShaderPass.Pre);
+			                 ShaderType.FragmentShader, ShaderPass.COLOR_PRE,
+			                 Module.RESOURCES) {
+
+			public override void Load(ShaderProgram shader) {
+				shader.SetUniform("tex2DSampler", 1);
+			}
+		}
 	}
 }
