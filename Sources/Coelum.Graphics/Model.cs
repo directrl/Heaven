@@ -2,10 +2,10 @@ using Coelum.Graphics.OpenGL;
 
 namespace Coelum.Graphics {
 	
-	public class Model : IShaderRenderable {
+	public class Model : _IShaderRenderable {
 
 		public Mesh[] Meshes { get; init; }
-		public Material Material { get; set; } = new();
+		public Material Material = new();
 
 		public Model(params Mesh[] meshes) {
 			Meshes = meshes;

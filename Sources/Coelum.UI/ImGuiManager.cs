@@ -10,6 +10,11 @@ namespace Coelum.UI {
 			io->ConfigFlags |= ImGuiConfigFlags.DockingEnable;
 
 			byte[] pathBytes = Encoding.UTF8.GetBytes(iniPath);
+			byte[] terminated = new byte[pathBytes.Length + 1];
+			
+			Array.Copy(pathBytes, terminated, pathBytes.Length);
+			terminated[^1] = 0;
+			
 			fixed(byte* b = pathBytes) {
 				io->IniFilename = b;
 			}
