@@ -3,11 +3,16 @@ using Silk.NET.OpenGL;
 
 namespace Coelum.Graphics {
 	
-	public class Mesh : IDisposable {
+	public class Mesh : IDisposable, ICloneable {
 
 		internal readonly GL _gl;
 		internal readonly List<VertexBufferObject> _vbos = new();
 
+		private readonly float[] _vertices;
+		private readonly uint[] _indices;
+		private readonly float[]? _texCoords;
+		private readonly float[]? _normals;
+		
 		public readonly uint VertexCount;
 		public readonly VertexArrayObject VAO;
 
@@ -18,6 +23,11 @@ namespace Coelum.Graphics {
 			
 			_gl = GLManager.Current;
 			Type = type;
+
+			_vertices = vertices;
+			_indices = indices;
+			_texCoords = texCoords;
+			_normals = normals;
 			
 			VertexCount = (uint) indices.Length;
 
@@ -90,6 +100,10 @@ namespace Coelum.Graphics {
 			}
 			
 			VAO.Dispose();
+		}
+
+		public object Clone() {
+			return new Mesh(Type, _vertices, _indices, _texCoords, _normals);
 		}
 	}
 }

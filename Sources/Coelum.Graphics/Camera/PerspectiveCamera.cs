@@ -11,8 +11,8 @@ namespace Coelum.Graphics.Camera {
 			ProjectionMatrix = Matrix4x4.CreatePerspectiveFieldOfView(
 				FOV.ToRadians(),
 				Width / Height,
-				Z_NEAR,
-				Z_FAR
+				ZNear,
+				ZFar
 			);
 
 			Matrix4x4.Invert(ProjectionMatrix, out var ipm);

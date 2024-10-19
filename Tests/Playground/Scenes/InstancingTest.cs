@@ -23,6 +23,7 @@ namespace Playground.Scenes {
 		
 		private Mesh? _mesh;
 		private InstancedObject<Object3D>? _instObject;
+		private InstancedObject<Object3D>? _instObject2;
 
 		private KeyBindings _keyBindings;
 		private FreeCamera _freeCamera;
@@ -37,7 +38,7 @@ namespace Playground.Scenes {
 			
 			this.SetupKeyBindings(_keyBindings);
 			
-			ShaderOverlays.AddRange(Texture2D.OVERLAYS);
+			//ShaderOverlays.AddRange(Texture2D.OVERLAYS);
 			ShaderOverlays.AddRange(TextureArray.OVERLAYS);
 			ShaderOverlays.AddRange(InstancedObject<Object3D>.OVERLAYS);
 		}
@@ -92,11 +93,17 @@ namespace Playground.Scenes {
 			}
 
 			if(_instObject == null && _mesh != null) {
-				int wall = 128;
+				int wall = 32;
 
 				_instObject = new((int) Math.Pow(wall, 3)) {
 					Meshes = new[] { _mesh }
 				};
+
+				_instObject2 = new((int) Math.Pow(wall, 3)) {
+					Meshes = new[] { _mesh }
+				};
+				
+				Console.WriteLine(_instObject == _instObject2);
 
 				var sw = Stopwatch.StartNew();
 				
@@ -110,14 +117,22 @@ namespace Playground.Scenes {
 						}
 					};
 
-					var o2 = new Object3D {
-						Position = o1.Position,
-						Material = o1.Material,
-						Meshes = new[] { _mesh }
+					var o2 = new Object3D() {
+						Position = new(x - (wall * 2), y, z),
+						Material = new() {
+							Color = new(0.5f, 0.5f, 0.5f, 1)
+						}
 					};
+
+					// var o2 = new Object3D {
+					// 	Position = o1.Position,
+					// 	Material = o1.Material,
+					// 	Meshes = new[] { _mesh }
+					// };
 					
 					_instObject.Add(o1);
-					objects.Add(o2);
+					_instObject2.Add(o2);
+					//objects.Add(o2);
 				}
 				
 				sw.Stop();
@@ -128,6 +143,7 @@ namespace Playground.Scenes {
 				Playground.AppLogger.Information("Building instances");
 				sw.Restart();
 				_instObject.Build();
+				_instObject2.Build();
 				sw.Stop();
 				Playground.AppLogger.Information($"Done in {sw.ElapsedMilliseconds}ms");
 			}
@@ -163,8 +179,11 @@ namespace Playground.Scenes {
 			base.OnRender(gl, delta);
 
 			if(_instancing) {
-				_instObject?.Load(PrimaryShader);
+				//_instObject?.Load(PrimaryShader);
 				_instObject?.Render(PrimaryShader);
+				
+				//_instObject2?.Load(PrimaryShader);
+				//_instObject2?.Render(PrimaryShader);
 			} else {
 				foreach(var o in objects) {
 					o.Load(PrimaryShader);

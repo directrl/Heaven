@@ -10,8 +10,8 @@ namespace Coelum.Graphics.Camera {
 			ProjectionMatrix = Matrix4x4.CreateOrthographic(
 				Width * FOV,
 				Height * FOV,
-				Z_NEAR,
-				Z_FAR
+				ZNear,
+				ZFar
 			);
 			
 			Matrix4x4.Invert(ProjectionMatrix, out var ipm);

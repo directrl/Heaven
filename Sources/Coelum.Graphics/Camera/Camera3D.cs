@@ -5,9 +5,6 @@ using Coelum.LanguageExtensions;
 namespace Coelum.Graphics.Camera {
 	
 	public abstract class Camera3D {
-
-		protected static float Z_NEAR = 0.01f;
-		protected static float Z_FAR = 1000f;
 		
 		private Vector3 _direction = new();
 		private Vector3 _front = new(0.0f, 0.0f, 1.0f);
@@ -15,13 +12,16 @@ namespace Coelum.Graphics.Camera {
 		
 		protected float Width { get; private set; }
 		protected float Height { get; private set; }
-		
+
 		public Matrix4x4 ProjectionMatrix { get; protected set; }
 		public Matrix4x4 InverseProjectionMatrix { get; protected set; }
 		public Matrix4x4 ViewMatrix { get; protected set; }
 		public Matrix4x4 InverseViewMatrix { get; protected set; }
 
 		public Vector3 Position = new();
+
+		public float ZNear = 0.01f;
+		public float ZFar = 1000f;
 
 		private float _yaw;
 		public float Yaw {

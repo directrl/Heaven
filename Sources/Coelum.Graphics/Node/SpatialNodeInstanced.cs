@@ -19,7 +19,7 @@ namespace Coelum.Graphics.Node {
 		
 		public GL GL { get; } = GLManager.Current;
 
-		public Model Model { get; set; }
+		public Model Model;
 		public Matrix4x4 ModelMatrix => throw new NotSupportedException();
 
 		public int NodeCount => _nodes.Count;
@@ -58,6 +58,9 @@ namespace Coelum.Graphics.Node {
 		public unsafe void Build() {
 			Tests.Assert(NodeCount > 1, "ObjectCount > 1");
 			Tests.Assert(!_ready, "!_ready");
+			
+			// we need a separate VAO for each instance
+			Model = (Model) Model.Clone();
 			
 			uint i = 10;
 

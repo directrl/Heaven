@@ -55,7 +55,7 @@ namespace Coelum.World {
 			return chunk;
 		}
 
-		public TWorldObject? GetObject<TWorldObject>(WorldObject.Coord coords)
+		public TWorldObject? GetObject<TWorldObject>(WorldCoord coords)
 			where TWorldObject : WorldObject {
 
 			var chunkCoords = coords.ChunkCoordinates;

@@ -9,7 +9,7 @@ namespace Coelum.Graphics.OpenGL {
 		public uint Id { get; }
 
 		public VertexArrayObject(GL gl) {
-			this._gl = gl;
+			_gl = gl;
 			Id = gl.GenVertexArray();
 		}
 

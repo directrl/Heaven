@@ -8,7 +8,7 @@ namespace Playground {
 	public class FreeCamera {
 		
 		private const float CAMERA_SENSITIVITY = 0.1f;
-		private const float CAMERA_SPEED = 10f;
+		public static float CAMERA_SPEED = 10f;
 		
 		private Vector2 _lastMousePosition;
 		private bool _cursorToggle = false;
