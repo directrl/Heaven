@@ -224,7 +224,7 @@ namespace Playground.Scenes {
 					}
 				};
 				
-				int wall = 64;
+				int wall = 128;
 
 				_instObject = new((int) Math.Pow(wall, 3)) {
 					Meshes = new Mesh[] { _mesh }

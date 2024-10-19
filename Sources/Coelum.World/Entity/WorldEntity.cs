@@ -6,16 +6,9 @@ namespace Coelum.World.Entity {
 	
 	public abstract class WorldEntity : Node3D {
 
-		public ulong Id { get; private set; }
-		public object World { get; private set; }
+		public ulong Id { get; internal set; }
+		public World World { get; internal set; }
 
 		public abstract Type[] Components { get; }
-		
-		public void Spawn(World world) {
-			Id = world.CurrentEntityId;
-			World = world;
-
-			world.Entities[Id] = this;
-		}
 	}
 }

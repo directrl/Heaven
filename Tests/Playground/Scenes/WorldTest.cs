@@ -8,6 +8,7 @@ using Coelum.UI;
 using Coelum.World;
 using Coelum.World.Components;
 using Coelum.World.Entity;
+using Coelum.World.Object;
 using Coelum.World.Queries;
 using ImGuiNET;
 using Playground.Entity;
@@ -71,7 +72,33 @@ namespace Playground.Scenes {
 
 		#region World
 			_world = new();
+			var noise = new FastNoiseLite();
+			noise.SetNoiseType(FastNoiseLite.NoiseType.Perlin);
+
+			var chunk = _world.CreateChunk(new(0, 0, 0));
+			
+			//for(int y = 0; y < 16; y++)
+			for(int x = 0; x < Chunk.SIZE_X; x++)
+			for(int z = 0; z < Chunk.SIZE_Y; z++) {
+				float y = noise.GetNoise(x, z);
+				y *= 50;
+				//chunk.PutObject(new VoxelObject(_world, chunk, new(x, (int)y, z)));
+
+				var obj = new VoxelObject(
+					_world,
+					chunk,
+					new(x, (int) y, z)
+				)/* {
+					Position = new(x, y, z)
+				}*/;
+				
+				_world.PlaceObject(obj);
+			}
+			
+			//_world.Chunks[chunk.ChunkPosition] = chunk;
+			chunk.Build();
 		#endregion
+
 		}
 
 		public override void OnUpdate(float delta) {
@@ -92,7 +119,7 @@ namespace Playground.Scenes {
 						Math.Clamp(RANDOM.Next(-64, 64), 0.5f, 1.0f)
 					);
 					
-					entity.Spawn(_world);
+					_world.Spawn(entity);
 				}
 			}
 
@@ -112,7 +139,10 @@ namespace Playground.Scenes {
 		public override void OnRender(GL gl, float delta) {
 			base.OnRender(gl, delta);
 			gl.Disable(EnableCap.CullFace);
-
+			
+			_world.Load(PrimaryShader);
+			_world.Render();
+			
 			foreach(var entity in _world.Entities.Values) {
 				entity.Load(PrimaryShader);
 				entity.Render();

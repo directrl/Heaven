@@ -92,7 +92,7 @@ namespace Playground.Scenes {
 			}
 
 			if(_instObject == null && _mesh != null) {
-				int wall = 32;
+				int wall = 128;
 
 				_instObject = new((int) Math.Pow(wall, 3)) {
 					Meshes = new[] { _mesh }

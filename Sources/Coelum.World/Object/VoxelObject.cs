@@ -1,14 +1,12 @@
+using System.Numerics;
 using Coelum.Graphics;
 using Coelum.Graphics.Texture;
-using Coelum.World.Components;
-using Coelum.World.Entity;
 using Silk.NET.OpenGL;
 
-namespace Playground.Entity {
-
-	public class TestEntity : WorldEntity, IInteractable, ITickable {
-
-		private static readonly Random RANDOM = new();
+namespace Coelum.World.Object {
+	
+	public class VoxelObject : WorldObject {
+		
 		public static readonly Model MODEL = new(
 			new Mesh(
 				PrimitiveType.Triangles,
@@ -113,24 +111,10 @@ namespace Playground.Entity {
 			}
 		};
 
+		public override Type[] Components => Array.Empty<Type>();
+
 		public override Model? Model => MODEL;
 
-		public override Type[] Components => new[] {
-			typeof(IInteractable)
-		};
-
-		public void Interact() {
-			Console.WriteLine(Id);
-		}
-
-		private bool _flag = false;
-		private float _amount = 30.0f;
-		public void Update(float delta) {
-			Position.X += delta * (_flag ? -_amount : _amount);
-			Position.Y += delta * (_flag ? -_amount : _amount);
-			Position.Z += delta * (_flag ? -_amount : _amount);
-
-			_flag = !_flag;
-		}
+		public VoxelObject(World world, Chunk chunk, Coord coordinates) : base(world, chunk, coordinates) { }
 	}
 }

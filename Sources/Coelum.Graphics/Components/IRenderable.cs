@@ -9,9 +9,6 @@ namespace Coelum.Graphics.Components {
 		
 		public GL GL { get; }
 		
-		public Model Model { get; }
-		public Matrix4x4 ModelMatrix { get; }
-
 		public void Render();
 	}
 }

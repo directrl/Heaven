@@ -80,6 +80,10 @@ namespace Coelum.Graphics.Scene {
 			PrimaryShaderSetup?.Invoke(gl, "", PrimaryShader);
 			
 			PrimaryShader.EnableOverlays(ShaderOverlays);
+
+			if(Debugging.WireframeRendering) {
+				gl.PolygonMode(TriangleFace.FrontAndBack, PolygonMode.Line);
+			}
 			
 			Render?.Invoke(gl, delta);
 		}
