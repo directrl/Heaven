@@ -4,6 +4,7 @@ using Coelum.Resources;
 using Coelum.Graphics;
 using Coelum.Graphics.Camera;
 using Coelum.Graphics.Node;
+using Coelum.Graphics.OpenGL;
 using Coelum.Graphics.Scene;
 using Coelum.Graphics.Texture;
 using Coelum.Input;
@@ -290,6 +291,7 @@ namespace Playground.Scenes {
 
 		public override void OnRender(float delta) {
 			base.OnRender(delta);
+			GlobalOpenGL.Gl.Disable(EnableCap.CullFace);
 			
 			_texArray?.Bind();
 			

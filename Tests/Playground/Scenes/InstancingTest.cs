@@ -27,7 +27,7 @@ namespace Playground.Scenes {
 		private KeyBindings _keyBindings;
 		private FreeCamera _freeCamera;
 
-		private bool _instancing = false;
+		private bool _instancing = true;
 		
 		List<Node3D> objects = new();
 
@@ -161,7 +161,7 @@ namespace Playground.Scenes {
 			this.UpdateKeyBindings(_keyBindings);
 		}
 
-		public void OnRender(float delta) {
+		public override void OnRender(float delta) {
 			base.OnRender(delta);
 
 			if(_instancing) {
