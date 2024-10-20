@@ -3,6 +3,8 @@ using Coelum.Graphics.OpenGL;
 using Coelum.Graphics.Scene;
 using Silk.NET.OpenGL.Extensions.ImGui;
 
+using static Coelum.Graphics.OpenGL.GlobalOpenGL;
+
 namespace Coelum.UI {
 	
 	public class ImGuiOverlay : OverlayUI {
@@ -10,7 +12,7 @@ namespace Coelum.UI {
 		private readonly string _iniPath;
 		protected ImGuiController Controller { get; }
 		
-		public ImGuiOverlay(SceneBase scene) : base(scene.Window?.GL ?? GLManager.Current) {
+		public ImGuiOverlay(SceneBase scene) {
 			if(scene.Window == null) {
 				throw new ArgumentException("Scene must already have a window assigned! "
 					+ "Are you creating an overlay in the constructor instead of in Load()?");
@@ -19,11 +21,11 @@ namespace Coelum.UI {
 			_iniPath = scene.Options.ConfigFile.FullName.Replace(GameOptions.FORMAT, ".imgui.ini");
 			
 			// TODO each new controller resets the previous frame meaning you cant have more than 1 overlay per window
-			Controller = new(GL, scene.Window.SilkImpl, scene.Window.Input, onConfigureIO: () => {
+			Controller = new(Gl, scene.Window.SilkImpl, scene.Window.Input, onConfigureIO: () => {
 				ImGuiManager.SetDefaults(ImGuiNET.ImGui.GetIO(), _iniPath);
 			});
 
-			scene.Render += (gl, delta) => OnRender(delta);
+			scene.Render += delta => OnRender(delta);
 			scene.Unload += () => {
 				var ctx = Controller.Context;
 				ImGuiNET.ImGui.SetCurrentContext(ctx);

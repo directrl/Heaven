@@ -20,7 +20,7 @@ namespace Playground {
 			Windows.Add(window);
 
 			if(args.Contains("multi-window-test")) {
-				var scene1 = new TextureTest();
+				var scene1 = new InstancingTest();
 				var window1 = Window.Create(debug: true);
 				window1.Scene = scene1;
 			

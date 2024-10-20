@@ -37,13 +37,12 @@ namespace Coelum.Graphics.Texture {
 
 		[Obsolete("Not supported. Use Bind(ShaderProgram) instead", true)]
 		public override void Bind() {
-			GL.ActiveTexture(TextureUnit.Texture1);
-			GL.BindTexture(Target, Id);
+			Gl.ActiveTexture(TextureUnit.Texture1);
+			Gl.BindTexture(Target, Id);
 		}
 
 		public static Texture2D Load(Resource resource) {
-			if(Cache.GLOBAL.TryGet(resource,
-			                       out var texture)) {
+			if(Cache.GLOBAL.TryGet(resource, out var texture)) {
 				return texture;
 			}
 
@@ -63,8 +62,8 @@ namespace Coelum.Graphics.Texture {
 			using(var image = Image.Load<Rgba32>(data)) {
 				texture = new(new(image.Width, image.Height));
 				
-				GLManager.SetDefaultsForTextureCreation(texture.Target, gl);
-					
+				GLManager.SetDefaultsForTextureCreation(texture.Target);
+				
 				image.ProcessPixelRows(accessor => {
 					var data = new void*[image.Height];
 					
@@ -74,13 +73,13 @@ namespace Coelum.Graphics.Texture {
 						}
 					}
 					
-					gl.TexImage2D(texture.Target, 0, InternalFormat.Rgba8,
+					Gl.TexImage2D(texture.Target, 0, InternalFormat.Rgba8,
 					              (uint) image.Width, (uint) image.Height, 0,
 					              PixelFormat.Rgba, PixelType.UnsignedByte, data[0]);
 				});
 			}
 			
-			if(EngineOptions.Texture.Mipmapping) gl.GenerateMipmap(texture.Target);
+			if(EngineOptions.Texture.Mipmapping) Gl.GenerateMipmap(texture.Target);
 			return texture;
 		}
 		

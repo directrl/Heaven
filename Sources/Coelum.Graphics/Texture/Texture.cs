@@ -14,20 +14,20 @@ namespace Coelum.Graphics.Texture {
 		protected Texture(TextureTarget target, TSize size) {
 			Target = target;
 
-			Id = gl.GenTexture();
+			Id = Gl.GenTexture();
 			Size = size;
 
 			Bind();
 		}
 
 		public virtual void Bind() {
-			GL.ActiveTexture(TextureUnit.Texture0);
-			GL.BindTexture(Target, Id);
+			Gl.ActiveTexture(TextureUnit.Texture0);
+			Gl.BindTexture(Target, Id);
 		}
 
 		public void Dispose() {
 			GC.SuppressFinalize(this);
-			GL.DeleteTexture(Id);
+			Gl.DeleteTexture(Id);
 		}
 	}
 }

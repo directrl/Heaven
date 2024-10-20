@@ -161,8 +161,8 @@ namespace Playground.Scenes {
 			this.UpdateKeyBindings(_keyBindings);
 		}
 
-		public override void OnRender(GL gl, float delta) {
-			base.OnRender(gl, delta);
+		public void OnRender(float delta) {
+			base.OnRender(delta);
 
 			if(_instancing) {
 				_instObject?.Load(PrimaryShader);

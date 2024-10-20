@@ -167,7 +167,7 @@ namespace Playground.Scenes {
 					Playground.AppResources[Resource.Type.TEXTURE, "four"]
 				};
 				
-				_texArray = TextureArray.Create(null, textures);
+				_texArray = TextureArray.Create(textures);
 			}
 
 			if(_instObject == null && _mesh != null) {
@@ -288,9 +288,8 @@ namespace Playground.Scenes {
 			this.UpdateKeyBindings(_keyBindings);
 		}
 
-		public override void OnRender(GL gl, float delta) {
-			base.OnRender(gl, delta);
-			gl.Disable(EnableCap.CullFace);
+		public override void OnRender(float delta) {
+			base.OnRender(delta);
 			
 			_texArray?.Bind();
 			
