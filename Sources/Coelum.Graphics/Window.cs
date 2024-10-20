@@ -78,6 +78,7 @@ namespace Coelum.Graphics {
 			};
 			
 			SilkImpl.FramebufferResize += size => {
+				SilkImpl.MakeCurrent();
 				Gl.Viewport(size);
 			};
 			
