@@ -14,7 +14,6 @@ namespace Coelum.Graphics {
 		private static IGLContext? _sharedContext;
 		
 		public IWindow SilkImpl { get; }
-		public GL? GL { get; private set; }
 		
 		public IInputContext? Input { get; private set; }
 		
@@ -29,13 +28,8 @@ namespace Coelum.Graphics {
 				_scene?.OnUnload();
 				_scene = value;
 
-				if(value != null && GL != null) {
-					var oldGl = GLManager.Current;
-					GLManager.Current = GL;
-					
+				if(value != null) {
 					value?.OnLoad(this);
-
-					GLManager.Current = oldGl;
 				}
 			}
 		}
@@ -45,17 +39,15 @@ namespace Coelum.Graphics {
 			
 			SilkImpl.Load += () => {
 				if(_sharedContext == null) {
-					GL = SilkImpl.CreateOpenGL();
-					_sharedContext ??= SilkImpl.GLContext;
-					GLManager.Current = GL;
-				} else {
-					GL = GLManager.Current;
+					new GlobalOpenGL(SilkImpl.CreateOpenGL());
+					_sharedContext = SilkImpl.GLContext;
 				}
 				
-				GL.Viewport(SilkImpl.FramebufferSize);
-
+				SilkImpl.MakeCurrent();
+				Gl.Viewport(SilkImpl.FramebufferSize);
+				
 				if(Debugging.Enabled) {
-					GLManager.EnableDebugOutput(GL);
+					GLManager.EnableDebugOutput();
 				}
 
 				Input = SilkImpl.CreateInput();
@@ -77,17 +69,14 @@ namespace Coelum.Graphics {
 				if(!SilkImpl.IsVisible) return;
 				SilkImpl.MakeCurrent();
 
-				if(GL != null) {
-					GLManager.Current = GL;
-					GLManager.SetDefaults();
-					
-					GL.Clear((uint) (ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit));
-					Scene?.OnRender(GL, (float) delta);
-				}
+				GLManager.SetDefaults();
+				
+				Gl.Clear((uint) (ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit));
+				Scene?.OnRender((float) delta);
 			};
 
 			SilkImpl.FramebufferResize += size => {
-				GL?.Viewport(size);
+				Gl.Viewport(size);
 			};
 			
 			SilkImpl.Initialize();
@@ -108,7 +97,6 @@ namespace Coelum.Graphics {
 
 		public void Dispose() {
 			Close();
-			GL?.Dispose();
 			SilkImpl.Dispose();
 		}
 

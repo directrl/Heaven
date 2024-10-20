@@ -14,35 +14,26 @@ namespace Coelum.Graphics.Texture {
 		
 		public static Texture2D DefaultTexture {
 			get {
-				if(Cache.GLOBAL.TryGet(
-					   new Cache.Entry {
-						   GL = GLManager.Current,
-						   UID = "default"
-					   },
-					   out var texture)) {
+				var resource = Module.RESOURCES[Resource.Type.TEXTURE, "default"];
+				
+				if(Cache.GLOBAL.TryGet(resource, out var texture)) {
 					return texture;
 				}
 				
-				var resource = Module.RESOURCES[Resource.Type.TEXTURE, "default"];
 				var data = resource.ReadBytes();
 
 				if(data == null) {
-					throw new Exception("Couldn't find the default texture. This should not happen :(");
+					throw new Exception("Couldn't read the default texture. This should not happen :(");
 				}
 				
-				texture = Create(
-					"default",
-					data,
-					GLManager.Current
-				);
-				
-				Cache.GLOBAL.Set(new Cache.Entry { GL = GLManager.Current, UID = "default" },
-					texture);
+				texture = Create("default", data);
+				Cache.GLOBAL.Set(resource, texture);
 				return texture;
 			}
 		}
 		
-		public Texture2D(GL gl, Vector2 size) : base(gl, TextureTarget.Texture2D, size) { }
+		public Texture2D(Vector2 size) : base(TextureTarget.Texture2D, size) { }
+		public Texture2D(int width, int height) : base(TextureTarget.Texture2D, new(width, height)) { }
 
 		[Obsolete("Not supported. Use Bind(ShaderProgram) instead", true)]
 		public override void Bind() {
@@ -50,27 +41,27 @@ namespace Coelum.Graphics.Texture {
 			GL.BindTexture(Target, Id);
 		}
 
-		public static Texture2D Load(Resource resource, GL? gl = null) {
-			gl ??= GLManager.Current;
-			
-			if(Cache.GLOBAL.TryGet(new Cache.Entry { GL = gl, UID = resource.UID },
+		public static Texture2D Load(Resource resource) {
+			if(Cache.GLOBAL.TryGet(resource,
 			                       out var texture)) {
 				return texture;
 			}
 
 			var data = resource.ReadBytes();
 			if(data == null) return DefaultTexture;
-			return Create(resource.UID, data, gl);
+
+			texture = Create(resource.UID, data);
+			Cache.GLOBAL.Set(resource, texture);
+			return texture;
 		}
 		
-		private unsafe static Texture2D Create(string name, byte[] data, GL? gl = null) {
-			gl ??= GLManager.Current;
+		private unsafe static Texture2D Create(string name, byte[] data) {
 			Log.Debug($"Creating texture for [{name}]");
 
 			Texture2D texture;
 
 			using(var image = Image.Load<Rgba32>(data)) {
-				texture = new(gl, new(image.Width, image.Height));
+				texture = new(new(image.Width, image.Height));
 				
 				GLManager.SetDefaultsForTextureCreation(texture.Target, gl);
 					

@@ -13,14 +13,14 @@ namespace Playground {
 		}
 
 		public override void Setup(string[] args) {
-			var scene = new NodeGraphTest();
+			var scene = new TextureTest();
 			var window = Window.Create(debug: true);
 			window.Scene = scene;
 			
 			Windows.Add(window);
 
 			if(args.Contains("multi-window-test")) {
-				var scene1 = new NodeGraphTest();
+				var scene1 = new TextureTest();
 				var window1 = Window.Create(debug: true);
 				window1.Scene = scene1;
 			

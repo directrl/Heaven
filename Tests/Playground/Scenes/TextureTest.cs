@@ -226,14 +226,14 @@ namespace Playground.Scenes {
 					}
 				};
 				
-				int wall = 64;
+				int wall = 16;
 
 				_instObject = new(new(_mesh), (int) Math.Pow(wall, 3));
 
-				// var tex1 = Texture2D.Load();
-				// var tex2 = Texture2D.Load(Playground.AppResources[Resource.Type.TEXTURE, "two"]);
-				// var tex3 = Texture2D.Load(Playground.AppResources[Resource.Type.TEXTURE, "three"]);
-				// var tex4 = Texture2D.Load(Playground.AppResources[Resource.Type.TEXTURE, "four"]);
+				var tex1 = Texture2D.Load(Playground.AppResources[Resource.Type.TEXTURE, "one"]);
+				var tex2 = Texture2D.Load(Playground.AppResources[Resource.Type.TEXTURE, "two"]);
+				var tex3 = Texture2D.Load(Playground.AppResources[Resource.Type.TEXTURE, "three"]);
+				var tex4 = Texture2D.Load(Playground.AppResources[Resource.Type.TEXTURE, "four"]);
 				
 				for(int y = 0; y < (wall * 2); y += 2)
 				for(int x = 0; x < (wall * 2); x += 2)

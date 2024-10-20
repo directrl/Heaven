@@ -1,17 +1,17 @@
 using Silk.NET.OpenGL;
 
+using static Coelum.Graphics.OpenGL.GLManager;
+
 namespace Coelum.Graphics.Texture {
 	
 	public class Texture<TSize> : IDisposable {
 
-		protected GL GL { get; }
 		protected TextureTarget Target { get; }
 
 		public uint Id { get; init; }
 		public TSize Size { get; init; }
 
-		protected Texture(GL gl, TextureTarget target, TSize size) {
-			GL = gl;
+		protected Texture(TextureTarget target, TSize size) {
 			Target = target;
 
 			Id = gl.GenTexture();

@@ -8,9 +8,9 @@ using Silk.NET.OpenGL;
 
 namespace Coelum.Graphics.OpenGL {
 	
+	// TODO cache
 	public class ShaderProgram : IDisposable {
 
-		private readonly GL _gl;
 		private readonly Shader[] _program;
 		private readonly List<IShaderOverlay> _overlays = new();
 		
@@ -27,8 +27,7 @@ namespace Coelum.Graphics.OpenGL {
 		public ShaderProgram(ResourceManager? preprocessorResources, params Shader[] program) {
 			_preprocessorResources = preprocessorResources;
 			
-			_gl = GLManager.Current;
-			Id = _gl.CreateProgram();
+			Id = Gl.CreateProgram();
 
 			if(Id == 0) {
 				throw new PlatformException("Could not create a GL shader program");
@@ -92,24 +91,24 @@ namespace Coelum.Graphics.OpenGL {
 					            "Skipping preprocessing on shader due to no ResourceManager provided");
 				}
 				
-				var shaderId = shader.Compile(_gl);
+				var shaderId = shader.Compile();
 
 				if(shaderId != 0) {
-					_gl.AttachShader(Id, shaderId);
+					Gl.AttachShader(Id, shaderId);
 					shaderIds.Add(shaderId);
 				}
 			}
 
-			_gl.LinkProgram(Id);
+			Gl.LinkProgram(Id);
 
-			if(_gl.GetProgram(Id, GLEnum.LinkStatus) == 0) {
-				throw new LinkingException(_gl, Id);
+			if(Gl.GetProgram(Id, GLEnum.LinkStatus) == 0) {
+				throw new LinkingException(Id);
 			}
 			
 			// cleanup
 			foreach(var shaderId in shaderIds) {
-				_gl.DetachShader(Id, shaderId);
-				_gl.DeleteShader(shaderId);
+				Gl.DetachShader(Id, shaderId);
+				Gl.DeleteShader(shaderId);
 			}
 
 			_ready = true;
@@ -119,21 +118,21 @@ namespace Coelum.Graphics.OpenGL {
 		}
 
 		public void Validate() {
-			_gl.ValidateProgram(Id);
+			Gl.ValidateProgram(Id);
 
-			if(_gl.GetProgram(Id, GLEnum.ValidateStatus) != 0) {
-				throw new ValidationException(_gl, Id);
+			if(Gl.GetProgram(Id, GLEnum.ValidateStatus) != 0) {
+				throw new ValidationException(Id);
 			}
 		}
 
 		public void Bind() {
 			if(!_ready) Build();
-			_gl.UseProgram(Id);
+			Gl.UseProgram(Id);
 			_bound = true;
 		}
 		
 		public int GetUniformLocation(string name) {
-			int location = _gl.GetUniformLocation(Id, UniformPrefix + name + UniformSuffix);
+			int location = Gl.GetUniformLocation(Id, UniformPrefix + name + UniformSuffix);
 
 			if(location < 0) {
 				if(Debugging.Enabled && Debugging.IgnoreMissingShaderUniforms) {
@@ -151,7 +150,7 @@ namespace Coelum.Graphics.OpenGL {
 			int location = GetUniformLocation(name);
 			if(location < 0) return false;
 			
-			_gl.UniformMatrix4(location, 1, false, (float*) &value);
+			Gl.UniformMatrix4(location, 1, false, (float*) &value);
 			return true;
 		}
 		
@@ -159,7 +158,7 @@ namespace Coelum.Graphics.OpenGL {
 			int location = GetUniformLocation(name);
 			if(location < 0) return false;
 			
-			_gl.Uniform3(location, 1, (float*) &value);
+			Gl.Uniform3(location, 1, (float*) &value);
 			return true;
 		}
 		
@@ -167,7 +166,7 @@ namespace Coelum.Graphics.OpenGL {
 			int location = GetUniformLocation(name);
 			if(location < 0) return false;
 			
-			_gl.Uniform4(location, 1, (float*) &value);
+			Gl.Uniform4(location, 1, (float*) &value);
 			return true;
 		}
 		
@@ -175,7 +174,7 @@ namespace Coelum.Graphics.OpenGL {
 			int location = GetUniformLocation(name);
 			if(location < 0) return false;
 			
-			_gl.Uniform1(location, 1, (int*) &value);
+			Gl.Uniform1(location, 1, (int*) &value);
 			return true;
 		}
 		
@@ -183,7 +182,7 @@ namespace Coelum.Graphics.OpenGL {
 			int location = GetUniformLocation(name);
 			if(location < 0) return false;
 			
-			_gl.Uniform1(location, 1, &value);
+			Gl.Uniform1(location, 1, &value);
 			return true;
 		}
 		
@@ -191,7 +190,7 @@ namespace Coelum.Graphics.OpenGL {
 			int location = GetUniformLocation(name);
 			if(location < 0) return false;
 			
-			_gl.Uniform1(location, 1, &value);
+			Gl.Uniform1(location, 1, &value);
 			return true;
 		}
 
@@ -199,19 +198,19 @@ namespace Coelum.Graphics.OpenGL {
 			GC.SuppressFinalize(this);
 			
 			if(!_ready) return;
-			_gl.DeleteProgram(Id);
+			Gl.DeleteProgram(Id);
 		}
 
 		public class LinkingException : Exception {
 			
-			public LinkingException(GL gl, uint id)
-				: base($"Error occured during program linking: {gl.GetProgramInfoLog(id)}") { }
+			public LinkingException(uint id)
+				: base($"Error occured during program linking: {Gl.GetProgramInfoLog(id)}") { }
 		}
 		
 		public class ValidationException : Exception {
 			
-			public ValidationException(GL gl, uint id)
-				: base($"Shader validation failed: {gl.GetProgramInfoLog(id)}") { }
+			public ValidationException(uint id)
+				: base($"Shader validation failed: {Gl.GetProgramInfoLog(id)}") { }
 		}
 	}
 }
