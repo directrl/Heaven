@@ -2,11 +2,12 @@ using System.Drawing;
 using Coelum.Configuration;
 using Coelum.Debug;
 using Coelum.Graphics.OpenGL;
+using Coelum.Node;
 using Silk.NET.OpenGL;
 
 namespace Coelum.Graphics.Scene {
 	
-	public abstract class SceneBase {
+	public abstract class SceneBase : RootNode {
 
 	#region Delegates
 		public delegate void LoadEventHandler(Window window);
