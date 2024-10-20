@@ -21,6 +21,8 @@ namespace Coelum.Graphics {
 		public float FixedUpdateDelta { get; private set; }
 		public float RenderDelta { get; private set; }
 
+		public bool DoUpdates { get; set; } = true;
+
 		private SceneBase? _scene;
 		public SceneBase? Scene {
 			get => _scene;
@@ -74,7 +76,7 @@ namespace Coelum.Graphics {
 				Gl.Clear((uint) (ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit));
 				Scene?.OnRender((float) delta);
 			};
-
+			
 			SilkImpl.FramebufferResize += size => {
 				Gl.Viewport(size);
 			};
@@ -92,6 +94,7 @@ namespace Coelum.Graphics {
 
 		public void Close() {
 			Scene?.OnUnload();
+			DoUpdates = false;
 			SilkImpl.Close();
 		}
 

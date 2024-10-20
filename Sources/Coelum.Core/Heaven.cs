@@ -103,26 +103,28 @@ namespace Coelum.Core {
 			
 			Window? toRemove = null;
 			var primaryWindow = Windows[0];
+			// TODO the entire program crashes when a window other than the primary one is closed
 			while(!primaryWindow.SilkImpl.IsClosing && Running) {
 				foreach(var window in Windows) {
-					window.SilkImpl.DoEvents();
+					if(!window.DoUpdates) continue;
 					
+					window.SilkImpl.DoEvents();
+
 					if(!window.SilkImpl.IsClosing) window.SilkImpl.DoUpdate();
 					if(window.SilkImpl.IsClosing) {
 						toRemove ??= window;
 						continue;
 					}
-					
+
 					window.SilkImpl.DoRender();
 				}
 
-				if(toRemove != null) {
+				if(toRemove != null && toRemove != primaryWindow) {
 					toRemove.Dispose();
-					Windows.Remove(toRemove);
 					toRemove = null;
 				}
 			}
-			
+
 			Stop();
 		}
 

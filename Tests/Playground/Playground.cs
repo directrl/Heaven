@@ -25,6 +25,12 @@ namespace Playground {
 				window1.Scene = scene1;
 			
 				Windows.Add(window1);
+				
+				var scene2 = new NodeGraphTest();
+				var window2 = Window.Create(debug: true);
+				window2.Scene = scene2;
+			
+				Windows.Add(window2);
 			}
 		}
 	}

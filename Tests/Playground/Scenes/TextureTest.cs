@@ -20,6 +20,7 @@ namespace Playground.Scenes {
 		private static readonly Random RANDOM = new();
 
 		private ImGuiOverlay _overlay;
+		private ImGuiOverlay _overlay2;
 		
 		private Mesh? _mesh;
 		
@@ -265,6 +266,14 @@ namespace Playground.Scenes {
 					ImGui.Text($"Camera position: {Camera?.Position.ToString() ?? "Unknown"}");
 					ImGui.Text($"Camera pitch: {Camera?.Pitch.ToString() ?? "Unknown"}");
 					ImGui.Text($"Camera yaw: {Camera?.Yaw.ToString() ?? "Unknown"}");
+					ImGui.End();
+				}
+			};
+
+			_overlay2 = new(this);
+			_overlay2.Render += (_, _) => {
+				if(ImGui.Begin("2nd overlay test")) {
+					ImGui.Text("hello");
 					ImGui.End();
 				}
 			};

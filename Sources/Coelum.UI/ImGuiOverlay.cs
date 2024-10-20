@@ -1,8 +1,9 @@
 using Coelum.Configuration;
 using Coelum.Graphics.OpenGL;
 using Coelum.Graphics.Scene;
+using ImGuiNET;
 using Silk.NET.OpenGL.Extensions.ImGui;
-
+using Silk.NET.Windowing;
 using static Coelum.Graphics.OpenGL.GlobalOpenGL;
 
 namespace Coelum.UI {
@@ -10,26 +11,32 @@ namespace Coelum.UI {
 	public class ImGuiOverlay : OverlayUI {
 
 		private readonly string _iniPath;
+		
 		protected ImGuiController Controller { get; }
 		
 		public ImGuiOverlay(SceneBase scene) {
-			if(scene.Window == null) {
-				throw new ArgumentException("Scene must already have a window assigned! "
+			if(scene.Window?.Input == null) {
+				throw new ArgumentException("Scene must already have a window with input assigned! "
 					+ "Are you creating an overlay in the constructor instead of in Load()?");
 			}
 			
 			_iniPath = scene.Options.ConfigFile.FullName.Replace(GameOptions.FORMAT, ".imgui.ini");
 			
-			// TODO each new controller resets the previous frame meaning you cant have more than 1 overlay per window
 			Controller = new(Gl, scene.Window.SilkImpl, scene.Window.Input, onConfigureIO: () => {
-				ImGuiManager.SetDefaults(ImGuiNET.ImGui.GetIO(), _iniPath);
+				ImGuiManager.SetDefaults(ImGui.GetIO(), _iniPath);
 			});
 
-			scene.Render += delta => OnRender(delta);
+			scene.Render += delta => {
+				scene.Window.SilkImpl.MakeCurrent();
+				Controller.MakeCurrent();
+				ImGui.SetCurrentContext(Controller.Context);
+				OnRender(delta);
+			};
+			
 			scene.Unload += () => {
 				var ctx = Controller.Context;
-				ImGuiNET.ImGui.SetCurrentContext(ctx);
-				ImGuiNET.ImGui.SaveIniSettingsToDisk(_iniPath);
+				ImGui.SetCurrentContext(ctx);
+				ImGui.SaveIniSettingsToDisk(_iniPath);
 			};
 		}
 
