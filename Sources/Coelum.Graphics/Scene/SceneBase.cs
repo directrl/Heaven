@@ -1,7 +1,9 @@
 using System.Drawing;
 using Coelum.Configuration;
 using Coelum.Debug;
+using Coelum.Graphics.Node;
 using Coelum.Graphics.OpenGL;
+using Coelum.Graphics.Texture;
 using Coelum.Node;
 using Silk.NET.OpenGL;
 
@@ -81,6 +83,12 @@ namespace Coelum.Graphics.Scene {
 			PrimaryShaderSetup?.Invoke(gl, "", PrimaryShader);
 			
 			PrimaryShader.EnableOverlays(ShaderOverlays);
+
+			var renderableChildren
+				= FindChildrenByComponent<Node.Component.IShaderRenderable>();
+			foreach(var child in renderableChildren) {
+				child.Render(PrimaryShader);
+			}
 			
 			Render?.Invoke(gl, delta);
 		}

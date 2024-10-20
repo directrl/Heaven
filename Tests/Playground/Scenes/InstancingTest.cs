@@ -27,7 +27,7 @@ namespace Playground.Scenes {
 		private KeyBindings _keyBindings;
 		private FreeCamera _freeCamera;
 
-		private bool _instancing = true;
+		private bool _instancing = false;
 		
 		List<Node3D> objects = new();
 

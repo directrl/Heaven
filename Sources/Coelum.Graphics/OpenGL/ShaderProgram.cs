@@ -41,7 +41,7 @@ namespace Coelum.Graphics.OpenGL {
 			=> EnableOverlays((IEnumerable<IShaderOverlay>) overlays);
 
 		public void AddOverlays(IEnumerable<IShaderOverlay> overlays) {
-			Tests.Assert(!_ready);
+			Tests.Assert(!_ready, "Can't add overlays to a shader that has already been built");
 
 			foreach(var overlay in overlays) {
 				_overlays.Add(overlay);
@@ -52,7 +52,7 @@ namespace Coelum.Graphics.OpenGL {
 			=> EnableOverlays((IEnumerable<IShaderOverlay>) overlays);
 		
 		public void EnableOverlays(IEnumerable<IShaderOverlay> overlays) {
-			Tests.Assert(_bound);
+			Tests.Assert(_bound, "Can't enable overlays for a shader that is not bound");
 
 			foreach(var overlay in overlays) {
 				Tests.Assert(SetUniform($"overlay_{overlay.Name}", true),
@@ -66,7 +66,7 @@ namespace Coelum.Graphics.OpenGL {
 			=> DisableOverlays((IEnumerable<IShaderOverlay>) overlays);
 		
 		public void DisableOverlays(IEnumerable<IShaderOverlay> overlays) {
-			Tests.Assert(_bound);
+			Tests.Assert(_bound, "Can't enable overlays for a shader that is not bound");
 
 			foreach(var overlay in overlays) {
 				Tests.Assert(SetUniform($"overlay_{overlay.Name}", false),

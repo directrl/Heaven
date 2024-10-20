@@ -1,10 +1,12 @@
 using System.Numerics;
+using Coelum.Graphics.Node;
 using Coelum.Graphics.OpenGL;
+using Coelum.Graphics.Scene;
 using Coelum.LanguageExtensions;
 
 namespace Coelum.Graphics.Camera {
 	
-	public abstract class Camera3D {
+	public abstract class Camera3D : Node3D {
 
 		protected static float Z_NEAR = 0.01f;
 		protected static float Z_FAR = 1000f;
@@ -21,27 +23,25 @@ namespace Coelum.Graphics.Camera {
 		public Matrix4x4 ViewMatrix { get; protected set; }
 		public Matrix4x4 InverseViewMatrix { get; protected set; }
 
-		public Vector3 Position = new();
+		//public Vector3 Position = new();
 
-		private float _yaw;
 		public float Yaw {
-			get => _yaw;
+			get => Rotation.Y;
 			set {
-				_yaw = value;
-				_direction.X = MathF.Cos(_yaw.ToRadians()) * MathF.Cos(_pitch.ToRadians());
-				_direction.Z = MathF.Sin(_yaw.ToRadians()) * MathF.Cos(_pitch.ToRadians());
+				Rotation.Y = value;
+				_direction.X = MathF.Cos(Rotation.Y.ToRadians()) * MathF.Cos(Rotation.X.ToRadians());
+				_direction.Z = MathF.Sin(Rotation.Y.ToRadians()) * MathF.Cos(Rotation.X.ToRadians());
 				_front = Vector3.Normalize(_direction);
 			}
 		}
 		
-		private float _pitch;
 		public float Pitch {
-			get => _pitch;
+			get => Rotation.X;
 			set {
-				_pitch = value;
-				_direction.X = MathF.Cos(_yaw.ToRadians()) * MathF.Cos(_pitch.ToRadians());
-				_direction.Y = MathF.Sin(_pitch.ToRadians());
-				_direction.Z = MathF.Sin(_yaw.ToRadians()) * MathF.Cos(_pitch.ToRadians());
+				Rotation.X = value;
+				_direction.X = MathF.Cos(Rotation.Y.ToRadians()) * MathF.Cos(Rotation.X.ToRadians());
+				_direction.Y = MathF.Sin(Rotation.X.ToRadians());
+				_direction.Z = MathF.Sin(Rotation.Y.ToRadians()) * MathF.Cos(Rotation.X.ToRadians());
 				_front = Vector3.Normalize(_direction);
 			}
 		}
@@ -77,11 +77,13 @@ namespace Coelum.Graphics.Camera {
 		public void MoveForward(float amount) => Position -= _direction = Vector3.Multiply(ViewMatrix.PositiveZ(), amount);
 		public void MoveBackward(float amount) => Position += _direction = Vector3.Multiply(ViewMatrix.PositiveZ(), amount);
 
-		public void Load(ShaderProgram shader) {
+		public override void Load(ShaderProgram shader) {
 			RecalculateViewMatrix();
 			
 			shader.SetUniform("projection", ProjectionMatrix);
 			shader.SetUniform("view", ViewMatrix);
+			
+			base.Load(shader);
 		}
 
 		protected abstract void RecalculateProjectionMatrix();

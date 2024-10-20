@@ -6,13 +6,13 @@ using Shader = Coelum.Graphics.OpenGL.Shader;
 
 namespace Coelum.Graphics.Node {
 	
-	public abstract class SpatialNode : NodeBase, IRenderable, IShaderLoadable {
+	public abstract class SpatialNode : NodeBase, Component.IShaderRenderable {
 
 		public GL GL { get; } = GLManager.Current;
 
 		public virtual Model? Model { get; init; }
 		public abstract Matrix4x4 ModelMatrix { get; }
-
+		
 		public virtual void Load(ShaderProgram shader) {
 			if(Model == null) return;
 			
@@ -23,6 +23,18 @@ namespace Coelum.Graphics.Node {
 		public virtual void Render() {
 			Model?.Render();
 		}
+
+		// public void Render(ShaderProgram shader) {
+		// 	Load(shader);
+		// 	Render();
+		//
+		// 	// foreach(var child in Children) {
+		// 	// 	if(child is SpatialNode spatialChild) {
+		// 	// 		spatialChild.Load(shader);
+		// 	// 		spatialChild.Render();
+		// 	// 	}
+		// 	// }
+		// }
 
 		public void Render(ShaderProgram shader) {
 			Load(shader);

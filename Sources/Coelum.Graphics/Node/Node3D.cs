@@ -17,5 +17,9 @@ namespace Coelum.Graphics.Node {
 				return scaleMatrix * positionMatrix * rotationMatrix;
 			}
 		}
+
+		public override string ToString() {
+			return $"{base.ToString()}{{Position={Position}, Rotation={Rotation}, Scale={Scale}}}";
+		}
 	}
 }

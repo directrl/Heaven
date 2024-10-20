@@ -6,4 +6,8 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Coelum.LanguageExtensions\Coelum.LanguageExtensions.csproj" />
+    </ItemGroup>
+
 </Project>
