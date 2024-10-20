@@ -23,8 +23,6 @@ namespace Coelum.Graphics.Camera {
 		public Matrix4x4 ViewMatrix { get; protected set; }
 		public Matrix4x4 InverseViewMatrix { get; protected set; }
 
-		//public Vector3 Position = new();
-
 		public float Yaw {
 			get => Rotation.Y;
 			set {
@@ -45,6 +43,9 @@ namespace Coelum.Graphics.Camera {
 				_front = Vector3.Normalize(_direction);
 			}
 		}
+		
+		public float GlobalYaw => Yaw * GlobalRotation.Y;
+		public float GlobalPitch => Pitch * GlobalRotation.X;
 
 		private float _fov = 1.0f;
 		public float FOV {
@@ -90,8 +91,8 @@ namespace Coelum.Graphics.Camera {
 
 		protected void RecalculateViewMatrix() {
 			ViewMatrix = Matrix4x4.CreateLookAt(
-				Position,
-				Position + _front,
+				GlobalPosition,
+				GlobalPosition + _front,
 				_up
 			);
 			

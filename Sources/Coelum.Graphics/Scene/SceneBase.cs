@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.Drawing;
 using Coelum.Configuration;
 using Coelum.Debug;
@@ -84,11 +85,11 @@ namespace Coelum.Graphics.Scene {
 			
 			PrimaryShader.EnableOverlays(ShaderOverlays);
 
-			var renderableChildren
-				= FindChildrenByComponent<Node.Component.IShaderRenderable>();
-			foreach(var child in renderableChildren) {
-				child.Render(PrimaryShader);
-			}
+			int i = 0;
+
+			FindChildrenByComponent((Node.Component.IShaderRenderable renderable) => {
+				renderable.Render(PrimaryShader);
+			});
 			
 			Render?.Invoke(gl, delta);
 		}

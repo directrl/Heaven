@@ -17,7 +17,9 @@ namespace Coelum.Graphics.Node {
 		private readonly List<Material> _materials;
 
 		public override Model? Model { get; init; }
-		public override Matrix4x4 ModelMatrix => throw new NotSupportedException();
+		
+		public override Matrix4x4 GlobalTransform => throw new NotSupportedException();
+		public override Matrix4x4 LocalTransform => throw new NotSupportedException();
 
 		public int NodeCount => _nodes.Count;
 
@@ -39,14 +41,14 @@ namespace Coelum.Graphics.Node {
 			for(int i = 0; i < nodes.Count; i++) {
 				var obj = nodes[i];
 				
-				_models[i] = obj.ModelMatrix;
+				_models[i] = obj.GlobalTransform;
 				_materials[i] = obj.Model?.Material ?? new Material();
 			}
 		}
 		
 		public void Add(TNode obj) {
 			_nodes.Add(obj);
-			_models.Add(obj.ModelMatrix);
+			_models.Add(obj.GlobalTransform);
 			_materials.Add(obj.Model?.Material ?? new Material());
 		}
 

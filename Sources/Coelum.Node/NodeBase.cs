@@ -1,84 +1,146 @@
 using System.Collections.Concurrent;
+using System.Collections.ObjectModel;
 using Coelum.LanguageExtensions;
 
 namespace Coelum.Node {
 	
 	public class NodeBase {
+
+		private static readonly Random RANDOM = new();
 		
 		public NodeBase? Parent { get; internal set; }
 
-		private NodeList<NodeBase> _children;
-		public NodeList<NodeBase> Children {
-			get => _children;
-			set {
-				_children = value;
+		private Dictionary<string, NodeBase> _children;
+		public ReadOnlyDictionary<string, NodeBase> Children => new(_children);
 
-				foreach(var child in _children) {
+		public Dictionary<string, NodeBase> InitialChildren {
+			init {
+				_children = value;
+				
+				foreach((string key, var child) in _children) {
 					child.Parent = this;
+					child.Name = key;
 				}
 			}
 		}
 
-		public string Name { get; set; } = "";
+		private string _name = new string(Enumerable.Repeat("abcdefghijklmnopqrstuvwxyz", 8)
+		                                            .Select(s => s[RANDOM.Next(s.Length)])
+		                                            .ToArray());
+		public string Name {
+			set {
+				if(Parent != null) {
+					Parent._children.Remove(_name);
+					Parent._children[value] = this;
+				}
+				
+				_name = value;
+			}
+			get => _name;
+		}
 
 		public NodeBase() {
 			Parent = null;
-			Children = new(this);
+			_children = new();
 		}
 
-		public NodeBase(NodeBase? parent, IEnumerable<NodeBase> children) {
+		public NodeBase(NodeBase? parent, Dictionary<string, NodeBase> children) {
 			Parent = parent;
-			Children = new(this, children);
+			_children = new(children);
 		}
 
-		public TNode? FindParent<TNode>(NodeBase? start = null)
-			where TNode : NodeBase {
-
-			if(start == null) start = this;
-			if(start.Parent == null) return null;
-			
-			if(start.Parent is TNode node) {
-				return node;
+		public void AddChild(NodeBase child) {
+			child.Parent = this;
+			_children[child.Name] = child;
+		}
+		
+		public void AddChild(string newName, NodeBase child) {
+			if(_children.ContainsKey(child.Name) || child.Parent != null) {
+				throw new ArgumentException("child is already has a parent", nameof(child));
 			}
 			
-			return FindParent<TNode>(start.Parent);
+			child._name = newName;
+			child.Parent = this;
+			_children[newName] = child;
 		}
 
-		public NodeList<TNode> FindChildren<TNode>() where TNode : NodeBase {
-			var nodes = new NodeList<TNode>(this);
-
-			Parallel.ForEach(Children, child => {
-				if(child is TNode theChild) nodes.Add(theChild);
-			});
+		public void RemoveChild(string name) {
+			var child = Children[name];
 			
-			return nodes;
+			_children.Remove(name);
+			child.Parent = null;
 		}
 		
-		public ConcurrentBag<TComponent> FindChildrenByComponent<TComponent>(NodeBase? node = null)
-			where TComponent : INodeComponent {
-    
-			node ??= this;
-			var components = new ConcurrentBag<TComponent>();
+		public void RemoveChild(NodeBase child) {
+			_children.Remove(child.Name);
+			child.Parent = null;
+		}
+
+		public TNode? FindParentByType<TNode>(NodeBase? start = null)
+			where TNode : NodeBase {
+
+			start ??= this;
+			
+			switch(start.Parent) {
+				case null:
+					return null;
+				case TNode node:
+					return node;
+				default:
+					return FindParentByType<TNode>(start.Parent);
+			}
+		}
+
+		public void FindChildrenByType<TNode>(Action<TNode> forEach) where TNode : NodeBase {
+			Parallel.ForEach(Children.Values, child => {
+				if(child is TNode theChild) forEach.Invoke(theChild);
+			});
+		}
 		
-			Parallel.ForEach(node.Children, child => {
-				if(child is TComponent a) {
-					components.Add(a);
+		public void FindChildrenByComponentParallel<TComponent>(Action<TComponent> forEach)
+			where TComponent : INodeComponent {
+		
+			Parallel.ForEach(Children.Values, child => {
+				if(child is TComponent component) {
+					forEach.Invoke(component);
 				}
 		
-				void Traverse(NodeBase n) {
-					foreach(var c in n.Children) {
-						if(c is TComponent nodeComponent) {
-							components.Add(nodeComponent);
+				void Traverse(NodeBase node) {
+					foreach(var child in node.Children.Values) {
+						if(child is TComponent componentChild) {
+							forEach.Invoke(componentChild);
 						}
-						
-						if(child.Children.Count > 0) Traverse(c);
+
+						if(child.Children.Count > 0) {
+							Traverse(child);
+						}
 					}
 				}
 				
 				Traverse(child);
 			});
+		}
 		
-			return components;
+		public void FindChildrenByComponent<TComponent>(Action<TComponent> forEach)
+			where TComponent : INodeComponent {
+
+			void Traverse(NodeBase node) {
+				if(node is TComponent component) {
+					forEach?.Invoke(component);
+				}
+				
+				foreach(var child in node.Children.Values) {
+					if(child is TComponent componentChild) {
+						forEach?.Invoke(componentChild);
+
+						if(child.Children.Count > 0) {
+							Traverse(child);
+						}
+					}
+				}
+			}
+		
+			Traverse(this);
 		}
 	}
 }

@@ -11,30 +11,28 @@ namespace Coelum.Graphics.Node {
 		public GL GL { get; } = GLManager.Current;
 
 		public virtual Model? Model { get; init; }
-		public abstract Matrix4x4 ModelMatrix { get; }
+		public abstract Matrix4x4 LocalTransform { get; }
 		
+		public virtual Matrix4x4 GlobalTransform {
+			get {
+				if(Parent is SpatialNode n) {
+					return LocalTransform * n.GlobalTransform;
+				}
+
+				return LocalTransform;
+			}
+		}
+
 		public virtual void Load(ShaderProgram shader) {
 			if(Model == null) return;
 			
 			Model.Load(shader);
-			shader.SetUniform("model", ModelMatrix);
+			shader.SetUniform("model", GlobalTransform);
 		}
 		
 		public virtual void Render() {
 			Model?.Render();
 		}
-
-		// public void Render(ShaderProgram shader) {
-		// 	Load(shader);
-		// 	Render();
-		//
-		// 	// foreach(var child in Children) {
-		// 	// 	if(child is SpatialNode spatialChild) {
-		// 	// 		spatialChild.Load(shader);
-		// 	// 		spatialChild.Render();
-		// 	// 	}
-		// 	// }
-		// }
 
 		public void Render(ShaderProgram shader) {
 			Load(shader);

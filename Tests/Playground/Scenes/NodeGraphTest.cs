@@ -11,6 +11,7 @@ using Coelum.UI;
 using ImGuiNET;
 using Silk.NET.Input;
 using Silk.NET.OpenGL;
+using IShaderRenderable = Coelum.Graphics.Node.Component.IShaderRenderable;
 
 namespace Playground.Scenes {
 	
@@ -109,14 +110,14 @@ namespace Playground.Scenes {
 			}
 
 			if(_mesh != null) {
-				/*Children.Add(new Node3D() {
+				AddChild(new Node3D() {
 					Position = new(0, 0, 0),
 					Model = new() {
 						Meshes = new[] { _mesh },
 					}
 				});
 				
-				Children.Add(new Node3D() {
+				AddChild(new Node3D() {
 					Position = new(1, 2, 0),
 					Model = new() {
 						Meshes = new[] { _mesh },
@@ -124,8 +125,8 @@ namespace Playground.Scenes {
 							Color = Color.FromArgb(200, 100, 50).ToVector4()
 						}
 					},
-					Children = new(this) {
-						new Node3D() {
+					InitialChildren = new() {
+						["meow"] = new Node3D() {
 							Position = new(0, 1, 0),
 							Model = new() {
 								Meshes = new[] { _mesh },
@@ -133,8 +134,8 @@ namespace Playground.Scenes {
 									Color = Color.FromArgb(0, 100, 50).ToVector4()
 								}
 							},
-							Children = new(this) {
-								new Node3D() {
+							InitialChildren = new() {
+								["bowow"] = new Node3D() {
 									Position = new(-1, 0, -3),
 									Model = new() {
 										Meshes = new[] { _mesh },
@@ -143,7 +144,7 @@ namespace Playground.Scenes {
 										}
 									}
 								},
-								new Node3D() {
+								["awoo"] = new Node3D() {
 									Position = new(0, 1, 0),
 									Model = new() {
 										Meshes = new[] { _mesh },
@@ -155,9 +156,9 @@ namespace Playground.Scenes {
 							}
 						}
 					}
-				});*/
+				});
 
-				int wall = 16;
+				/*int wall = 16;
 				
 				for(int y = 0; y < (wall * 2); y += 2) {
 					var n = new Node3D() {
@@ -206,7 +207,7 @@ namespace Playground.Scenes {
 					}
 					
 					Children.Add(n);
-				}
+				}*/
 			}
 			
 			_overlay = new(this);
@@ -226,10 +227,9 @@ namespace Playground.Scenes {
 					int childrenTotal = 0;
 
 					void DrawChildren(NodeBase node) {
-						for(int i = 0; i < node.Children.Count; i++) {
-							childrenTotal++;
-							var child = node.Children[i];
-							
+						int i = 0;
+
+						foreach(var child in node.Children.Values) {
 							ImGui.PushID(i);
 							if(ImGui.TreeNode("", $"{child.Name}: {child}")) {
 								ImGui.Text($"Parent: {child.Parent}");
