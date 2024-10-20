@@ -135,7 +135,7 @@ namespace Playground.Scenes {
 								}
 							},
 							InitialChildren = new() {
-								["bowow"] = new Node3D() {
+								["bowwow"] = new Node3D() {
 									Position = new(-1, 0, -3),
 									Model = new() {
 										Meshes = new[] { _mesh },
@@ -231,7 +231,7 @@ namespace Playground.Scenes {
 
 						foreach(var child in node.Children.Values) {
 							ImGui.PushID(i);
-							if(ImGui.TreeNode("", $"{child.Name}: {child}")) {
+							if(ImGui.TreeNode("", $"{child.GetType().Name}: {child}")) {
 								ImGui.Text($"Parent: {child.Parent}");
 								ImGui.Separator();
 								DrawChildren(child);

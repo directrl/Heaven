@@ -49,7 +49,7 @@ namespace Coelum.Graphics.Node {
 		}
 
 		public override string ToString() {
-			return $"{base.ToString()}{{Position={Position}, GlobalPosition={GlobalPosition}, Rotation={GlobalRotation}, Scale={GlobalScale}}}";
+			return $"{Name}{{Position={Position}, Rotation={GlobalRotation}, Scale={GlobalScale}}}";
 		}
 	}
 }

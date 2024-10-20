@@ -6,7 +6,7 @@ using Coelum.Graphics.Texture;
 namespace Coelum.Graphics {
 	
 	[StructLayout(LayoutKind.Explicit, Pack = 1)]
-	public struct Material : IShaderLoadable {
+	public struct Material {
 
 		[FieldOffset(0)] public Vector4 Color;
 		
