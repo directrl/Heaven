@@ -8,8 +8,8 @@ namespace Coelum.Graphics.Camera {
 
 		protected override void RecalculateProjectionMatrix() {
 			ProjectionMatrix = Matrix4x4.CreateOrthographic(
-				Width * FOV,
-				Height * FOV,
+				Width * FOV / 1000,
+				Height * FOV / 1000,
 				Z_NEAR,
 				Z_FAR
 			);

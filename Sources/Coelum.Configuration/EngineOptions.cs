@@ -5,8 +5,12 @@ namespace Coelum.Configuration {
 	public static class EngineOptions {
 
 		public const String BASENAME = "heaven";
-		
-		public static void FromArgs(string[] args) { }
+
+		public static bool VerticalSync { get; set; } = true;
+
+		public static void FromArgs(string[] args) {
+			if(args.Contains("--no-vsync")) VerticalSync = false;
+		}
 
 		public static class Texture {
 

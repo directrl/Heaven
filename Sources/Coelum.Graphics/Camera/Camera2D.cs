@@ -1,9 +1,10 @@
 using System.Numerics;
+using Coelum.Graphics.Node;
 using Coelum.Graphics.OpenGL;
 
 namespace Coelum.Graphics.Camera {
 	
-	public class Camera2D {
+	public class Camera2D : Node2D {
 
 		private Vector3 _direction = new();
 		private Vector3 _front = new(0.0f, 0.0f, 1.0f);
@@ -14,8 +15,6 @@ namespace Coelum.Graphics.Camera {
 
 		public Matrix4x4 ProjectionMatrix { get; protected set; }
 		public Matrix4x4 ViewMatrix { get; protected set; }
-
-		public Vector2 Position = new();
 
 		public Camera2D(Window window) {
 			Width = window.SilkImpl.FramebufferSize.X;
@@ -32,11 +31,13 @@ namespace Coelum.Graphics.Camera {
 			};
 		}
 
-		public void Load(ShaderProgram shader) {
+		public override void Load(ShaderProgram shader) {
 			RecalculateViewMatrix();
 			
 			shader.SetUniform("projection", ProjectionMatrix);
 			shader.SetUniform("view", ViewMatrix);
+			
+			base.Load(shader);
 		}
 		
 		protected void RecalculateProjectionMatrix() {

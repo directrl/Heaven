@@ -1,3 +1,4 @@
+using Coelum.Configuration;
 using Coelum.Debug;
 using Coelum.Graphics.OpenGL;
 using Coelum.Graphics.Scene;
@@ -114,7 +115,7 @@ namespace Coelum.Graphics {
 			if(optimalDefaults) {
 				api.Flags |= ContextFlags.ForwardCompatible;
 
-				defaults.VSync = true;
+				defaults.VSync = EngineOptions.VerticalSync;
 				defaults.UpdatesPerSecond = 60;
 				defaults.IsVisible = false;
 				defaults.TransparentFramebuffer = true;

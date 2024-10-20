@@ -2,7 +2,7 @@ using Coelum.Graphics.OpenGL;
 
 namespace Coelum.Graphics {
 	
-	public class Model : IShaderRenderable {
+	public class Model {
 
 		public Mesh[] Meshes { get; init; }
 		public Material Material { get; set; } = new();
@@ -14,16 +14,11 @@ namespace Coelum.Graphics {
 		public virtual void Load(ShaderProgram shader) {
 			Material.Load(shader);
 		}
-
+		
 		public virtual void Render() {
 			foreach(var mesh in Meshes) {
 				mesh.Render();
 			}
-		}
-
-		public void Render(ShaderProgram shader) {
-			Load(shader);
-			Render();
 		}
 	}
 }

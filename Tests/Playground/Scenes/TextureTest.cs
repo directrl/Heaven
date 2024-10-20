@@ -3,7 +3,7 @@ using Coelum.Debug;
 using Coelum.Resources;
 using Coelum.Graphics;
 using Coelum.Graphics.Camera;
-using Coelum.Graphics.Object;
+using Coelum.Graphics.Node;
 using Coelum.Graphics.Scene;
 using Coelum.Graphics.Texture;
 using Coelum.Input;
@@ -32,9 +32,9 @@ namespace Playground.Scenes {
 		private Object3D? _object3;
 		private Object3D? _object4;*/
 
-		private Object3D? _object;
-		private List<Object3D>? _objects;
-		private InstancedObject<Object3D>? _instObject;
+		private Node3D? _object;
+		private List<Node3D>? _objects;
+		private InstancedNode<Node3D>? _instObject;
 		private TextureArray? _texArray;
 
 		private KeyBindings _keyBindings;
@@ -48,7 +48,7 @@ namespace Playground.Scenes {
 			
 			ShaderOverlays.AddRange(Texture2D.OVERLAYS);
 			ShaderOverlays.AddRange(TextureArray.OVERLAYS);
-			ShaderOverlays.AddRange(InstancedObject<Object3D>.OVERLAYS);
+			ShaderOverlays.AddRange(InstancedNode<Node3D>.OVERLAYS);
 		}
 
 		public override void OnLoad(Window window) {
@@ -215,20 +215,20 @@ namespace Playground.Scenes {
 					Material = _mat4.Value
 				};*/
 
-				_object = new Object3D {
-					Meshes = new[] { _mesh },
+				_object = new Node3D() {
 					Position = new(0, 20, 0),
-					Material = new() {
-						Color = new(1, 1, 1, 1),
-						Texture = Texture2D.Load(Playground.AppResources[Resource.Type.TEXTURE, "two"])
+					Model = new() {
+						Meshes = new[] { _mesh },
+						Material = new() {
+							Color = new(1, 1, 1, 1),
+							Texture = Texture2D.Load(Playground.AppResources[Resource.Type.TEXTURE, "two"])
+						}
 					}
 				};
 				
 				int wall = 64;
 
-				_instObject = new((int) Math.Pow(wall, 3)) {
-					Meshes = new Mesh[] { _mesh }
-				};
+				_instObject = new(new(_mesh), (int) Math.Pow(wall, 3));
 
 				// var tex1 = Texture2D.Load();
 				// var tex2 = Texture2D.Load(Playground.AppResources[Resource.Type.TEXTURE, "two"]);
@@ -240,12 +240,14 @@ namespace Playground.Scenes {
 				for(int z = 0; z < (wall * 2); z += 2) {
 					int random = RANDOM.Next(0, 4);
 					
-					var o = new Object3D {
-						Meshes = new[] { _mesh },
+					var o = new Node3D() {
 						Position = new(x, y, z),
-						Material = new() {
-							Color = new(1, 1, 1, 1),
-							TextureLayer = random
+						Model = new() {
+							Meshes = new[] { _mesh },
+							Material = new() {
+								Color = new(1, 1, 1, 1),
+								TextureLayer = random
+							}
 						}
 					};
 					

@@ -1,12 +1,16 @@
+using System.Collections.Concurrent;
 using System.Drawing;
 using Coelum.Configuration;
 using Coelum.Debug;
+using Coelum.Graphics.Node;
 using Coelum.Graphics.OpenGL;
+using Coelum.Graphics.Texture;
+using Coelum.Node;
 using Silk.NET.OpenGL;
 
 namespace Coelum.Graphics.Scene {
 	
-	public abstract class SceneBase {
+	public abstract class SceneBase : RootNode {
 
 	#region Delegates
 		public delegate void LoadEventHandler(Window window);
@@ -80,6 +84,12 @@ namespace Coelum.Graphics.Scene {
 			PrimaryShaderSetup?.Invoke(gl, "", PrimaryShader);
 			
 			PrimaryShader.EnableOverlays(ShaderOverlays);
+
+			int i = 0;
+
+			FindChildrenByComponent((Node.Component.IShaderRenderable renderable) => {
+				renderable.Render(PrimaryShader);
+			});
 			
 			Render?.Invoke(gl, delta);
 		}
