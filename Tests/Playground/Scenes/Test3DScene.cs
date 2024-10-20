@@ -2,7 +2,7 @@ using System.Numerics;
 using Coelum.Debug;
 using Coelum.Graphics;
 using Coelum.Graphics.Camera;
-using Coelum.Graphics.Object;
+using Coelum.Graphics.Node;
 using Coelum.Graphics.Scene;
 using Coelum.Graphics.Texture;
 using Coelum.Input;
@@ -18,7 +18,7 @@ namespace Playground.Scenes {
 		private ImGuiOverlay _overlay;
 		
 		private Mesh? _mesh;
-		private Object3D? _object;
+		private Node3D? _object;
 
 		private KeyBindings _keyBindings;
 		private FreeCamera _freeCamera;
@@ -93,9 +93,11 @@ namespace Playground.Scenes {
 			}
 
 			if(_object == null && _mesh != null) {
-				_object = new Object3D {
-					Meshes = new[] { _mesh },
-					Position = new(0, 0, 0)
+				_object = new Node3D() {
+					Position = new(0, 0, 0),
+					Model = new() {
+						Meshes = new[] { _mesh },
+					}
 				};
 			}
 			

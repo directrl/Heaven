@@ -1,7 +1,7 @@
 using System.Numerics;
 using Coelum.Debug;
 using Coelum.Graphics;
-using Coelum.Graphics.Object;
+using Coelum.Graphics.Node;
 using Coelum.Graphics.Scene;
 using Coelum.Graphics.Texture;
 using Coelum.Input;
@@ -17,8 +17,8 @@ namespace Playground.Scenes {
 		private ImGuiOverlay _overlay;
 		
 		private Mesh? _mesh;
-		private Object2D? _object;
-		private Object2D? _object2;
+		private Node2D? _object;
+		private Node2D? _object2;
 
 		private KeyBindings _keyBindings;
 		private FreeCamera _freeCamera;
@@ -51,19 +51,23 @@ namespace Playground.Scenes {
 			}
 
 			if(_object == null && _mesh != null) {
-				_object = new Object2D {
-					Meshes = new[] { _mesh },
+				_object = new Node2D() {
 					Position = new(-50f, -50f),
-					Material = new Material {
-						Color = new(1.0f, 0.0f, 0.0f, 1.0f)
+					Model = new Model() {
+						Meshes = new[] { _mesh },
+						Material = new Material {
+							Color = new(1.0f, 0.0f, 0.0f, 1.0f)
+						}
 					}
 				};
 
-				_object2 = new Object2D {
-					Meshes = new[] { _mesh },
+				_object2 = new Node2D() {
 					Position = new(50f, 50f),
-					Material = new Material {
-						Color = new(0.0f, 0.0f, 1.0f, 1.0f)
+					Model = new Model() {
+						Meshes = new[] { _mesh },
+						Material = new Material {
+							Color = new(0.0f, 0.0f, 1.0f, 1.0f)
+						}
 					}
 				};
 			}

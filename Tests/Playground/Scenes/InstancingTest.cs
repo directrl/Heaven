@@ -4,7 +4,7 @@ using Coelum.Debug;
 using Coelum.LanguageExtensions;
 using Coelum.Graphics;
 using Coelum.Graphics.Camera;
-using Coelum.Graphics.Object;
+using Coelum.Graphics.Node;
 using Coelum.Graphics.Scene;
 using Coelum.Graphics.Texture;
 using Coelum.Input;
@@ -22,14 +22,14 @@ namespace Playground.Scenes {
 		private DebugUI _overlay;
 		
 		private Mesh? _mesh;
-		private InstancedObject<Object3D>? _instObject;
+		private InstancedNode<Node3D>? _instObject;
 
 		private KeyBindings _keyBindings;
 		private FreeCamera _freeCamera;
 
 		private bool _instancing = true;
 		
-		List<Object3D> objects = new();
+		List<Node3D> objects = new();
 
 		public InstancingTest() : base("instancing") {
 			_keyBindings = new(Id);
@@ -39,7 +39,7 @@ namespace Playground.Scenes {
 			
 			ShaderOverlays.AddRange(Texture2D.OVERLAYS);
 			ShaderOverlays.AddRange(TextureArray.OVERLAYS);
-			ShaderOverlays.AddRange(InstancedObject<Object3D>.OVERLAYS);
+			ShaderOverlays.AddRange(InstancedNode<Node3D>.OVERLAYS);
 		}
 
 		public override void OnLoad(Window window) {
@@ -94,26 +94,28 @@ namespace Playground.Scenes {
 			if(_instObject == null && _mesh != null) {
 				int wall = 32;
 
-				_instObject = new((int) Math.Pow(wall, 3)) {
-					Meshes = new[] { _mesh }
-				};
+				_instObject = new(new(_mesh), (int) Math.Pow(wall, 3));
 
 				var sw = Stopwatch.StartNew();
 				
 				for(int y = 0; y < (wall * 2); y += 2)
 				for(int x = 0; x < (wall * 2); x += 2)
 				for(int z = 0; z < (wall * 2); z += 2) {
-					var o1 = new Object3D {
+					var o1 = new Node3D() {
 						Position = new(x, y, z),
-						Material = new Material {
-							Color = new(RANDOM.NextSingle(), RANDOM.NextSingle(), RANDOM.NextSingle(), 1)
+						Model = new() {
+							Material = new() {
+								Color = new(RANDOM.NextSingle(), RANDOM.NextSingle(), RANDOM.NextSingle(), 1)
+							}
 						}
 					};
 
-					var o2 = new Object3D {
+					var o2 = new Node3D() {
 						Position = o1.Position,
-						Material = o1.Material,
-						Meshes = new[] { _mesh }
+						Model = new() {
+							Material = o1.Model.Material,
+							Meshes = new[] { _mesh }
+						}
 					};
 					
 					_instObject.Add(o1);
@@ -122,7 +124,7 @@ namespace Playground.Scenes {
 				
 				sw.Stop();
 				
-				Playground.AppLogger.Information($"Created objects: {_instObject.ObjectCount}" +
+				Playground.AppLogger.Information($"Created objects: {_instObject.NodeCount}" +
 					$" in {sw.ElapsedMilliseconds}ms");
 				
 				Playground.AppLogger.Information("Building instances");
@@ -138,7 +140,7 @@ namespace Playground.Scenes {
 					ImGui.Text($"Camera position: {Camera?.Position.ToString() ?? "Unknown"}");
 					ImGui.Text($"Camera pitch: {Camera?.Pitch.ToString() ?? "Unknown"}");
 					ImGui.Text($"Camera yaw: {Camera?.Yaw.ToString() ?? "Unknown"}");
-					ImGui.Text($"Object count: {_instObject?.ObjectCount.ToString() ?? "Unknown"}");
+					ImGui.Text($"Object count: {_instObject?.NodeCount.ToString() ?? "Unknown"}");
 					ImGui.Text($"Using instancing: {_instancing}");
 					ImGui.Checkbox("Use instancing", ref _instancing);
 					ImGui.End();
