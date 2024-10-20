@@ -46,7 +46,7 @@ namespace Coelum.Core {
 			AppResources = new(aNamespace ?? "", Assembly.GetCallingAssembly());
 		}
 
-		public abstract void Setup();
+		public abstract void Setup(string[] args);
 
 		public void Start(string[] args) {
 			Debugging.FromArgs(args);
@@ -98,7 +98,7 @@ namespace Coelum.Core {
 			
 			Running = true;
 			
-			Setup();
+			Setup(args);
 			Tests.Assert(Windows.Count > 0);
 			
 			var primaryWindow = Windows[0];

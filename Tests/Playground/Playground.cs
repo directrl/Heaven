@@ -12,12 +12,20 @@ namespace Playground {
 			Debugging.IgnoreMissingShaderUniforms = true;
 		}
 
-		public override void Setup() {
+		public override void Setup(string[] args) {
 			var scene = new NodeGraphTest();
 			var window = Window.Create(debug: true);
 			window.Scene = scene;
 			
 			Windows.Add(window);
+
+			if(args.Contains("multi-window-test")) {
+				var scene1 = new NodeGraphTest();
+				var window1 = Window.Create(debug: true);
+				window1.Scene = scene1;
+			
+				Windows.Add(window1);
+			}
 		}
 	}
 }

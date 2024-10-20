@@ -2,6 +2,7 @@ using Coelum.Configuration;
 using Coelum.Debug;
 using Coelum.Graphics.OpenGL;
 using Coelum.Graphics.Scene;
+using Silk.NET.Core.Contexts;
 using Silk.NET.Input;
 using Silk.NET.OpenGL;
 using Silk.NET.Windowing;
@@ -9,6 +10,8 @@ using Silk.NET.Windowing;
 namespace Coelum.Graphics {
 	
 	public sealed class Window : IDisposable {
+
+		private static IGLContext? _sharedContext;
 		
 		public IWindow SilkImpl { get; }
 		public GL? GL { get; private set; }
@@ -41,7 +44,14 @@ namespace Coelum.Graphics {
 			SilkImpl = impl;
 			
 			SilkImpl.Load += () => {
-				GL = SilkImpl.CreateOpenGL();
+				if(_sharedContext == null) {
+					GL = SilkImpl.CreateOpenGL();
+					_sharedContext ??= SilkImpl.GLContext;
+					GLManager.Current = GL;
+				} else {
+					GL = GLManager.Current;
+				}
+				
 				GL.Viewport(SilkImpl.FramebufferSize);
 
 				if(Debugging.Enabled) {
@@ -120,6 +130,10 @@ namespace Coelum.Graphics {
 				defaults.IsVisible = false;
 				defaults.TransparentFramebuffer = true;
 				defaults.ShouldSwapAutomatically = true;
+
+				if(_sharedContext != null) {
+					defaults.SharedContext = _sharedContext;
+				}
 			}
 
 			if(debug) api.Flags |= ContextFlags.Debug;
