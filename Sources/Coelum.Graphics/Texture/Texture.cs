@@ -1,33 +1,33 @@
 using Silk.NET.OpenGL;
 
+using static Coelum.Graphics.OpenGL.GLManager;
+
 namespace Coelum.Graphics.Texture {
 	
 	public class Texture<TSize> : IDisposable {
 
-		protected GL GL { get; }
 		protected TextureTarget Target { get; }
 
 		public uint Id { get; init; }
 		public TSize Size { get; init; }
 
-		protected Texture(GL gl, TextureTarget target, TSize size) {
-			GL = gl;
+		protected Texture(TextureTarget target, TSize size) {
 			Target = target;
 
-			Id = gl.GenTexture();
+			Id = Gl.GenTexture();
 			Size = size;
 
 			Bind();
 		}
 
 		public virtual void Bind() {
-			GL.ActiveTexture(TextureUnit.Texture0);
-			GL.BindTexture(Target, Id);
+			Gl.ActiveTexture(TextureUnit.Texture0);
+			Gl.BindTexture(Target, Id);
 		}
 
 		public void Dispose() {
 			GC.SuppressFinalize(this);
-			GL.DeleteTexture(Id);
+			Gl.DeleteTexture(Id);
 		}
 	}
 }

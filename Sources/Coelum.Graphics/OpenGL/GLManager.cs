@@ -5,42 +5,34 @@ using Silk.NET.OpenGL;
 namespace Coelum.Graphics.OpenGL {
 	
 	public static class GLManager {
-		
-		public static GL Current { get; internal set; }
 
-		public unsafe static void SetDefaults(GL? gl = null) {
-			if(gl == null) gl = Current;
+		public unsafe static void SetDefaults() {
+			Gl.Enable(EnableCap.DepthTest);
 			
-			gl.Enable(EnableCap.DepthTest);
+			Gl.Enable(EnableCap.CullFace);
+			Gl.CullFace(TriangleFace.Back);
 			
-			gl.Enable(EnableCap.CullFace);
-			gl.CullFace(TriangleFace.Back);
-			
-			gl.Enable(EnableCap.Blend);
-			gl.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
+			Gl.Enable(EnableCap.Blend);
+			Gl.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
 		}
 		
-		public static void SetDefaultsForTextureCreation(TextureTarget target, GL? gl = null) {
-			if(gl == null) gl = Current;
-
-			gl.TexParameter(target, TextureParameterName.TextureMinFilter,
-				EngineOptions.Texture.MinFilter);
-			gl.TexParameter(target, TextureParameterName.TextureMagFilter,
-				EngineOptions.Texture.MagFilter);
+		public static void SetDefaultsForTextureCreation(TextureTarget target) {
+			Gl.TexParameter(target, TextureParameterName.TextureMinFilter,
+			                EngineOptions.Texture.MinFilter);
+			Gl.TexParameter(target, TextureParameterName.TextureMagFilter,
+			                EngineOptions.Texture.MagFilter);
 			
-			gl.TexParameter(target, TextureParameterName.TextureWrapS,
+			Gl.TexParameter(target, TextureParameterName.TextureWrapS,
 			                (uint) TextureWrapMode.Repeat);
-			gl.TexParameter(target, TextureParameterName.TextureWrapT,
+			Gl.TexParameter(target, TextureParameterName.TextureWrapT,
 			                (uint) TextureWrapMode.Repeat);
 		}
 		
-		public unsafe static void EnableDebugOutput(GL? gl = null) {
-			if(gl == null) gl = Current;
-			
-			gl.Enable(EnableCap.DebugOutput);
-			gl.Enable(EnableCap.DebugOutputSynchronous);
-			gl.DebugMessageCallback(GlDebugPrint, null);
-			gl.DebugMessageControl(
+		public unsafe static void EnableDebugOutput() {
+			Gl.Enable(EnableCap.DebugOutput);
+			Gl.Enable(EnableCap.DebugOutputSynchronous);
+			Gl.DebugMessageCallback(GlDebugPrint, null);
+			Gl.DebugMessageControl(
 				DebugSource.DontCare,
 				DebugType.DontCare,
 				DebugSeverity.DontCare,

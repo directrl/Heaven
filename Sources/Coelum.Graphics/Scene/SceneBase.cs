@@ -3,6 +3,7 @@ using System.Drawing;
 using Coelum.Configuration;
 using Coelum.Debug;
 using Coelum.Graphics.Node;
+using Coelum.Graphics.Node.Component;
 using Coelum.Graphics.OpenGL;
 using Coelum.Graphics.Texture;
 using Coelum.Node;
@@ -18,9 +19,9 @@ namespace Coelum.Graphics.Scene {
 	
 		public delegate void FixedUpdateEventHandler(float delta);
 		public delegate void UpdateEventHandler(float delta);
-		public delegate void RenderEventHandler(GL gl, float delta);
+		public delegate void RenderEventHandler(float delta);
 
-		public delegate void ShaderSetupEventHandler(GL gl, string id, ShaderProgram shader);
+		public delegate void ShaderSetupEventHandler(ShaderProgram shader);
 	#endregion
 
 	#region Events
@@ -61,11 +62,34 @@ namespace Coelum.Graphics.Scene {
 			PrimaryShader.AddOverlays(ShaderOverlays);
 			
 			Window = window;
+
+			// TODO should this really be set each time a scene is changed?
+			window.SilkImpl.Size = new(
+				Options.GetOrDefault("window_width", window.SilkImpl.Size.X),
+				Options.GetOrDefault("window_height", window.SilkImpl.Size.Y)
+			);
+
+			window.SilkImpl.Position = new(
+				Options.GetOrDefault("window_x", window.SilkImpl.Position.X),
+				Options.GetOrDefault("window_y", window.SilkImpl.Position.Y)
+			);
+
+			window.SilkImpl.Resize += newSize => {
+				Options.Set("window_width", newSize.X);
+				Options.Set("window_height", newSize.Y);
+			};
+
+			window.SilkImpl.Move += newPosition => {
+				Options.Set("window_x", newPosition.X);
+				Options.Set("window_y", newPosition.Y);
+			};
+			
 			Load?.Invoke(window);
 		}
 
 		public virtual void OnUnload() {
 			Window = null;
+			Options.Save();
 			Unload?.Invoke();
 		}
 
@@ -77,21 +101,21 @@ namespace Coelum.Graphics.Scene {
 			FixedUpdate?.Invoke(delta);
 		}
 		
-		public virtual void OnRender(GL gl, float delta) {
-			gl.ClearColor(ClearColor);
+		public virtual void OnRender(float delta) {
+			Gl.ClearColor(ClearColor);
 			
 			PrimaryShader.Bind();
-			PrimaryShaderSetup?.Invoke(gl, "", PrimaryShader);
+			PrimaryShaderSetup?.Invoke(PrimaryShader);
 			
 			PrimaryShader.EnableOverlays(ShaderOverlays);
 
 			int i = 0;
 
-			FindChildrenByComponent((Node.Component.IShaderRenderable renderable) => {
+			FindChildrenByComponent((IShaderRenderable renderable) => {
 				renderable.Render(PrimaryShader);
 			});
 			
-			Render?.Invoke(gl, delta);
+			Render?.Invoke(delta);
 		}
 	}
 }

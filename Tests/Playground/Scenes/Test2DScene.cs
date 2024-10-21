@@ -124,8 +124,8 @@ namespace Playground.Scenes {
 			_keyBindings.Update(Window.Input.Keyboards[0]);
 		}
 
-		public override void OnRender(GL gl, float delta) {
-			base.OnRender(gl, delta);
+		public override void OnRender(float delta) {
+			base.OnRender(delta);
 			
 			//MainShader.SetUniform("color", new Vector4(1.0f, 0.0f, 0.0f, 1.0f));
 			_object?.Load(PrimaryShader);

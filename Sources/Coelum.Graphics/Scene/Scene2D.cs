@@ -9,7 +9,7 @@ namespace Coelum.Graphics.Scene {
 		public Camera2D? Camera { get; set; }
 
 		protected Scene2D(string id) : base(id) {
-			PrimaryShaderSetup += (gl, _, shader) => {
+			PrimaryShaderSetup += shader => {
 				Camera?.Load(shader);
 			};
 		}
@@ -26,10 +26,9 @@ namespace Coelum.Graphics.Scene {
 			base.OnLoad(window);
 		}
 		
-		public override void OnRender(GL gl, float delta) {
-			gl.Disable(EnableCap.CullFace);
-			
-			base.OnRender(gl, delta);
+		public override void OnRender(float delta) {
+			Gl.Disable(EnableCap.CullFace);
+			base.OnRender(delta);
 		}
 	}
 }

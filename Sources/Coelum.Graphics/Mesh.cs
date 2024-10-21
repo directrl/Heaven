@@ -5,7 +5,6 @@ namespace Coelum.Graphics {
 	
 	public class Mesh : IDisposable {
 
-		internal readonly GL _gl;
 		internal readonly List<VertexBufferObject> _vbos = new();
 
 		public readonly uint VertexCount;
@@ -16,56 +15,55 @@ namespace Coelum.Graphics {
 		public Mesh(PrimitiveType type,
 		            float[] vertices, uint[] indices, float[]? texCoords, float[]? normals) {
 			
-			_gl = GLManager.Current;
 			Type = type;
 			
 			VertexCount = (uint) indices.Length;
 
-			VAO = new(_gl);
+			VAO = new();
 			VAO.Bind();
 
 		#region Vertices
 			{
-				var vbo = new VertexBufferObject(_gl, BufferTargetARB.ArrayBuffer);
+				var vbo = new VertexBufferObject(BufferTargetARB.ArrayBuffer);
 				_vbos.Add(vbo);
 			
 				vbo.Bind();
 				vbo.Data<float>(vertices, BufferUsageARB.StaticDraw);
 				
-				_gl.EnableVertexAttribArray(0);
-				_gl.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 0, 0);
+				Gl.EnableVertexAttribArray(0);
+				Gl.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 0, 0);
 			}
 		#endregion
 			
 		#region Texture Coordinates
 			if(texCoords != null) {
-				var vbo = new VertexBufferObject(_gl, BufferTargetARB.ArrayBuffer);
+				var vbo = new VertexBufferObject(BufferTargetARB.ArrayBuffer);
 				_vbos.Add(vbo);
 			
 				vbo.Bind();
 				vbo.Data<float>(texCoords, BufferUsageARB.StaticDraw);
 			
-				_gl.EnableVertexAttribArray(1);
-				_gl.VertexAttribPointer(1, 2, VertexAttribPointerType.Float, false, 0, 0);
+				Gl.EnableVertexAttribArray(1);
+				Gl.VertexAttribPointer(1, 2, VertexAttribPointerType.Float, false, 0, 0);
 			}
 		#endregion
 			
 		#region Normals
 			if(normals != null) {
-				var vbo = new VertexBufferObject(_gl, BufferTargetARB.ArrayBuffer);
+				var vbo = new VertexBufferObject(BufferTargetARB.ArrayBuffer);
 				_vbos.Add(vbo);
 			
 				vbo.Bind();
 				vbo.Data<float>(normals, BufferUsageARB.StaticRead);
 			
-				_gl.EnableVertexAttribArray(2);
-				_gl.VertexAttribPointer(2, 3, VertexAttribPointerType.Float, false, 0, 0);
+				Gl.EnableVertexAttribArray(2);
+				Gl.VertexAttribPointer(2, 3, VertexAttribPointerType.Float, false, 0, 0);
 			}
 		#endregion
 			
 		#region Indices
 			{
-				var vbo = new VertexBufferObject(_gl, BufferTargetARB.ElementArrayBuffer);
+				var vbo = new VertexBufferObject(BufferTargetARB.ElementArrayBuffer);
 				_vbos.Add(vbo);
 			
 				vbo.Bind();
@@ -73,13 +71,13 @@ namespace Coelum.Graphics {
 			}
 		#endregion
 			
-			_gl.BindBuffer(BufferTargetARB.ArrayBuffer, 0);
-			_gl.BindVertexArray(0);
+			Gl.BindBuffer(BufferTargetARB.ArrayBuffer, 0);
+			Gl.BindVertexArray(0);
 		}
 
 		public unsafe virtual void Render() {
 			VAO.Bind();
-			_gl.DrawElements(Type, VertexCount, DrawElementsType.UnsignedInt, null);
+			Gl.DrawElements(Type, VertexCount, DrawElementsType.UnsignedInt, null);
 		}
 
 		public void Dispose() {

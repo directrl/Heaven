@@ -2,6 +2,7 @@ using Coelum.Configuration;
 using Coelum.Debug;
 using Coelum.Graphics.OpenGL;
 using Coelum.Graphics.Scene;
+using Silk.NET.Core.Contexts;
 using Silk.NET.Input;
 using Silk.NET.OpenGL;
 using Silk.NET.Windowing;
@@ -9,15 +10,18 @@ using Silk.NET.Windowing;
 namespace Coelum.Graphics {
 	
 	public sealed class Window : IDisposable {
+
+		private static IGLContext? _sharedContext;
 		
 		public IWindow SilkImpl { get; }
-		public GL? GL { get; private set; }
 		
 		public IInputContext? Input { get; private set; }
 		
 		public float UpdateDelta { get; private set; }
 		public float FixedUpdateDelta { get; private set; }
 		public float RenderDelta { get; private set; }
+
+		public bool DoUpdates { get; set; } = true;
 
 		private SceneBase? _scene;
 		public SceneBase? Scene {
@@ -26,13 +30,8 @@ namespace Coelum.Graphics {
 				_scene?.OnUnload();
 				_scene = value;
 
-				if(value != null && GL != null) {
-					var oldGl = GLManager.Current;
-					GLManager.Current = GL;
-					
+				if(value != null) {
 					value?.OnLoad(this);
-
-					GLManager.Current = oldGl;
 				}
 			}
 		}
@@ -41,11 +40,16 @@ namespace Coelum.Graphics {
 			SilkImpl = impl;
 			
 			SilkImpl.Load += () => {
-				GL = SilkImpl.CreateOpenGL();
-				GL.Viewport(SilkImpl.FramebufferSize);
-
+				if(_sharedContext == null) {
+					new GlobalOpenGL(SilkImpl.CreateOpenGL());
+					_sharedContext = SilkImpl.GLContext;
+				}
+				
+				SilkImpl.MakeCurrent();
+				Gl.Viewport(SilkImpl.FramebufferSize);
+				
 				if(Debugging.Enabled) {
-					GLManager.EnableDebugOutput(GL);
+					GLManager.EnableDebugOutput();
 				}
 
 				Input = SilkImpl.CreateInput();
@@ -67,17 +71,15 @@ namespace Coelum.Graphics {
 				if(!SilkImpl.IsVisible) return;
 				SilkImpl.MakeCurrent();
 
-				if(GL != null) {
-					GLManager.Current = GL;
-					GLManager.SetDefaults();
-					
-					GL.Clear((uint) (ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit));
-					Scene?.OnRender(GL, (float) delta);
-				}
+				GLManager.SetDefaults();
+				
+				Gl.Clear((uint) (ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit));
+				Scene?.OnRender((float) delta);
 			};
-
+			
 			SilkImpl.FramebufferResize += size => {
-				GL?.Viewport(size);
+				SilkImpl.MakeCurrent();
+				Gl.Viewport(size);
 			};
 			
 			SilkImpl.Initialize();
@@ -93,12 +95,12 @@ namespace Coelum.Graphics {
 
 		public void Close() {
 			Scene?.OnUnload();
+			DoUpdates = false;
 			SilkImpl.Close();
 		}
 
 		public void Dispose() {
 			Close();
-			GL?.Dispose();
 			SilkImpl.Dispose();
 		}
 
@@ -120,6 +122,10 @@ namespace Coelum.Graphics {
 				defaults.IsVisible = false;
 				defaults.TransparentFramebuffer = true;
 				defaults.ShouldSwapAutomatically = true;
+
+				if(_sharedContext != null) {
+					defaults.SharedContext = _sharedContext;
+				}
 			}
 
 			if(debug) api.Flags |= ContextFlags.Debug;

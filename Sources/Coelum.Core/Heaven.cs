@@ -46,7 +46,7 @@ namespace Coelum.Core {
 			AppResources = new(aNamespace ?? "", Assembly.GetCallingAssembly());
 		}
 
-		public abstract void Setup();
+		public abstract void Setup(string[] args);
 
 		public void Start(string[] args) {
 			Debugging.FromArgs(args);
@@ -98,21 +98,33 @@ namespace Coelum.Core {
 			
 			Running = true;
 			
-			Setup();
+			Setup(args);
 			Tests.Assert(Windows.Count > 0);
 			
+			Window? toRemove = null;
 			var primaryWindow = Windows[0];
+			// TODO the entire program crashes when a window other than the primary one is closed
 			while(!primaryWindow.SilkImpl.IsClosing && Running) {
 				foreach(var window in Windows) {
+					if(!window.DoUpdates) continue;
+					
 					window.SilkImpl.DoEvents();
-					
+
 					if(!window.SilkImpl.IsClosing) window.SilkImpl.DoUpdate();
-					if(window.SilkImpl.IsClosing) continue;
-					
+					if(window.SilkImpl.IsClosing) {
+						toRemove ??= window;
+						continue;
+					}
+
 					window.SilkImpl.DoRender();
 				}
+
+				if(toRemove != null && toRemove != primaryWindow) {
+					toRemove.Dispose();
+					toRemove = null;
+				}
 			}
-			
+
 			Stop();
 		}
 

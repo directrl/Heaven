@@ -15,14 +15,14 @@ namespace Coelum.Graphics.Texture {
 		public int Layers { get; }
 		public int LayerIndex { get; private set; }
 
-		public TextureArray(GL gl, Vector2 size, int layers)
-			: base(gl, TextureTarget.Texture2DArray, size) {
+		public TextureArray(Vector2 size, int layers)
+			: base(TextureTarget.Texture2DArray, size) {
 
 			Layers = layers;
 			
-			GLManager.SetDefaultsForTextureCreation(Target, GL);
+			GLManager.SetDefaultsForTextureCreation(Target);
 			
-			gl.TexStorage3D(
+			Gl.TexStorage3D(
 				Target,
 				EngineOptions.Texture.TexStorage3DLevels,
 				SizedInternalFormat.Rgba8,
@@ -33,20 +33,18 @@ namespace Coelum.Graphics.Texture {
 		public void Add(Resource resource) {
 			Bind();
 			
-			if(!LoadTexture(this, resource, GL)) {
+			if(!LoadTexture(this, resource)) {
 				throw new ArgumentException("Could not load resource", nameof(resource));
 			}
 		}
 
 		[Obsolete("Not supported. Use Bind(ShaderProgram) instead", true)]
 		public override void Bind() {
-			GL.ActiveTexture(TextureUnit.Texture2);
-			GL.BindTexture(Target, Id);
+			Gl.ActiveTexture(TextureUnit.Texture2);
+			Gl.BindTexture(Target, Id);
 		}
 
-		public static TextureArray Create(GL? gl, params Resource[] resources) {
-			gl ??= GLManager.Current;
-
+		public static TextureArray Create(params Resource[] resources) {
 			int width = 0, height = 0;
 			if(!LoadImage(resources[0],
 			              image => {
@@ -56,10 +54,10 @@ namespace Coelum.Graphics.Texture {
 				throw new ArgumentException("Could not load resources[0]", nameof(resources));
 			}
 
-			var texture = new TextureArray(gl, new(width, height), resources.Length);
+			var texture = new TextureArray(new(width, height), resources.Length);
 			
 			for(int i = 0; i < resources.Length; i++) {
-				if(!LoadTexture(texture, resources[i], gl)) {
+				if(!LoadTexture(texture, resources[i])) {
 					throw new ArgumentException($"Could not load resources[{i}]", nameof(resources));
 				}
 			}
@@ -80,7 +78,7 @@ namespace Coelum.Graphics.Texture {
 			return true;
 		}
 		
-		private unsafe static bool LoadTexture(TextureArray texture, Resource resource, GL gl) {
+		private unsafe static bool LoadTexture(TextureArray texture, Resource resource) {
 			return LoadImage(resource, image => {
 				texture.Bind();
 				
@@ -96,7 +94,7 @@ namespace Coelum.Graphics.Texture {
 						}
 					}
 					
-					gl.TexSubImage3D(
+					Gl.TexSubImage3D(
 						texture.Target,
 						0,
 						0, 0, texture.LayerIndex,
@@ -106,7 +104,7 @@ namespace Coelum.Graphics.Texture {
 					);
 				});
 
-				if(EngineOptions.Texture.Mipmapping) gl.GenerateMipmap(texture.Target);
+				if(EngineOptions.Texture.Mipmapping) Gl.GenerateMipmap(texture.Target);
 				texture.LayerIndex++;
 			});
 		}

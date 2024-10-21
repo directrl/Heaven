@@ -4,6 +4,7 @@ using Coelum.Resources;
 using Coelum.Graphics;
 using Coelum.Graphics.Camera;
 using Coelum.Graphics.Node;
+using Coelum.Graphics.OpenGL;
 using Coelum.Graphics.Scene;
 using Coelum.Graphics.Texture;
 using Coelum.Input;
@@ -19,6 +20,7 @@ namespace Playground.Scenes {
 		private static readonly Random RANDOM = new();
 
 		private ImGuiOverlay _overlay;
+		private ImGuiOverlay _overlay2;
 		
 		private Mesh? _mesh;
 		
@@ -167,7 +169,7 @@ namespace Playground.Scenes {
 					Playground.AppResources[Resource.Type.TEXTURE, "four"]
 				};
 				
-				_texArray = TextureArray.Create(null, textures);
+				_texArray = TextureArray.Create(textures);
 			}
 
 			if(_instObject == null && _mesh != null) {
@@ -226,14 +228,14 @@ namespace Playground.Scenes {
 					}
 				};
 				
-				int wall = 64;
+				int wall = 16;
 
 				_instObject = new(new(_mesh), (int) Math.Pow(wall, 3));
 
-				// var tex1 = Texture2D.Load();
-				// var tex2 = Texture2D.Load(Playground.AppResources[Resource.Type.TEXTURE, "two"]);
-				// var tex3 = Texture2D.Load(Playground.AppResources[Resource.Type.TEXTURE, "three"]);
-				// var tex4 = Texture2D.Load(Playground.AppResources[Resource.Type.TEXTURE, "four"]);
+				var tex1 = Texture2D.Load(Playground.AppResources[Resource.Type.TEXTURE, "one"]);
+				var tex2 = Texture2D.Load(Playground.AppResources[Resource.Type.TEXTURE, "two"]);
+				var tex3 = Texture2D.Load(Playground.AppResources[Resource.Type.TEXTURE, "three"]);
+				var tex4 = Texture2D.Load(Playground.AppResources[Resource.Type.TEXTURE, "four"]);
 				
 				for(int y = 0; y < (wall * 2); y += 2)
 				for(int x = 0; x < (wall * 2); x += 2)
@@ -268,6 +270,14 @@ namespace Playground.Scenes {
 				}
 			};
 
+			_overlay2 = new(this);
+			_overlay2.Render += (_, _) => {
+				if(ImGui.Begin("2nd overlay test")) {
+					ImGui.Text("hello");
+					ImGui.End();
+				}
+			};
+
 			window.GetMice()[0].MouseMove += (mouse, pos) => {
 				_freeCamera.CameraMove(Camera, pos);
 			};
@@ -288,9 +298,9 @@ namespace Playground.Scenes {
 			this.UpdateKeyBindings(_keyBindings);
 		}
 
-		public override void OnRender(GL gl, float delta) {
-			base.OnRender(gl, delta);
-			gl.Disable(EnableCap.CullFace);
+		public override void OnRender(float delta) {
+			base.OnRender(delta);
+			GlobalOpenGL.Gl.Disable(EnableCap.CullFace);
 			
 			_texArray?.Bind();
 			

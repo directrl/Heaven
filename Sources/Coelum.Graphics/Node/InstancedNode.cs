@@ -66,40 +66,38 @@ namespace Coelum.Graphics.Node {
 
 		#region Model
 			{
-				var vbo = new VertexBufferObject(GL, BufferTargetARB.ArrayBuffer);
+				var vbo = new VertexBufferObject(BufferTargetARB.ArrayBuffer);
 				vbo.Bind();
 
 				int size = _models.Count * sizeof(Matrix4x4);
 			
 				fixed(void* addr = &_models.ToArrayNoCopy()[0]) {
-					GL.BufferData(vbo.Target, (nuint) size, addr, GLEnum.StaticDraw);
+					Gl.BufferData(vbo.Target, (nuint) size, addr, GLEnum.StaticDraw);
 				}
 			
 				foreach(var mesh in Model.Meshes) {
-					Tests.Assert(mesh._gl == GL);
-				
 					mesh._vbos.Add(vbo);
 					mesh.VAO.Bind();
 
 					var type = VertexAttribPointerType.Float;
 					size = sizeof(Matrix4x4);
 				
-					GL.EnableVertexAttribArray(i);
-					GL.VertexAttribPointer(i, 4, type, false, (uint) size, null);
-					GL.EnableVertexAttribArray(i + 1);
-					GL.VertexAttribPointer(i + 1, 4, type, false, (uint) size, sizeof(Vector4));
-					GL.EnableVertexAttribArray(i + 2);
-					GL.VertexAttribPointer(i + 2, 4, type, false, (uint) size, 2 * sizeof(Vector4));
-					GL.EnableVertexAttribArray(i + 3);
-					GL.VertexAttribPointer(i + 3, 4, type, false, (uint) size, 3 * sizeof(Vector4));
+					Gl.EnableVertexAttribArray(i);
+					Gl.VertexAttribPointer(i, 4, type, false, (uint) size, null);
+					Gl.EnableVertexAttribArray(i + 1);
+					Gl.VertexAttribPointer(i + 1, 4, type, false, (uint) size, sizeof(Vector4));
+					Gl.EnableVertexAttribArray(i + 2);
+					Gl.VertexAttribPointer(i + 2, 4, type, false, (uint) size, 2 * sizeof(Vector4));
+					Gl.EnableVertexAttribArray(i + 3);
+					Gl.VertexAttribPointer(i + 3, 4, type, false, (uint) size, 3 * sizeof(Vector4));
 				
-					GL.VertexAttribDivisor(i, 1);
-					GL.VertexAttribDivisor(++i, 1);
-					GL.VertexAttribDivisor(++i, 1);
-					GL.VertexAttribDivisor(++i, 1);
+					Gl.VertexAttribDivisor(i, 1);
+					Gl.VertexAttribDivisor(++i, 1);
+					Gl.VertexAttribDivisor(++i, 1);
+					Gl.VertexAttribDivisor(++i, 1);
 				
-					GL.BindBuffer(BufferTargetARB.ArrayBuffer, 0);
-					GL.BindVertexArray(0);
+					Gl.BindBuffer(BufferTargetARB.ArrayBuffer, 0);
+					Gl.BindVertexArray(0);
 				}
 			}
 		#endregion
@@ -108,39 +106,37 @@ namespace Coelum.Graphics.Node {
 
 		#region Material
 			{
-				var vbo = new VertexBufferObject(GL, BufferTargetARB.ArrayBuffer);
+				var vbo = new VertexBufferObject(BufferTargetARB.ArrayBuffer);
 				vbo.Bind();
 
 				int size = _materials.Count * sizeof(Material);
 
 				fixed(void* addr = &_materials.ToArrayNoCopy()[0]) {
-					GL.BufferData(vbo.Target, (nuint) size, addr, GLEnum.StaticDraw);
+					Gl.BufferData(vbo.Target, (nuint) size, addr, GLEnum.StaticDraw);
 				}
 
 				foreach(var mesh in Model.Meshes) {
-					Tests.Assert(mesh._gl == GL);
-				
 					mesh._vbos.Add(vbo);
 					mesh.VAO.Bind();
 
 				#region Color
-					GL.EnableVertexAttribArray(i);
-					GL.VertexAttribPointer(i, 4, VertexAttribPointerType.Float, false,
+					Gl.EnableVertexAttribArray(i);
+					Gl.VertexAttribPointer(i, 4, VertexAttribPointerType.Float, false,
 						(uint) sizeof(Material), null);
-					GL.VertexAttribDivisor(i, 1);
+					Gl.VertexAttribDivisor(i, 1);
 				#endregion
 
 					i++;
 
 				#region Texture Layer
-					GL.EnableVertexAttribArray(i);
-					GL.VertexAttribIPointer(i, 1, VertexAttribIType.Int,
+					Gl.EnableVertexAttribArray(i);
+					Gl.VertexAttribIPointer(i, 1, VertexAttribIType.Int,
 						(uint) sizeof(Material), 24);
-					GL.VertexAttribDivisor(i, 1);
+					Gl.VertexAttribDivisor(i, 1);
 				#endregion
 				
-					GL.BindBuffer(BufferTargetARB.ArrayBuffer, 0);
-					GL.BindVertexArray(0);
+					Gl.BindBuffer(BufferTargetARB.ArrayBuffer, 0);
+					Gl.BindVertexArray(0);
 				}
 			}
 		#endregion
@@ -161,10 +157,8 @@ namespace Coelum.Graphics.Node {
 			uint oc = (uint) NodeCount;
 			
 			foreach(var mesh in Model.Meshes) {
-				Tests.Assert(mesh._gl == GL);
-				
 				mesh.VAO.Bind();
-				GL.DrawElementsInstanced(mesh.Type, mesh.VertexCount, DrawElementsType.UnsignedInt, null, oc);
+				Gl.DrawElementsInstanced(mesh.Type, mesh.VertexCount, DrawElementsType.UnsignedInt, null, oc);
 			}
 		}
 		

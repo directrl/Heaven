@@ -9,7 +9,7 @@ namespace Coelum.Graphics.Scene {
 		public Camera3D? Camera { get; set; }
 
 		protected Scene3D(string id) : base(id) {
-			PrimaryShaderSetup += (gl, _, shader) => {
+			PrimaryShaderSetup += shader => {
 				Camera?.Load(shader);
 			};
 		}

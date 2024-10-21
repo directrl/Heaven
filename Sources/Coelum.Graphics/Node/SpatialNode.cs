@@ -1,4 +1,5 @@
 using System.Numerics;
+using Coelum.Graphics.Node.Component;
 using Coelum.Graphics.OpenGL;
 using Coelum.Node;
 using Silk.NET.OpenGL;
@@ -6,9 +7,7 @@ using Shader = Coelum.Graphics.OpenGL.Shader;
 
 namespace Coelum.Graphics.Node {
 	
-	public abstract class SpatialNode : NodeBase, Component.IShaderRenderable {
-
-		public GL GL { get; } = GLManager.Current;
+	public abstract class SpatialNode : NodeBase, IShaderRenderable {
 
 		public virtual Model? Model { get; init; }
 		public abstract Matrix4x4 LocalTransform { get; }

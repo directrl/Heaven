@@ -4,6 +4,7 @@ using Silk.NET.OpenGL;
 
 namespace Coelum.Graphics.OpenGL {
 	
+	// TODO cache
 	public class Shader {
 		
 		public ShaderType Type { get; }
@@ -23,22 +24,22 @@ namespace Coelum.Graphics.OpenGL {
 			Code = code ?? throw new ArgumentException("Invalid shader resource", nameof(resource));
 		}
 		
-		public uint Compile(GL gl) {
+		public uint Compile() {
 			if(string.IsNullOrEmpty(Code)) {
 				throw new ArgumentNullException("code", "Cannot compile an empty shader!");
 			}
 			
-			uint id = gl.CreateShader(Type);
+			uint id = Gl.CreateShader(Type);
 
 			if(id == 0) {
 				throw new PlatformException("Could not create a GL shader");
 			}
 			
-			gl.ShaderSource(id, Code);
-			gl.CompileShader(id);
+			Gl.ShaderSource(id, Code);
+			Gl.CompileShader(id);
 
-			if(gl.GetShader(id, GLEnum.CompileStatus) == 0) {
-				throw new CompilationException(gl, id);
+			if(Gl.GetShader(id, GLEnum.CompileStatus) == 0) {
+				throw new CompilationException(id);
 			}
 
 			return id;
@@ -46,8 +47,8 @@ namespace Coelum.Graphics.OpenGL {
 		
 		public class CompilationException : Exception {
 
-			public CompilationException(GL gl, uint id)
-				: base($"Error occured during shader compilation: {gl.GetShaderInfoLog(id)}") { }
+			public CompilationException(uint id)
+				: base($"Error occured during shader compilation: {Gl.GetShaderInfoLog(id)}") { }
 		}
 
 		public class PreprocessingException : Exception {
