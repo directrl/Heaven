@@ -16,7 +16,7 @@ void main() {
 	vec4 mat_color = vec4(1.0, 1.0, 1.0, 1.0);
 	
 	//$overlay_call COLOR_PRE
-	mat_color = u_material.color;
+	mat_color = u_material.albedo;
 	//$overlay_call COLOR_POST
 	
 	if(tex_color.a < 0.01) {

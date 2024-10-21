@@ -10,7 +10,7 @@ namespace Coelum.Graphics.Scene {
 
 		protected Scene2D(string id) : base(id) {
 			PrimaryShaderSetup += shader => {
-				Camera?.Load(shader);
+				Camera?.Render(shader);
 			};
 		}
 
@@ -18,9 +18,9 @@ namespace Coelum.Graphics.Scene {
 			PrimaryShader = new(
 				Module.RESOURCES, 
 				new(ShaderType.FragmentShader,
-				    Module.RESOURCES[Resource.Type.SHADER, "scene.frag"]),
+				    Module.RESOURCES[ResourceType.SHADER, "scene.frag"]),
 				new(ShaderType.VertexShader,
-				    Module.RESOURCES[Resource.Type.SHADER, "scene.vert"])
+				    Module.RESOURCES[ResourceType.SHADER, "scene.vert"])
 			);
 			
 			base.OnLoad(window);

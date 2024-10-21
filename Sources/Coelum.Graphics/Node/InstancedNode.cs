@@ -144,7 +144,7 @@ namespace Coelum.Graphics.Node {
 			_ready = true;
 		}
 
-		public override void Load(ShaderProgram shader) {
+		public override void Render(ShaderProgram shader) {
 			Tests.Assert(_ready, "Object is not ready! Did you forget to call Build() beforehand?");
 			
 			Model.Load(shader);

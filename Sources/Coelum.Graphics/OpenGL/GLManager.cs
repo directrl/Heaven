@@ -1,5 +1,6 @@
 using System.Text;
 using Coelum.Configuration;
+using Coelum.Debug;
 using Silk.NET.OpenGL;
 
 namespace Coelum.Graphics.OpenGL {
@@ -14,6 +15,10 @@ namespace Coelum.Graphics.OpenGL {
 			
 			Gl.Enable(EnableCap.Blend);
 			Gl.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
+
+			if(Debugging.WireframeRendering) {
+				Gl.PolygonMode(TriangleFace.FrontAndBack, PolygonMode.Line);
+			}
 		}
 		
 		public static void SetDefaultsForTextureCreation(TextureTarget target) {

@@ -7,6 +7,7 @@ namespace Coelum.Debug {
 		
 		public static bool DumpShaders { get; set; }
 		public static bool IgnoreMissingShaderUniforms { get; set; }
+		public static bool WireframeRendering { get; set; }
 		
 	#if DEBUG
 		public static bool CheatEnabled { get; private set; }
@@ -26,6 +27,7 @@ namespace Coelum.Debug {
 
 			if(args.Contains("--verbose")) Verbose = true;
 			if(args.Contains("--dump-shaders")) DumpShaders = true;
+			if(args.Contains("--wireframe")) WireframeRendering = true;
 		}
 	}
 }

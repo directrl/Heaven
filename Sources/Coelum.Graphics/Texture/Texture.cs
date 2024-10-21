@@ -20,8 +20,8 @@ namespace Coelum.Graphics.Texture {
 			Bind();
 		}
 
-		public virtual void Bind() {
-			Gl.ActiveTexture(TextureUnit.Texture0);
+		public virtual void Bind(int unit = 0) {
+			Gl.ActiveTexture((TextureUnit) ((int) TextureUnit.Texture0 + unit));
 			Gl.BindTexture(Target, Id);
 		}
 

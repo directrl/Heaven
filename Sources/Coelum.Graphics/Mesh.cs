@@ -10,7 +10,8 @@ namespace Coelum.Graphics {
 		public readonly uint VertexCount;
 		public readonly VertexArrayObject VAO;
 
-		public readonly PrimitiveType Type;
+		public PrimitiveType Type { get; }
+		public Material Material { get; set; } = new();
 		
 		public Mesh(PrimitiveType type,
 		            float[] vertices, uint[] indices, float[]? texCoords, float[]? normals) {
@@ -75,7 +76,9 @@ namespace Coelum.Graphics {
 			Gl.BindVertexArray(0);
 		}
 
-		public unsafe virtual void Render() {
+		public unsafe virtual void Render(ShaderProgram shader) {
+			Material.Load(shader);
+			
 			VAO.Bind();
 			Gl.DrawElements(Type, VertexCount, DrawElementsType.UnsignedInt, null);
 		}

@@ -58,7 +58,7 @@ namespace Coelum.Graphics.OpenGL {
 			
 			if(line.StartsWith(token)) {
 				string includeName = line.Replace(token, "");
-				var resource = resources[Resource.Type.SHADER, includeName];
+				var resource = resources[ResourceType.SHADER, includeName];
 
 				string? code = resource.ReadString();
 				if(code == null) {

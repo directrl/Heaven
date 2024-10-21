@@ -38,13 +38,13 @@ namespace Coelum.Graphics.Texture {
 			}
 		}
 
-		[Obsolete("Not supported. Use Bind(ShaderProgram) instead", true)]
-		public override void Bind() {
-			Gl.ActiveTexture(TextureUnit.Texture2);
-			Gl.BindTexture(Target, Id);
-		}
+		// TODO
+		// [Obsolete("Not supported. Use Bind(ShaderProgram) instead", true)]
+		// public override void Bind(int unit = 2) {
+		// 	base.Bind(unit);
+		// }
 
-		public static TextureArray Create(params Resource[] resources) {
+		public static TextureArray Create(params IResource[] resources) {
 			int width = 0, height = 0;
 			if(!LoadImage(resources[0],
 			              image => {
@@ -65,7 +65,7 @@ namespace Coelum.Graphics.Texture {
 			return texture;
 		}
 
-		private static bool LoadImage(Resource resource, Action<Image<Rgba32>> callback) {
+		private static bool LoadImage(IResource resource, Action<Image<Rgba32>> callback) {
 			resource.Cache = false; // textures should not be cached as they're uploaded to the GPU
 			
 			var data = resource.ReadBytes();
@@ -78,7 +78,7 @@ namespace Coelum.Graphics.Texture {
 			return true;
 		}
 		
-		private unsafe static bool LoadTexture(TextureArray texture, Resource resource) {
+		private unsafe static bool LoadTexture(TextureArray texture, IResource resource) {
 			return LoadImage(resource, image => {
 				texture.Bind();
 				

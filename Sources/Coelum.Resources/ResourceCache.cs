@@ -3,7 +3,7 @@ using Coelum.LanguageExtensions;
 
 namespace Coelum.Resources {
 	
-	public class ResourceCache : CacheBase<Resource, byte[]> {
+	public class ResourceCache : CacheBase<IResource, byte[]> {
 
 		public static readonly ResourceCache GLOBAL = new();
 	}

@@ -54,9 +54,9 @@ namespace Playground.Scenes {
 				_object = new Node2D() {
 					Position = new(-50f, -50f),
 					Model = new Model() {
-						Meshes = new[] { _mesh },
+						Meshes = new() { _mesh },
 						Material = new Material {
-							Color = new(1.0f, 0.0f, 0.0f, 1.0f)
+							Albedo = new(1.0f, 0.0f, 0.0f, 1.0f)
 						}
 					}
 				};
@@ -64,9 +64,9 @@ namespace Playground.Scenes {
 				_object2 = new Node2D() {
 					Position = new(50f, 50f),
 					Model = new Model() {
-						Meshes = new[] { _mesh },
+						Meshes = new() { _mesh },
 						Material = new Material {
-							Color = new(0.0f, 0.0f, 1.0f, 1.0f)
+							Albedo = new(0.0f, 0.0f, 1.0f, 1.0f)
 						}
 					}
 				};

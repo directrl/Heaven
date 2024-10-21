@@ -13,7 +13,7 @@ namespace Playground {
 		}
 
 		public override void Setup(string[] args) {
-			var scene = new TextureTest();
+			var scene = new ModelTest();
 			var window = Window.Create(debug: true);
 			window.Scene = scene;
 			

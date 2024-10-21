@@ -162,11 +162,11 @@ namespace Playground.Scenes {
 			}
 
 			if(_texArray == null) {
-				var textures = new Resource[] {
-					Playground.AppResources[Resource.Type.TEXTURE, "one"],
-					Playground.AppResources[Resource.Type.TEXTURE, "two"],
-					Playground.AppResources[Resource.Type.TEXTURE, "three"],
-					Playground.AppResources[Resource.Type.TEXTURE, "four"]
+				var textures = new IResource[] {
+					Playground.AppResources[ResourceType.TEXTURE, "one"],
+					Playground.AppResources[ResourceType.TEXTURE, "two"],
+					Playground.AppResources[ResourceType.TEXTURE, "three"],
+					Playground.AppResources[ResourceType.TEXTURE, "four"]
 				};
 				
 				_texArray = TextureArray.Create(textures);
@@ -176,22 +176,22 @@ namespace Playground.Scenes {
 				_objects = new();
 				
 				/*_mat1 = new() {
-					//Texture = Texture2D.Load(Playground.AppResources[Resource.Type.TEXTURE, "one"]),
+					//Texture = Texture2D.Load(Playground.AppResources[ResourceType.TEXTURE, "one"]),
 					TextureLayer = 0,
 					Color = new(1, 1, 1, 1)
 				};
 				_mat2 = new() {
-					//Texture = Texture2D.Load(Playground.AppResources[Resource.Type.TEXTURE, "two"]),
+					//Texture = Texture2D.Load(Playground.AppResources[ResourceType.TEXTURE, "two"]),
 					TextureLayer = 1,
 					Color = new(1, 1, 1, 1)
 				};
 				_mat3 = new() {
-					//Texture = Texture2D.Load(Playground.AppResources[Resource.Type.TEXTURE, "three"]),
+					//Texture = Texture2D.Load(Playground.AppResources[ResourceType.TEXTURE, "three"]),
 					TextureLayer = 2,
 					Color = new(1, 1, 1, 1)
 				};
 				_mat4 = new() {
-					//Texture = Texture2D.Load(Playground.AppResources[Resource.Type.TEXTURE, "four"]),
+					//Texture = Texture2D.Load(Playground.AppResources[ResourceType.TEXTURE, "four"]),
 					TextureLayer = 3,
 					Color = new(1, 1, 1, 1)
 				};*/
@@ -220,10 +220,12 @@ namespace Playground.Scenes {
 				_object = new Node3D() {
 					Position = new(0, 20, 0),
 					Model = new() {
-						Meshes = new[] { _mesh },
+						Meshes = new() { _mesh },
 						Material = new() {
-							Color = new(1, 1, 1, 1),
-							Texture = Texture2D.Load(Playground.AppResources[Resource.Type.TEXTURE, "two"])
+							Albedo = new(1, 1, 1, 1),
+							Textures = new() {
+								(Material.TextureType.Diffuse, Texture2D.Load(Playground.AppResources[ResourceType.TEXTURE, "two"]))
+							}
 						}
 					}
 				};
@@ -232,10 +234,10 @@ namespace Playground.Scenes {
 
 				_instObject = new(new(_mesh), (int) Math.Pow(wall, 3));
 
-				var tex1 = Texture2D.Load(Playground.AppResources[Resource.Type.TEXTURE, "one"]);
-				var tex2 = Texture2D.Load(Playground.AppResources[Resource.Type.TEXTURE, "two"]);
-				var tex3 = Texture2D.Load(Playground.AppResources[Resource.Type.TEXTURE, "three"]);
-				var tex4 = Texture2D.Load(Playground.AppResources[Resource.Type.TEXTURE, "four"]);
+				var tex1 = Texture2D.Load(Playground.AppResources[ResourceType.TEXTURE, "one"]);
+				var tex2 = Texture2D.Load(Playground.AppResources[ResourceType.TEXTURE, "two"]);
+				var tex3 = Texture2D.Load(Playground.AppResources[ResourceType.TEXTURE, "three"]);
+				var tex4 = Texture2D.Load(Playground.AppResources[ResourceType.TEXTURE, "four"]);
 				
 				for(int y = 0; y < (wall * 2); y += 2)
 				for(int x = 0; x < (wall * 2); x += 2)
@@ -245,10 +247,10 @@ namespace Playground.Scenes {
 					var o = new Node3D() {
 						Position = new(x, y, z),
 						Model = new() {
-							Meshes = new[] { _mesh },
+							Meshes = new() { _mesh },
 							Material = new() {
-								Color = new(1, 1, 1, 1),
-								TextureLayer = random
+								Albedo = new(1, 1, 1, 1),
+								//TextureLayer = random
 							}
 						}
 					};

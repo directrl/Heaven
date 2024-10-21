@@ -31,7 +31,7 @@ namespace Coelum.Graphics.Camera {
 			};
 		}
 
-		public override void Load(ShaderProgram shader) {
+		public override void Render(ShaderProgram shader) {
 			RecalculateViewMatrix();
 			
 			shader.SetUniform("projection", ProjectionMatrix);
