@@ -62,11 +62,34 @@ namespace Coelum.Graphics.Scene {
 			PrimaryShader.AddOverlays(ShaderOverlays);
 			
 			Window = window;
+
+			// TODO should this really be set each time a scene is changed?
+			window.SilkImpl.Size = new(
+				Options.GetOrDefault("window_width", window.SilkImpl.Size.X),
+				Options.GetOrDefault("window_height", window.SilkImpl.Size.Y)
+			);
+
+			window.SilkImpl.Position = new(
+				Options.GetOrDefault("window_x", window.SilkImpl.Position.X),
+				Options.GetOrDefault("window_y", window.SilkImpl.Position.Y)
+			);
+
+			window.SilkImpl.Resize += newSize => {
+				Options.Set("window_width", newSize.X);
+				Options.Set("window_height", newSize.Y);
+			};
+
+			window.SilkImpl.Move += newPosition => {
+				Options.Set("window_x", newPosition.X);
+				Options.Set("window_y", newPosition.Y);
+			};
+			
 			Load?.Invoke(window);
 		}
 
 		public virtual void OnUnload() {
 			Window = null;
+			Options.Save();
 			Unload?.Invoke();
 		}
 
