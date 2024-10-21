@@ -523,4 +523,4 @@ msbuild.wrn
 # krita
 *~
 
-Resources/Playground/Models/**/*
+Resources/Playground/Resources/Models
