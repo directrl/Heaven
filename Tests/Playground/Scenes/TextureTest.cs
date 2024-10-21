@@ -48,7 +48,7 @@ namespace Playground.Scenes {
 			
 			this.SetupKeyBindings(_keyBindings);
 			
-			ShaderOverlays.AddRange(Texture2D.OVERLAYS);
+			ShaderOverlays.AddRange(Material.OVERLAYS);
 			ShaderOverlays.AddRange(TextureArray.OVERLAYS);
 			ShaderOverlays.AddRange(InstancedNode<Node3D>.OVERLAYS);
 		}

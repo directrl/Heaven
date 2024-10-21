@@ -48,7 +48,8 @@ namespace Coelum.ModelLoading {
 				                                   | PostProcessSteps.CalculateTangentSpace 
 				                                   | PostProcessSteps.LimitBoneWeights 
 				                                   | PostProcessSteps.PreTransformVertices 
-				                                   | PostProcessSteps.OptimizeMeshes)) {
+				                                   | PostProcessSteps.OptimizeMeshes
+				                                   | PostProcessSteps.FlipUVs)) {
 			
 			Log.Debug($"[MODEL LOADER] Creating model for [{name}]");
 
@@ -102,7 +103,7 @@ namespace Coelum.ModelLoading {
 					var texCoord = aiMesh->MTextureCoords[0][i];
 					texCoords.Add(texCoord.X);
 					texCoords.Add(texCoord.Y);
-					texCoords.Add(texCoord.Z);
+					//texCoords.Add(texCoord.Z);
 				}
 			}
 		#endregion
@@ -117,7 +118,10 @@ namespace Coelum.ModelLoading {
 			}
 		#endregion
 
-			var material = new Material();
+			var material = new Material() {
+				Textures = new()
+			};
+			
 			ProcessMaterial(ref model, ref material,
 			                aiScene, aiScene->MMaterials[aiMesh->MMaterialIndex]);
 			
@@ -181,8 +185,14 @@ namespace Coelum.ModelLoading {
 		                                                   AiScene* aiScene, 
 		                                                   AiMaterial* aiMaterial,
 		                                                   AiTextureType textureType) {
+
+			uint texCount = Ai.GetMaterialTextureCount(aiMaterial, textureType);
+
+			if(texCount == 0) {
+				Log.Warning($"[MODEL LOADER ({model.Name})] No textures found for material; is the model exported correctly?");
+			}
 			
-			for(uint i = 0; i < Ai.GetMaterialTextureCount(aiMaterial, textureType); i++) {
+			for(uint i = 0; i < texCount; i++) {
 				AssimpString path;
 				Ai.GetMaterialTexture(aiMaterial, textureType, i, &path,
 				                      null, null, null, null, null, null);

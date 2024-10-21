@@ -27,7 +27,7 @@ namespace Playground.Scenes {
 			_keyBindings = new(Id);
 			//_freeCamera = new(_keyBindings);
 			
-			ShaderOverlays.AddRange(Texture2D.OVERLAYS);
+			ShaderOverlays.AddRange(Material.OVERLAYS);
 		}
 
 		public override void OnLoad(Window window) {

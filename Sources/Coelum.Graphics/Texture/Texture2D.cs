@@ -54,7 +54,7 @@ namespace Coelum.Graphics.Texture {
 			Cache.GLOBAL.Set(resource, texture);
 			return texture;
 		}
-		
+		private static int i = 0;
 		private unsafe static Texture2D Create(string name, byte[] data) {
 			Log.Debug($"Creating texture for [{name}]");
 
@@ -89,24 +89,24 @@ namespace Coelum.Graphics.Texture {
 			public static readonly Cache GLOBAL = new();
 		}
 		
-		public static readonly IShaderOverlay[] OVERLAYS = {
-			FragmentShaderOverlay.OVERLAY
-		};
-
-		public class FragmentShaderOverlay : IShaderOverlay, ILazySingleton<FragmentShaderOverlay> {
-
-			public static FragmentShaderOverlay OVERLAY
-				=> ILazySingleton<FragmentShaderOverlay>._instance.Value;
-
-			public string Name => "texture2D";
-			public string Path => "Overlays.Texture2D";
-			public ShaderType Type => ShaderType.FragmentShader;
-			public ShaderPass Pass => ShaderPass.COLOR_PRE;
-			public ResourceManager ResourceManager => Module.RESOURCES;
-
-			public void Load(ShaderProgram shader) {
-				//shader.SetUniform("tex2d_sampler", 1);
-			}
-		}
+		// public static readonly IShaderOverlay[] OVERLAYS = {
+		// 	FragmentShaderOverlay.OVERLAY
+		// };
+		//
+		// public class FragmentShaderOverlay : IShaderOverlay, ILazySingleton<FragmentShaderOverlay> {
+		//
+		// 	public static FragmentShaderOverlay OVERLAY
+		// 		=> ILazySingleton<FragmentShaderOverlay>._instance.Value;
+		//
+		// 	public string Name => "texture2D";
+		// 	public string Path => "Overlays.Texture2D";
+		// 	public ShaderType Type => ShaderType.FragmentShader;
+		// 	public ShaderPass Pass => ShaderPass.COLOR_PRE;
+		// 	public ResourceManager ResourceManager => Module.RESOURCES;
+		//
+		// 	public void Load(ShaderProgram shader) {
+		// 		//shader.SetUniform("tex2d_sampler", 1);
+		// 	}
+		// }
 	}
 }

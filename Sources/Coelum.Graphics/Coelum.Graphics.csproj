@@ -103,6 +103,18 @@
     <EmbeddedResource Update="..\..\Resources\Coeli\Resources\Shaders\Uniforms\camera_matrices.glsl">
       <Link>Resources\Shaders\Uniforms\camera_matrices.glsl</Link>
     </EmbeddedResource>
+    <EmbeddedResource Update="..\..\Resources\Coeli\Resources\Shaders\Overlays\Material\header.frag">
+      <Link>Resources\Shaders\Overlays\Material\header.frag</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Update="..\..\Resources\Coeli\Resources\Shaders\Overlays\Material\material.glsl">
+      <Link>Resources\Shaders\Overlays\Material\material.glsl</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Update="..\..\Resources\Coeli\Resources\Shaders\Structures\material.glsl">
+      <Link>Resources\Shaders\Structures\material.glsl</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Update="..\..\Resources\Coeli\Resources\Shaders\Overlays\Material\call.frag">
+      <Link>Resources\Shaders\Overlays\Material\call.frag</Link>
+    </EmbeddedResource>
   </ItemGroup>
 
   <ItemGroup>

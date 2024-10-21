@@ -35,7 +35,7 @@ namespace Playground.Scenes {
 			
 			this.SetupKeyBindings(_keyBindings);
 			
-			ShaderOverlays.AddRange(Texture2D.OVERLAYS);
+			ShaderOverlays.AddRange(Material.OVERLAYS);
 			// ShaderOverlays.AddRange(TextureArray.OVERLAYS);
 			// ShaderOverlays.AddRange(InstancedNode<Node3D>.OVERLAYS);
 		}
@@ -95,7 +95,7 @@ namespace Playground.Scenes {
 				};
 				_model2 = new("test", new[] { _mesh });
 				
-				_model = ModelLoader.Load(Playground.AppResources[ResourceType.MODEL, "bmw/bmw.obj"]);
+				_model = ModelLoader.Load(Playground.AppResources[ResourceType.MODEL, "untitled.glb"]);
 				_node = new() {
 					Model = _model
 				};

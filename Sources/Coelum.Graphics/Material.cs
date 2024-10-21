@@ -3,6 +3,9 @@ using System.Runtime.InteropServices;
 using Coelum.Debug;
 using Coelum.Graphics.OpenGL;
 using Coelum.Graphics.Texture;
+using Coelum.LanguageExtensions;
+using Coelum.Resources;
+using Silk.NET.OpenGL;
 using ShadingModel = Silk.NET.OpenGL.ShadingModel;
 
 namespace Coelum.Graphics {
@@ -59,23 +62,14 @@ namespace Coelum.Graphics {
 			shader.SetUniform("material.diffuse_color", DiffuseColor);
 			shader.SetUniform("material.specular_color", SpecularColor);
 
-			int[] textureCounter = new int[(int) TextureType.Unknown];
 			int textureUnit = 0;
 			
 			foreach(var (type, texture) in Textures) {
-				int textureIndex = textureCounter[(int) type];
-
-				if(textureIndex >= 4) {
-					throw new ArgumentOutOfRangeException(
-						nameof(textureIndex), "Only a maximum of 4 textures of one type are supported");
-				}
-				
-				string uniformName = $"tex_{type.ToString().ToLower()}_{textureIndex}";
+				string uniformName = $"material.tex_{type.ToString().ToLower()}";
 			
 				shader.SetUniform(uniformName, textureUnit);
 				texture.Bind(textureUnit);
-				
-				textureCounter[(int) type]++;
+
 				textureUnit++;
 			}
 		}
@@ -87,6 +81,24 @@ namespace Coelum.Graphics {
 			Normal,
 			Height,
 			Unknown
+		}
+
+		public static readonly IShaderOverlay[] OVERLAYS = {
+			FragmentShaderOverlay.OVERLAY
+		};
+
+		public class FragmentShaderOverlay : IShaderOverlay, ILazySingleton<FragmentShaderOverlay> {
+			
+			public static FragmentShaderOverlay OVERLAY
+				=> ILazySingleton<FragmentShaderOverlay>._instance.Value;
+
+			public string Name => "material";
+			public string Path => "Overlays.Material";
+			public ShaderType Type => ShaderType.FragmentShader;
+			public ShaderPass Pass => ShaderPass.COLOR_PRE;
+			public ResourceManager ResourceManager => Module.RESOURCES;
+
+			public void Load(ShaderProgram shader) { }
 		}
 	}
 }
