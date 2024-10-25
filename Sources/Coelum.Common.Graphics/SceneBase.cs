@@ -55,10 +55,6 @@ namespace Coelum.Common.Graphics {
 		}
 		
 		public virtual void OnRender(float delta) {
-			FindChildrenByComponent((IRenderable renderable) => {
-				renderable.Render(delta);
-			});
-			
 			Render?.Invoke(delta);
 		}
 	}
