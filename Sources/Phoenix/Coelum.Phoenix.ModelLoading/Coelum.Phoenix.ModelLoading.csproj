@@ -9,8 +9,8 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Coelum.Phoenix\Coelum.Phoenix.csproj" />
-      <ProjectReference Include="..\Coelum.LanguageExtensions\Coelum.LanguageExtensions.csproj" />
-      <ProjectReference Include="..\Coelum.Resources\Coelum.Resources.csproj" />
+      <ProjectReference Include="..\..\Coelum.LanguageExtensions\Coelum.LanguageExtensions.csproj" />
+      <ProjectReference Include="..\..\Coelum.Resources\Coelum.Resources.csproj" />
     </ItemGroup>
 
     <ItemGroup>

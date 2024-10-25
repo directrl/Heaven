@@ -111,7 +111,7 @@ namespace Playground.Scenes {
 			}
 
 			if(_mesh != null) {
-				AddChild(new Node3D() {
+				/*AddChild(new Node3D() {
 					Position = new(0, 0, 0),
 					Model = new() {
 						Meshes = new() { _mesh },
@@ -157,7 +157,7 @@ namespace Playground.Scenes {
 							}
 						}
 					}
-				});
+				});*/
 
 				/*int wall = 16;
 				

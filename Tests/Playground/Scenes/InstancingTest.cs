@@ -55,51 +55,51 @@ namespace Playground.Scenes {
 
 			if(_mesh == null) {
 				_mesh = new Mesh(PrimitiveType.Triangles,
-					new float[] {
-						// VO
-						-0.5f, 0.5f, 0.5f,
-						// V1
-						-0.5f, -0.5f, 0.5f,
-						// V2
-						0.5f, -0.5f, 0.5f,
-						// V3
-						0.5f, 0.5f, 0.5f,
-						// V4
-						-0.5f, 0.5f, -0.5f,
-						// V5
-						0.5f, 0.5f, -0.5f,
-						// V6
-						-0.5f, -0.5f, -0.5f,
-						// V7
-						0.5f, -0.5f, -0.5f,
-					},
-					new uint[] {
-						// Front face
-						0, 1, 3, 3, 1, 2,
-						// Top Face
-						4, 0, 3, 5, 4, 3,
-						// Right face
-						3, 2, 7, 5, 3, 7,
-						// Left face
-						6, 1, 0, 6, 0, 4,
-						// Bottom face
-						2, 1, 6, 2, 6, 7,
-						// Back face
-						7, 6, 4, 7, 4, 5,
-					},
-					null,
-					null
+				                 new float[] {
+					                 // VO
+					                 -0.5f, 0.5f, 0.5f,
+					                 // V1
+					                 -0.5f, -0.5f, 0.5f,
+					                 // V2
+					                 0.5f, -0.5f, 0.5f,
+					                 // V3
+					                 0.5f, 0.5f, 0.5f,
+					                 // V4
+					                 -0.5f, 0.5f, -0.5f,
+					                 // V5
+					                 0.5f, 0.5f, -0.5f,
+					                 // V6
+					                 -0.5f, -0.5f, -0.5f,
+					                 // V7
+					                 0.5f, -0.5f, -0.5f,
+				                 },
+				                 new uint[] {
+					                 // Front face
+					                 0, 1, 3, 3, 1, 2,
+					                 // Top Face
+					                 4, 0, 3, 5, 4, 3,
+					                 // Right face
+					                 3, 2, 7, 5, 3, 7,
+					                 // Left face
+					                 6, 1, 0, 6, 0, 4,
+					                 // Bottom face
+					                 2, 1, 6, 2, 6, 7,
+					                 // Back face
+					                 7, 6, 4, 7, 4, 5,
+				                 },
+				                 null,
+				                 null
 				);
 			}
 
 			if(_instObject == null && _mesh != null) {
 				int wall = 32;
 
-				_instObject = new(new(_mesh), (int) Math.Pow(wall, 3));
+				_instObject = new(null/*new(_mesh)*/, (int) Math.Pow(wall, 3));
 
 				var sw = Stopwatch.StartNew();
 				
-				for(int y = 0; y < (wall * 2); y += 2)
+				/*for(int y = 0; y < (wall * 2); y += 2)
 				for(int x = 0; x < (wall * 2); x += 2)
 				for(int z = 0; z < (wall * 2); z += 2) {
 					var o1 = new Node3D() {
@@ -121,7 +121,7 @@ namespace Playground.Scenes {
 					
 					_instObject.Add(o1);
 					objects.Add(o2);
-				}
+				}*/
 				
 				sw.Stop();
 				
