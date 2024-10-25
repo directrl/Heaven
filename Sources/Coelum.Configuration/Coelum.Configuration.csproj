@@ -10,10 +10,4 @@
       <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Reference Include="Silk.NET.OpenGL">
-        <HintPath>..\..\..\..\..\..\..\home\default\.nuget\packages\silk.net.opengl\2.21.0\lib\net5.0\Silk.NET.OpenGL.dll</HintPath>
-      </Reference>
-    </ItemGroup>
-
 </Project>

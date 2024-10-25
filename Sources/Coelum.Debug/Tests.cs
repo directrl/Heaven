@@ -1,7 +1,4 @@
 using System.Runtime.CompilerServices;
-using Serilog;
-using Silk.NET.Core;
-using Silk.NET.OpenGL;
 
 namespace Coelum.Debug {
 	
@@ -19,23 +16,6 @@ namespace Coelum.Debug {
 		#if DEBUG
 			System.Diagnostics.Debug.Assert(condition, message);
 		#endif
-		}
-
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static void CheckGLError(GL gl, bool aggressive = false) {
-			var error = gl.GetError();
-
-			switch(error) {
-				case GLEnum.NoError:
-					break;
-				default:
-					if(aggressive) {
-						throw new PlatformException($"OpenGL Error: {error}");
-					}
-					
-					Log.Error($"OpenGL Error: {error}");
-					break;
-			}
 		}
 	}
 }

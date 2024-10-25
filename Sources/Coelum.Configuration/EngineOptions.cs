@@ -1,5 +1,3 @@
-using Silk.NET.OpenGL;
-
 namespace Coelum.Configuration {
 	
 	public static class EngineOptions {
@@ -14,8 +12,8 @@ namespace Coelum.Configuration {
 
 		public static class Texture {
 
-			public static uint MinFilter { get; set; } = (int) TextureMinFilter.NearestMipmapLinear;
-			public static uint MagFilter { get; set; } = (int) TextureMagFilter.Nearest;
+			public static uint MinFilter { get; set; } = 9986; // GL_NEAREST_MIPMAP_LINEAR
+			public static uint MagFilter { get; set; } = 9728; // GL_NEAREST
 
 			public static bool Mipmapping { get; set; } = true;
 			
