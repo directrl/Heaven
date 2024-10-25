@@ -4,16 +4,11 @@
         <TargetFramework>net6.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <RootNamespace>Coelum.Input</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Silk.NET.Input.Glfw" Version="2.21.0" />
-    </ItemGroup>
-
-    <ItemGroup>
       <ProjectReference Include="..\Coelum.Configuration\Coelum.Configuration.csproj" />
-      <ProjectReference Include="..\Coelum.Graphics.Phoenix\Coelum.Graphics.Phoenix.csproj" />
+      <ProjectReference Include="..\Coelum.Node\Coelum.Node.csproj" />
     </ItemGroup>
 
 </Project>

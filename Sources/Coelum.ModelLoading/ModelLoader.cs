@@ -1,8 +1,8 @@
 using System.Diagnostics;
 using System.Dynamic;
 using System.Numerics;
-using Coelum.Graphics;
-using Coelum.Graphics.Texture;
+using Coelum.Graphics.Phoenix;
+using Coelum.Graphics.Phoenix.Texture;
 using Coelum.LanguageExtensions;
 using Coelum.Resources;
 using Serilog;
@@ -15,8 +15,8 @@ using AiMesh = Silk.NET.Assimp.Mesh;
 using AiFace = Silk.NET.Assimp.Face;
 using AiMaterial = Silk.NET.Assimp.Material;
 using AiTextureType = Silk.NET.Assimp.TextureType;
-using Material = Coelum.Graphics.Material;
-using Mesh = Coelum.Graphics.Mesh;
+using Material = Coelum.Graphics.Phoenix.Material;
+using Mesh = Coelum.Graphics.Phoenix.Mesh;
 using PrimitiveType = Silk.NET.OpenGL.PrimitiveType;
 
 namespace Coelum.ModelLoading {

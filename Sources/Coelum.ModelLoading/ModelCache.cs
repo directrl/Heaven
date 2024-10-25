@@ -1,4 +1,4 @@
-using Coelum.Graphics;
+using Coelum.Graphics.Phoenix;
 using Coelum.LanguageExtensions;
 using Coelum.Resources;
 

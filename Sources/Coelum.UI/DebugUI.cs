@@ -1,4 +1,4 @@
-using Coelum.Graphics.Scene;
+using Coelum.Graphics.Phoenix.Scene;
 using ImGuiNET;
 
 namespace Coelum.UI {
@@ -7,10 +7,10 @@ namespace Coelum.UI {
 		
 		public delegate void AdditionalInfoEventHandler(float delta, params dynamic[] args);
 
-		private readonly SceneBase _scene;
+		private readonly PhoenixSceneBase _scene;
 		public event AdditionalInfoEventHandler? AdditionalInfo;
 
-		public DebugUI(SceneBase scene) : base(scene) {
+		public DebugUI(PhoenixSceneBase scene) : base(scene) {
 			_scene = scene;
 		}
 

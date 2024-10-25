@@ -1,10 +1,10 @@
 using Coelum.Configuration;
-using Coelum.Graphics.OpenGL;
-using Coelum.Graphics.Scene;
+using Coelum.Graphics.Phoenix.OpenGL;
+using Coelum.Graphics.Phoenix.Scene;
 using ImGuiNET;
 using Silk.NET.OpenGL.Extensions.ImGui;
 using Silk.NET.Windowing;
-using static Coelum.Graphics.OpenGL.GlobalOpenGL;
+using static Coelum.Graphics.Phoenix.OpenGL.GlobalOpenGL;
 
 namespace Coelum.UI {
 	
@@ -14,7 +14,7 @@ namespace Coelum.UI {
 		
 		protected ImGuiController Controller { get; }
 		
-		public ImGuiOverlay(SceneBase scene) {
+		public ImGuiOverlay(PhoenixSceneBase scene) {
 			if(scene.Window?.Input == null) {
 				throw new ArgumentException("Scene must already have a window with input assigned! "
 					+ "Are you creating an overlay in the constructor instead of in Load()?");

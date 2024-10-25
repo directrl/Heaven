@@ -1,13 +1,13 @@
-using Coelum.Graphics;
-using Coelum.Graphics.Scene;
+using Coelum.Graphics.Phoenix;
+using Coelum.Graphics.Phoenix.Scene;
 
 namespace Coelum.Input {
 	
 	public static class SceneExtensions {
 		
-		public static void SetupKeyBindings(this SceneBase scene, KeyBindings keyBindings) {
+		public static void SetupKeyBindings(this PhoenixSceneBase scene, KeyBindings keyBindings) {
 			if(scene.Window == null) {
-				scene.Load += window => DoSetupKeyBindings(window, keyBindings);
+				scene.Load += window => DoSetupKeyBindings((SilkWindow) window, keyBindings);
 			} else {
 				DoSetupKeyBindings(scene.Window, keyBindings);
 			}
@@ -15,7 +15,7 @@ namespace Coelum.Input {
 			scene.Unload += keyBindings.Dispose;
 		}
 
-		public static void UpdateKeyBindings(this SceneBase scene, KeyBindings keyBindings) {
+		public static void UpdateKeyBindings(this PhoenixSceneBase scene, KeyBindings keyBindings) {
 			if(scene.Window?.Input == null) return;
 			
 			foreach(var keyboard in scene.Window.Input.Keyboards) {
@@ -23,7 +23,7 @@ namespace Coelum.Input {
 			}
 		}
 
-		private static void DoSetupKeyBindings(Window window, KeyBindings keyBindings) {
+		private static void DoSetupKeyBindings(SilkWindow window, KeyBindings keyBindings) {
 			if(window.Input == null) throw new InvalidOperationException("Window input not initialized");
 			
 			foreach(var keyboard in window.Input.Keyboards) {

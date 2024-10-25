@@ -8,7 +8,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Coelum.Graphics\Coelum.Graphics.csproj" />
+      <ProjectReference Include="..\Coelum.Graphics.Phoenix\Coelum.Graphics.Phoenix.csproj" />
       <ProjectReference Include="..\Coelum.Input\Coelum.Input.csproj" />
     </ItemGroup>
 

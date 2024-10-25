@@ -1,5 +1,5 @@
 using System.Numerics;
-using Coelum.Graphics.Camera;
+using Coelum.Graphics.Phoenix.Camera;
 using Coelum.Input;
 using Silk.NET.Input;
 
