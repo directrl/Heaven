@@ -1,6 +1,6 @@
 using Coelum.Configuration;
 using Coelum.Debug;
-using Coelum.Graphics.Common;
+using Coelum.Common.Graphics;
 using Coelum.Phoenix.Scene;
 using Coelum.Phoenix.OpenGL;
 using Silk.NET.Core;

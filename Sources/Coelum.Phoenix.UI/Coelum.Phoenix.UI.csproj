@@ -9,7 +9,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Coelum.Phoenix\Coelum.Phoenix.csproj" />
-      <ProjectReference Include="..\Coelum.Input.Common\Coelum.Input.Common.csproj" />
+      <ProjectReference Include="..\Coelum.Common.Input\Coelum.Common.Input.csproj" />
     </ItemGroup>
 
     <ItemGroup>

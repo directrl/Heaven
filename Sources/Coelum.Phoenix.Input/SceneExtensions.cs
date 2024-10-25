@@ -1,4 +1,4 @@
-using Coelum.Input.Common;
+using Coelum.Common.Input;
 using Coelum.Phoenix;
 using Coelum.Phoenix.Scene;
 

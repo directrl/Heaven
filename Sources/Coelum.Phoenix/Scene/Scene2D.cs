@@ -1,4 +1,4 @@
-using Coelum.Graphics.Common;
+using Coelum.Common.Graphics;
 using Coelum.Phoenix.Camera;
 using Coelum.Resources;
 using Silk.NET.OpenGL;

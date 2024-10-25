@@ -2,7 +2,7 @@ using System.Collections.Concurrent;
 using System.Drawing;
 using Coelum.Configuration;
 using Coelum.Debug;
-using Coelum.Graphics.Common;
+using Coelum.Common.Graphics;
 using Coelum.Phoenix.Node;
 using Coelum.Phoenix.Texture;
 using Coelum.Node;

@@ -3,7 +3,7 @@ using System.Reflection;
 using Coelum.Configuration;
 using Coelum.Debug;
 using Coelum.Core.Logging;
-using Coelum.Graphics.Common;
+using Coelum.Common.Graphics;
 using Coelum.Resources;
 using Serilog;
 using Serilog.Core;
