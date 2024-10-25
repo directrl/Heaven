@@ -1,11 +1,12 @@
 using System.Numerics;
 using Coelum.Debug;
-using Coelum.Graphics;
-using Coelum.Graphics.Node;
-using Coelum.Graphics.Scene;
-using Coelum.Graphics.Texture;
+using Coelum.Phoenix;
+using Coelum.Phoenix.Node;
+using Coelum.Phoenix.Scene;
+using Coelum.Phoenix.Texture;
 using Coelum.Input;
-using Coelum.UI;
+using Coelum.Input.Common;
+using Coelum.Phoenix.UI;
 using ImGuiNET;
 using Silk.NET.Input;
 using Silk.NET.OpenGL;
@@ -30,7 +31,7 @@ namespace Playground.Scenes {
 			ShaderOverlays.AddRange(Material.OVERLAYS);
 		}
 
-		public override void OnLoad(Window window) {
+		public override void OnLoad(SilkWindow window) {
 			base.OnLoad(window);
 
 			Camera = new(window);

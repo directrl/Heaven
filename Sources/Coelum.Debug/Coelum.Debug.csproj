@@ -8,7 +8,6 @@
 
     <ItemGroup>
       <PackageReference Include="Serilog" Version="4.0.2" />
-      <PackageReference Include="Silk.NET.OpenGL" Version="2.21.0" />
     </ItemGroup>
 
 </Project>

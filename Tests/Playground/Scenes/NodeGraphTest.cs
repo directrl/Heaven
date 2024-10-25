@@ -1,17 +1,19 @@
 using System.Drawing;
-using Coelum.Graphics;
-using Coelum.Graphics.Camera;
-using Coelum.Graphics.Node;
-using Coelum.Graphics.Scene;
-using Coelum.Graphics.Texture;
+using Coelum.Phoenix;
+using Coelum.Phoenix.Camera;
+using Coelum.Phoenix.Node;
+using Coelum.Phoenix.Scene;
+using Coelum.Phoenix.Texture;
 using Coelum.Input;
+using Coelum.Input.Common;
 using Coelum.LanguageExtensions;
 using Coelum.Node;
-using Coelum.UI;
+using Coelum.Phoenix.Input;
+using Coelum.Phoenix.UI;
 using ImGuiNET;
 using Silk.NET.Input;
 using Silk.NET.OpenGL;
-using IShaderRenderable = Coelum.Graphics.Node.Component.IShaderRenderable;
+using IShaderRenderable = Coelum.Phoenix.Node.Component.IShaderRenderable;
 
 namespace Playground.Scenes {
 	
@@ -42,7 +44,7 @@ namespace Playground.Scenes {
 			this.SetupKeyBindings(_keyBindings);
 		}
 
-		public override void OnLoad(Window window) {
+		public override void OnLoad(SilkWindow window) {
 			base.OnLoad(window);
 
 			_camera1 = new PerspectiveCamera(window) {

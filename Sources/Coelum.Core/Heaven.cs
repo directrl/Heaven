@@ -3,12 +3,10 @@ using System.Reflection;
 using Coelum.Configuration;
 using Coelum.Debug;
 using Coelum.Core.Logging;
-using Coelum.Graphics;
+using Coelum.Graphics.Common;
 using Coelum.Resources;
 using Serilog;
 using Serilog.Core;
-using Silk.NET.Core;
-using Silk.NET.GLFW;
 
 namespace Coelum.Core {
 	
@@ -24,7 +22,7 @@ namespace Coelum.Core {
 		internal static ResourceManager EngineResources { get; private set; }
 		public static ResourceManager AppResources { get; protected set; }
 		
-		public static List<Window> Windows { get; private set; }
+		public static List<WindowBase> Windows { get; private set; }
 
 		protected Heaven(string id) {
 			Id = id;
@@ -76,52 +74,26 @@ namespace Coelum.Core {
 			if(Debugging.Verbose) loggerConfig.MinimumLevel.Verbose();
 			AppLogger = loggerConfig.CreateLogger();
 		#endregion
-
-		#region Windowing platform setup
-			if(ExperimentalFlags.ForceSDL) {
-				Silk.NET.Windowing.Window.PrioritizeSdl();
-			} else {
-				Silk.NET.Windowing.Window.PrioritizeGlfw();
-			}
-			
-			if(OperatingSystem.IsLinux() && !ExperimentalFlags.ForceWayland) {
-				var glfw = Glfw.GetApi();
-				
-				//			  GLFW_PLATFORM			 GLFW_PLATFORM_X11
-				glfw.InitHint((InitHint) 0x00050003, 0x00060004);
-
-				if(!glfw.Init()) {
-					throw new PlatformException("Could not initialize GLFW");
-				}
-			}
-		#endregion
 			
 			Running = true;
 			
 			Setup(args);
 			Tests.Assert(Windows.Count > 0);
 			
-			Window? toRemove = null;
+			WindowBase? toRemove = null;
 			var primaryWindow = Windows[0];
-			// TODO the entire program crashes when a window other than the primary one is closed
-			while(!primaryWindow.SilkImpl.IsClosing && Running) {
+			
+			while(primaryWindow.DoUpdates && Running) {
 				foreach(var window in Windows) {
 					if(!window.DoUpdates) continue;
-					
-					window.SilkImpl.DoEvents();
-
-					if(!window.SilkImpl.IsClosing) window.SilkImpl.DoUpdate();
-					if(window.SilkImpl.IsClosing) {
-						toRemove ??= window;
-						continue;
-					}
-
-					window.SilkImpl.DoRender();
+					if(!window.Update()) toRemove = window;
 				}
 
-				if(toRemove != null && toRemove != primaryWindow) {
-					toRemove.Dispose();
+				if(toRemove != null) {
+					Windows.Remove(toRemove);
 					toRemove = null;
+
+					if(Windows.Count <= 0) Running = false;
 				}
 			}
 
@@ -135,7 +107,7 @@ namespace Coelum.Core {
 			Running = false;
 			
 			foreach(var window in Windows) {
-				window.Dispose();
+				window.Close();
 			}
 		}
 
