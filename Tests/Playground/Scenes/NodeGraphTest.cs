@@ -1,17 +1,19 @@
 using System.Drawing;
-using Coelum.Graphics.Phoenix;
-using Coelum.Graphics.Phoenix.Camera;
-using Coelum.Graphics.Phoenix.Node;
-using Coelum.Graphics.Phoenix.Scene;
-using Coelum.Graphics.Phoenix.Texture;
+using Coelum.Phoenix;
+using Coelum.Phoenix.Camera;
+using Coelum.Phoenix.Node;
+using Coelum.Phoenix.Scene;
+using Coelum.Phoenix.Texture;
 using Coelum.Input;
+using Coelum.Input.Common;
 using Coelum.LanguageExtensions;
 using Coelum.Node;
-using Coelum.UI;
+using Coelum.Phoenix.Input;
+using Coelum.Phoenix.UI;
 using ImGuiNET;
 using Silk.NET.Input;
 using Silk.NET.OpenGL;
-using IShaderRenderable = Coelum.Graphics.Phoenix.Node.Component.IShaderRenderable;
+using IShaderRenderable = Coelum.Phoenix.Node.Component.IShaderRenderable;
 
 namespace Playground.Scenes {
 	

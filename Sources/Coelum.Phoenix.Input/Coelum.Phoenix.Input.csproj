@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Coelum.Input.Common\Coelum.Input.Common.csproj" />
+      <ProjectReference Include="..\Coelum.Phoenix\Coelum.Phoenix.csproj" />
+    </ItemGroup>
+
+</Project>

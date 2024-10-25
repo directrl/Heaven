@@ -1,7 +1,7 @@
 using Coelum.Core;
 using Coelum.Core.Logging;
 using Coelum.Debug;
-using Coelum.Graphics.Phoenix;
+using Coelum.Phoenix;
 using Playground.Scenes;
 
 namespace Playground {

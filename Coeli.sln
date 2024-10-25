@@ -11,11 +11,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{D210D6B3
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Playground", "Tests\Playground\Playground.csproj", "{FD3E522F-BBE0-43E7-BE2C-6DFD064B1DDD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Coelum.Graphics.Phoenix", "Sources\Coelum.Graphics.Phoenix\Coelum.Graphics.Phoenix.csproj", "{C2270D24-D8A7-4ADB-B2AF-491BB1CBA12D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Coelum.Phoenix", "Sources\Coelum.Phoenix\Coelum.Phoenix.csproj", "{C2270D24-D8A7-4ADB-B2AF-491BB1CBA12D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Coelum.UI", "Sources\Coelum.UI\Coelum.UI.csproj", "{863A8F59-BB36-4E7F-A30C-EEA7E37FD0D2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Coelum.Phoenix.UI", "Sources\Coelum.Phoenix.UI\Coelum.Phoenix.UI.csproj", "{863A8F59-BB36-4E7F-A30C-EEA7E37FD0D2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Coelum.Input", "Sources\Coelum.Input\Coelum.Input.csproj", "{7EAC9C7A-5C8A-47A9-96E8-A7EC66E9A306}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Coelum.Input.Common", "Sources\Coelum.Input.Common\Coelum.Input.Common.csproj", "{7EAC9C7A-5C8A-47A9-96E8-A7EC66E9A306}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Coelum.Debug", "Sources\Coelum.Debug\Coelum.Debug.csproj", "{D255AA69-B327-47B8-B1ED-1781A87A8D6E}"
 EndProject
@@ -27,9 +27,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Coelum.LanguageExtensions",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Coelum.Node", "Sources\Coelum.Node\Coelum.Node.csproj", "{66E09772-49AA-4843-8118-7A3AC9E7D9BA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Coelum.ModelLoading", "Sources\Coelum.ModelLoading\Coelum.ModelLoading.csproj", "{DFDEBC23-572A-4EC7-9D96-540DBB796DFA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Coelum.Phoenix.ModelLoading", "Sources\Coelum.Phoenix.ModelLoading\Coelum.Phoenix.ModelLoading.csproj", "{DFDEBC23-572A-4EC7-9D96-540DBB796DFA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Coelum.Graphics.Common", "Sources\Coelum.Graphics.Common\Coelum.Graphics.Common.csproj", "{DBBF7798-314D-4AAA-A65D-7D539EE5C761}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Coelum.Phoenix.Input", "Sources\Coelum.Phoenix.Input\Coelum.Phoenix.Input.csproj", "{0CE20A2C-0888-44D2-B0B1-67CFC6912788}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -88,6 +90,10 @@ Global
 		{DBBF7798-314D-4AAA-A65D-7D539EE5C761}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DBBF7798-314D-4AAA-A65D-7D539EE5C761}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DBBF7798-314D-4AAA-A65D-7D539EE5C761}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0CE20A2C-0888-44D2-B0B1-67CFC6912788}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0CE20A2C-0888-44D2-B0B1-67CFC6912788}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0CE20A2C-0888-44D2-B0B1-67CFC6912788}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0CE20A2C-0888-44D2-B0B1-67CFC6912788}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{6AFCE2E4-0486-4DE0-8C02-DC257CCE2DC7} = {ECDD9609-5209-4544-910F-099A50C8542D}
@@ -102,5 +108,6 @@ Global
 		{66E09772-49AA-4843-8118-7A3AC9E7D9BA} = {ECDD9609-5209-4544-910F-099A50C8542D}
 		{DFDEBC23-572A-4EC7-9D96-540DBB796DFA} = {ECDD9609-5209-4544-910F-099A50C8542D}
 		{DBBF7798-314D-4AAA-A65D-7D539EE5C761} = {ECDD9609-5209-4544-910F-099A50C8542D}
+		{0CE20A2C-0888-44D2-B0B1-67CFC6912788} = {ECDD9609-5209-4544-910F-099A50C8542D}
 	EndGlobalSection
 EndGlobal

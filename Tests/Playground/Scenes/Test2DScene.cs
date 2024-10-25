@@ -1,11 +1,12 @@
 using System.Numerics;
 using Coelum.Debug;
-using Coelum.Graphics.Phoenix;
-using Coelum.Graphics.Phoenix.Node;
-using Coelum.Graphics.Phoenix.Scene;
-using Coelum.Graphics.Phoenix.Texture;
+using Coelum.Phoenix;
+using Coelum.Phoenix.Node;
+using Coelum.Phoenix.Scene;
+using Coelum.Phoenix.Texture;
 using Coelum.Input;
-using Coelum.UI;
+using Coelum.Input.Common;
+using Coelum.Phoenix.UI;
 using ImGuiNET;
 using Silk.NET.Input;
 using Silk.NET.OpenGL;
