@@ -95,7 +95,7 @@ namespace Playground.Scenes {
 				};
 				_model2 = new("test", new[] { _mesh });
 				
-				_model = ModelLoader.Load(Playground.AppResources[ResourceType.MODEL, "untitled.glb"]);
+				_model = ModelLoader.Load(Playground.AppResources[ResourceType.MODEL, "backpack/backpack.obj"]);
 				_node = new() {
 					Model = _model
 				};

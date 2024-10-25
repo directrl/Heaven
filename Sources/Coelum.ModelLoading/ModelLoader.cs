@@ -35,12 +35,12 @@ namespace Coelum.ModelLoading {
 			var data = resource.ReadBytes();
 			if(data == null) return null;
 
-			model = Create(resource.UID, data);
+			model = Create(resource.UID, ref data);
 			ModelCache.GLOBAL.Set(resource, model);
 			return model;
 		}
 
-		private unsafe static Model Create(string name, byte[] data, uint flags
+		private unsafe static Model Create(string name, ref byte[] data, uint flags
 			                                   = (uint) (PostProcessSteps.GenerateSmoothNormals 
 				                                   | PostProcessSteps.JoinIdenticalVertices 
 				                                   | PostProcessSteps.Triangulate 
@@ -63,6 +63,8 @@ namespace Coelum.ModelLoading {
 			
 			var model = new Model(name, new List<Mesh>());
 			ProcessNode(ref model, scene, scene->MRootNode);
+			
+			Ai.FreeScene(scene);
 			
 			sw.Stop();
 			Log.Verbose($"[MODEL LOADER] DONE IN {sw.ElapsedMilliseconds}ms");
@@ -150,7 +152,7 @@ namespace Coelum.ModelLoading {
 					W = 1
 				};
 			} else {
-				Log.Warning($"Could not get the ambient color for material");
+				Log.Warning($"[MODEL LOADER: {model.Name}] Could not get the ambient color for material");
 			}
 				
 			var diffuse = new Vector4();
@@ -161,7 +163,7 @@ namespace Coelum.ModelLoading {
 					W = 1
 				};
 			} else {
-				Log.Warning($"Could not get the diffuse color for material");
+				Log.Warning($"[MODEL LOADER: {model.Name}] Could not get the diffuse color for material");
 			}
 				
 			var specular = new Vector4();
@@ -172,7 +174,7 @@ namespace Coelum.ModelLoading {
 					W = 1
 				};
 			} else {
-				Log.Warning($"Could not get the specular color for material");
+				Log.Warning($"[MODEL LOADER: {model.Name}] Could not get the specular color for material");
 			}
 			
 			ProcessMaterialTextures(ref model, ref material, aiScene, aiMaterial, AiTextureType.Diffuse);
@@ -189,7 +191,7 @@ namespace Coelum.ModelLoading {
 			uint texCount = Ai.GetMaterialTextureCount(aiMaterial, textureType);
 
 			if(texCount == 0) {
-				Log.Warning($"[MODEL LOADER ({model.Name})] No textures found for material; is the model exported correctly?");
+				Log.Warning($"[MODEL LOADER: {model.Name}] No textures found for material; is the model exported correctly?");
 			}
 			
 			for(uint i = 0; i < texCount; i++) {
@@ -209,12 +211,12 @@ namespace Coelum.ModelLoading {
 						texture = Texture2D.Load(resource);
 					}
 				} else {
-					Log.Debug($"[MODEL LOADER] Material texture path: {path.AsString}");
-					// TODO
+					Log.Debug($"[MODEL LOADER: {model.Name}] Material texture path: {path.AsString}");
+					throw new NotImplementedException();
 				}
 
 				if(texture == null) {
-					Log.Warning($"[MODEL LOADER] Could not load texture for model [{model.Name}]");
+					Log.Warning($"[MODEL LOADER: {model.Name}] Could not load texture for material");
 					continue;
 				}
 
@@ -227,7 +229,7 @@ namespace Coelum.ModelLoading {
 				};
 
 				if(trueType == Material.TextureType.Unknown) {
-					Log.Warning($"[MODEL LOADER] Unknown material texture type: {textureType}");
+					Log.Warning($"[MODEL LOADER: {model.Name}] Unknown material texture type: {textureType}");
 					continue;
 				}
 				
