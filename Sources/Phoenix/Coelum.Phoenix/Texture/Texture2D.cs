@@ -13,35 +13,12 @@ namespace Coelum.Phoenix.Texture {
 	public class Texture2D : Texture<Vector2> {
 		
 		public static Texture2D DefaultTexture {
-			// get {
-			// 	var resource = Module.RESOURCES[Resource.Type.TEXTURE, "default"];
-			// 	
-			// 	if(Cache.GLOBAL.TryGet(resource, out var texture)) {
-			// 		return texture;
-			// 	}
-			// 	
-			// 	var data = resource.ReadBytes();
-			//
-			// 	if(data == null) {
-			// 		throw new Exception("Couldn't read the default texture. This should not happen :(");
-			// 	}
-			// 	
-			// 	texture = Create(resource.UID, data);
-			// 	Cache.GLOBAL.Set(resource, texture);
-			// 	return texture;
-			// }
-			get => Texture2D.Load(Module.RESOURCES[ResourceType.TEXTURE, "default"]);
+			get => Load(Module.RESOURCES[ResourceType.TEXTURE, "default"]);
 		}
 		
 		public Texture2D(Vector2 size) : base(TextureTarget.Texture2D, size) { }
 		public Texture2D(int width, int height) : base(TextureTarget.Texture2D, new(width, height)) { }
-
-		// TODO
-		//[Obsolete("Not supported. Use Bind(ShaderProgram) instead", true)]
-		// public override void Bind(int unit = 1) {
-		// 	base.Bind(unit);
-		// }
-
+		
 		public static Texture2D Load(IResource resource) {
 			if(Cache.GLOBAL.TryGet(resource, out var texture)) {
 				return texture;
@@ -54,7 +31,7 @@ namespace Coelum.Phoenix.Texture {
 			Cache.GLOBAL.Set(resource, texture);
 			return texture;
 		}
-		private static int i = 0;
+		
 		private unsafe static Texture2D Create(string name, byte[] data) {
 			Log.Debug($"Creating texture for [{name}]");
 

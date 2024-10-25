@@ -8,6 +8,7 @@ using Silk.NET.OpenGL;
 
 namespace Coelum.Phoenix.Node {
 	
+	// TODO fix this
 	public class InstancedNode<TNode> : SpatialNode where TNode : SpatialNode {
 
 		private bool _ready = false;
@@ -42,14 +43,14 @@ namespace Coelum.Phoenix.Node {
 				var obj = nodes[i];
 				
 				_models[i] = obj.GlobalTransform;
-				_materials[i] = obj.Model?.Material ?? new Material();
+				//_materials[i] = obj.Model?.Material ?? new Material();
 			}
 		}
 		
 		public void Add(TNode obj) {
 			_nodes.Add(obj);
 			_models.Add(obj.GlobalTransform);
-			_materials.Add(obj.Model?.Material ?? new Material());
+			//_materials.Add(obj.Model?.Material ?? new Material());
 		}
 
 		public void Clear() {
@@ -147,8 +148,8 @@ namespace Coelum.Phoenix.Node {
 		public override void Render(ShaderProgram shader) {
 			Tests.Assert(_ready, "Object is not ready! Did you forget to call Build() beforehand?");
 			
-			Model.Load(shader);
 			shader.SetUniform("instance", true);
+			Model?.Render(shader);
 		}
 
 		public unsafe override void Render() {

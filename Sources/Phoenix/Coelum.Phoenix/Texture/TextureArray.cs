@@ -38,12 +38,6 @@ namespace Coelum.Phoenix.Texture {
 			}
 		}
 
-		// TODO
-		// [Obsolete("Not supported. Use Bind(ShaderProgram) instead", true)]
-		// public override void Bind(int unit = 2) {
-		// 	base.Bind(unit);
-		// }
-
 		public static TextureArray Create(params IResource[] resources) {
 			int width = 0, height = 0;
 			if(!LoadImage(resources[0],

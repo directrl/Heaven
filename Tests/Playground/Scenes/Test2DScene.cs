@@ -53,22 +53,22 @@ namespace Playground.Scenes {
 			if(_object == null && _mesh != null) {
 				_object = new Node2D() {
 					Position = new(-50f, -50f),
-					Model = new Model() {
+					/*Model = new Model() {
 						Meshes = new() { _mesh },
 						Material = new Material {
 							Albedo = new(1.0f, 0.0f, 0.0f, 1.0f)
 						}
-					}
+					}*/
 				};
 
 				_object2 = new Node2D() {
 					Position = new(50f, 50f),
-					Model = new Model() {
+					/*Model = new Model() {
 						Meshes = new() { _mesh },
 						Material = new Material {
 							Albedo = new(0.0f, 0.0f, 1.0f, 1.0f)
 						}
-					}
+					}*/
 				};
 			}
 			

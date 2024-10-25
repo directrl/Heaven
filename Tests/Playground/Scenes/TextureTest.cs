@@ -220,7 +220,7 @@ namespace Playground.Scenes {
 
 				_object = new Node3D() {
 					Position = new(0, 20, 0),
-					Model = new() {
+					/*Model = new() { TODO
 						Meshes = new() { _mesh },
 						Material = new() {
 							Albedo = new(1, 1, 1, 1),
@@ -228,12 +228,12 @@ namespace Playground.Scenes {
 								(Material.TextureType.Diffuse, Texture2D.Load(Playground.AppResources[ResourceType.TEXTURE, "two"]))
 							}
 						}
-					}
+					}*/
 				};
 				
 				int wall = 16;
 
-				_instObject = new(new(_mesh), (int) Math.Pow(wall, 3));
+				_instObject = new(new("", new[] { _mesh }), (int) Math.Pow(wall, 3));
 
 				var tex1 = Texture2D.Load(Playground.AppResources[ResourceType.TEXTURE, "one"]);
 				var tex2 = Texture2D.Load(Playground.AppResources[ResourceType.TEXTURE, "two"]);
@@ -247,13 +247,13 @@ namespace Playground.Scenes {
 					
 					var o = new Node3D() {
 						Position = new(x, y, z),
-						Model = new() {
+						/*Model = new() { TODO
 							Meshes = new() { _mesh },
 							Material = new() {
 								Albedo = new(1, 1, 1, 1),
 								//TextureLayer = random
 							}
-						}
+						}*/
 					};
 					
 					_instObject.Add(o);

@@ -95,9 +95,7 @@ namespace Playground.Scenes {
 			if(_object == null && _mesh != null) {
 				_object = new Node3D() {
 					Position = new(0, 0, 0),
-					Model = new() {
-						Meshes = new() { _mesh },
-					}
+					Model = new("", new[] { _mesh })
 				};
 			}
 			
