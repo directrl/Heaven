@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Sources\Coelum.Core\Coelum.Core.csproj" />
+    <ProjectReference Include="..\..\Sources\Coelum.Node\Coelum.Node.csproj" />
     <ProjectReference Include="..\..\Sources\Coelum.Phoenix.Input\Coelum.Phoenix.Input.csproj" />
     <ProjectReference Include="..\..\Sources\Coelum.Phoenix\Coelum.Phoenix.csproj" />
     <ProjectReference Include="..\..\Sources\Coelum.Phoenix.ModelLoading\Coelum.Phoenix.ModelLoading.csproj" />
