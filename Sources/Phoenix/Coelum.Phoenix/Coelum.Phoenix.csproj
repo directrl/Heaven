@@ -1,0 +1,135 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Silk.NET.Input.Common" Version="2.21.0" />
+    <PackageReference Include="Silk.NET.OpenGL" Version="2.21.0" />
+    <PackageReference Include="Silk.NET.Windowing.Glfw" Version="2.21.0" />
+    <PackageReference Include="SixLabors.ImageSharp" Version="3.1.5" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="..\..\..\Resources\Coeli\**\*"/>
+    <EmbeddedResource Update="..\..\..\Resources\Coeli\Resources\Shaders\test.vert">
+      <Link>Resources\Shaders\test.vert</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Update="..\..\..\Resources\Coeli\Resources\Shaders\test.frag">
+      <Link>Resources\Shaders\test.frag</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Update="..\..\..\Resources\Coeli\Resources\Shaders\scene2d_singlecolor.frag">
+      <Link>Resources\Shaders\scene2d_singlecolor.frag</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Update="..\..\..\Resources\Coeli\Resources\Shaders\scene2d_singlecolor.vert">
+      <Link>Resources\Shaders\scene2d_singlecolor.vert</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Update="..\..\..\Resources\Coeli\Resources\Shaders\texture_array.vert">
+      <Link>Resources\Shaders\texture_array.vert</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Update="..\..\..\Resources\Coeli\Resources\Shaders\texture_array.frag">
+      <Link>Resources\Shaders\texture_array.frag</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Update="..\..\..\Resources\Coeli\Resources\Shaders\material.glsl">
+      <Link>Resources\Shaders\material.glsl</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Update="..\..\..\Resources\Coeli\Resources\Shaders\instancing.frag">
+      <Link>Resources\Shaders\instancing.frag</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Update="..\..\..\Resources\Coeli\Resources\Shaders\instancing.vert">
+      <Link>Resources\Shaders\instancing.vert</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Update="..\..\..\Resources\Coeli\Resources\Shaders\Structs\material.glsl">
+      <Link>Resources\Shaders\Structs\material.glsl</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Update="..\..\..\Resources\Coeli\Resources\Shaders\Defaults\vertex,glsl">
+      <Link>Resources\Shaders\Defaults\vertex,glsl</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Update="..\..\..\Resources\Coeli\Resources\Shaders\scene_new.frag">
+      <Link>Resources\Shaders\scene_new.frag</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Update="..\..\..\Resources\Coeli\Resources\Shaders\scene_new.vert">
+      <Link>Resources\Shaders\scene_new.vert</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Update="..\..\..\Resources\Coeli\Resources\Shaders\Structs\vertex.glsl">
+      <Link>Resources\Shaders\Structs\vertex.glsl</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Update="..\..\..\Resources\Coeli\Resources\Shaders\Structures\model_matrices.glsl">
+      <Link>Resources\Shaders\Structures\model_matrices.glsl</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Update="..\..\..\Resources\Coeli\Resources\Shaders\Defaults\textures.glsl">
+      <Link>Resources\Shaders\Defaults\textures.glsl</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Update="..\..\..\Resources\Coeli\Resources\Shaders\Defaults\model_matrices.glsl">
+      <Link>Resources\Shaders\Defaults\model_matrices.glsl</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Update="..\..\..\Resources\Coeli\Resources\Shaders\Snippets\textures.glsl">
+      <Link>Resources\Shaders\Snippets\textures.glsl</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Update="..\..\..\Resources\Coeli\Resources\Shaders\Overlays\TextureArray\overlay_header.glsl">
+      <Link>Resources\Shaders\Overlays\TextureArray\overlay_header.glsl</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Update="..\..\..\Resources\Coeli\Resources\Shaders\Overlays\TextureArray\call.frag">
+      <Link>Resources\Shaders\Overlays\TextureArray\call.frag</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Update="..\..\..\Resources\Coeli\Resources\Shaders\Overlays\Texture\call.frag">
+      <Link>Resources\Shaders\Overlays\Texture\call.frag</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Update="..\..\..\Resources\Coeli\Resources\Shaders\Overlays\Texture\header.frag">
+      <Link>Resources\Shaders\Overlays\Texture\header.frag</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Update="..\..\..\Resources\Coeli\Resources\Shaders\Overlays\Instancing\call.frag">
+      <Link>Resources\Shaders\Overlays\Instancing\call.frag</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Update="..\..\..\Resources\Coeli\Resources\Shaders\Overlays\Instancing\header.frag">
+      <Link>Resources\Shaders\Overlays\Instancing\header.frag</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Update="..\..\..\Resources\Coeli\Resources\Shaders\Overlays\Instancing\call.vert">
+      <Link>Resources\Shaders\Overlays\Instancing\call.vert</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Update="..\..\..\Resources\Coeli\Resources\Shaders\Overlays\Instancing\header.vert">
+      <Link>Resources\Shaders\Overlays\Instancing\header.vert</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Update="..\..\..\Resources\Coeli\Resources\Shaders\scene.vert.out">
+      <Link>Resources\Shaders\scene.inout</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Update="..\..\..\Resources\Coeli\Resources\Shaders\Interfaces\scene.vert.out">
+      <Link>Resources\Shaders\Interfaces\scene.vert.out</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Update="..\..\..\Resources\Coeli\Resources\Shaders\Uniforms\camera_matrices.glsl">
+      <Link>Resources\Shaders\Uniforms\camera_matrices.glsl</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Update="..\..\..\Resources\Coeli\Resources\Shaders\Overlays\Material\header.frag">
+      <Link>Resources\Shaders\Overlays\Material\header.frag</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Update="..\..\..\Resources\Coeli\Resources\Shaders\Overlays\Material\material.glsl">
+      <Link>Resources\Shaders\Overlays\Material\material.glsl</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Update="..\..\..\Resources\Coeli\Resources\Shaders\Structures\material.glsl">
+      <Link>Resources\Shaders\Structures\material.glsl</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Update="..\..\..\Resources\Coeli\Resources\Shaders\Overlays\Material\call.frag">
+      <Link>Resources\Shaders\Overlays\Material\call.frag</Link>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Coelum.Configuration\Coelum.Configuration.csproj" />
+    <ProjectReference Include="..\..\Coelum.Debug\Coelum.Debug.csproj" />
+    <ProjectReference Include="..\..\Coelum.Common.Graphics\Coelum.Common.Graphics.csproj" />
+    <ProjectReference Include="..\..\Coelum.LanguageExtensions\Coelum.LanguageExtensions.csproj" />
+    <ProjectReference Include="..\..\Coelum.Node\Coelum.Node.csproj" />
+    <ProjectReference Include="..\..\Coelum.Resources\Coelum.Resources.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="..\..\..\Resources\Coeli\Resources\Textures\">
+      <Link>Resources\Textures</Link>
+    </Folder>
+  </ItemGroup>
+
+</Project>

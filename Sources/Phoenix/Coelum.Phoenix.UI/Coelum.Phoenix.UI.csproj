@@ -9,13 +9,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Coelum.Phoenix\Coelum.Phoenix.csproj" />
-      <ProjectReference Include="..\Coelum.Common.Input\Coelum.Common.Input.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Reference Include="Silk.NET.OpenGL.Extensions.ImGui">
-        <HintPath>..\..\..\..\..\..\..\home\default\.nuget\packages\silk.net.opengl.extensions.imgui\2.21.0\lib\net5.0\Silk.NET.OpenGL.Extensions.ImGui.dll</HintPath>
-      </Reference>
+      <ProjectReference Include="..\..\Coelum.Common.Input\Coelum.Common.Input.csproj" />
     </ItemGroup>
 
     <ItemGroup>
