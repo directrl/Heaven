@@ -2,15 +2,12 @@ namespace Coelum.Resources {
 	
 	public class ExternalResourceManager : ResourceManager {
 	
-		public ExternalResourceManager() : base(null) { }
+		public ExternalResourceManager() : base("") { }
 
-		public override Resource Get(Resource.Type type, string name)
-			=> throw new NotSupportedException();
+		public override IResource Get(ResourceType type, string path)
+			=> new ExternalResource(type, path);
 		
-		public override Resource this[Resource.Type type, string name]
-			=> throw new NotSupportedException();
-
-		public ExternalResource Get(string path) => new ExternalResource(path);
-		public ExternalResource this[string path] => new ExternalResource(path);
+		public override IResource this[ResourceType type, string path]
+			=> new ExternalResource(type, path);
 	}
 }

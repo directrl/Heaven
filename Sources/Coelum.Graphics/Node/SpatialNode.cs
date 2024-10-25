@@ -22,20 +22,22 @@ namespace Coelum.Graphics.Node {
 			}
 		}
 
-		public virtual void Load(ShaderProgram shader) {
+		public virtual void Render(ShaderProgram shader) {
 			if(Model == null) return;
 			
-			Model.Load(shader);
+			//Model.Load(shader);
 			shader.SetUniform("model", GlobalTransform);
+			Model?.Render(shader);
 		}
 		
+		[Obsolete]
 		public virtual void Render() {
-			Model?.Render();
+			
 		}
 
-		public void Render(ShaderProgram shader) {
-			Load(shader);
-			Render();
+		[Obsolete]
+		public void Load(ShaderProgram shader) {
+			
 		}
 	}
 }

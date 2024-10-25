@@ -78,7 +78,7 @@ namespace Coelum.Graphics.Camera {
 		public void MoveForward(float amount) => Position -= _direction = Vector3.Multiply(ViewMatrix.PositiveZ(), amount);
 		public void MoveBackward(float amount) => Position += _direction = Vector3.Multiply(ViewMatrix.PositiveZ(), amount);
 
-		public override void Load(ShaderProgram shader) {
+		public override void Render(ShaderProgram shader) {
 			RecalculateViewMatrix();
 			
 			shader.SetUniform("projection", ProjectionMatrix);

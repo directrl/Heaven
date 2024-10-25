@@ -13,35 +13,36 @@ namespace Coelum.Graphics.Texture {
 	public class Texture2D : Texture<Vector2> {
 		
 		public static Texture2D DefaultTexture {
-			get {
-				var resource = Module.RESOURCES[Resource.Type.TEXTURE, "default"];
-				
-				if(Cache.GLOBAL.TryGet(resource, out var texture)) {
-					return texture;
-				}
-				
-				var data = resource.ReadBytes();
-
-				if(data == null) {
-					throw new Exception("Couldn't read the default texture. This should not happen :(");
-				}
-				
-				texture = Create("default", data);
-				Cache.GLOBAL.Set(resource, texture);
-				return texture;
-			}
+			// get {
+			// 	var resource = Module.RESOURCES[Resource.Type.TEXTURE, "default"];
+			// 	
+			// 	if(Cache.GLOBAL.TryGet(resource, out var texture)) {
+			// 		return texture;
+			// 	}
+			// 	
+			// 	var data = resource.ReadBytes();
+			//
+			// 	if(data == null) {
+			// 		throw new Exception("Couldn't read the default texture. This should not happen :(");
+			// 	}
+			// 	
+			// 	texture = Create(resource.UID, data);
+			// 	Cache.GLOBAL.Set(resource, texture);
+			// 	return texture;
+			// }
+			get => Texture2D.Load(Module.RESOURCES[ResourceType.TEXTURE, "default"]);
 		}
 		
 		public Texture2D(Vector2 size) : base(TextureTarget.Texture2D, size) { }
 		public Texture2D(int width, int height) : base(TextureTarget.Texture2D, new(width, height)) { }
 
-		[Obsolete("Not supported. Use Bind(ShaderProgram) instead", true)]
-		public override void Bind() {
-			Gl.ActiveTexture(TextureUnit.Texture1);
-			Gl.BindTexture(Target, Id);
-		}
+		// TODO
+		//[Obsolete("Not supported. Use Bind(ShaderProgram) instead", true)]
+		// public override void Bind(int unit = 1) {
+		// 	base.Bind(unit);
+		// }
 
-		public static Texture2D Load(Resource resource) {
+		public static Texture2D Load(IResource resource) {
 			if(Cache.GLOBAL.TryGet(resource, out var texture)) {
 				return texture;
 			}
@@ -53,7 +54,7 @@ namespace Coelum.Graphics.Texture {
 			Cache.GLOBAL.Set(resource, texture);
 			return texture;
 		}
-		
+		private static int i = 0;
 		private unsafe static Texture2D Create(string name, byte[] data) {
 			Log.Debug($"Creating texture for [{name}]");
 
@@ -88,24 +89,24 @@ namespace Coelum.Graphics.Texture {
 			public static readonly Cache GLOBAL = new();
 		}
 		
-		public static readonly IShaderOverlay[] OVERLAYS = {
-			FragmentShaderOverlay.OVERLAY
-		};
-
-		public class FragmentShaderOverlay : IShaderOverlay, ILazySingleton<FragmentShaderOverlay> {
-
-			public static FragmentShaderOverlay OVERLAY
-				=> ILazySingleton<FragmentShaderOverlay>._instance.Value;
-
-			public string Name => "texture2D";
-			public string Path => "Overlays.Texture2D";
-			public ShaderType Type => ShaderType.FragmentShader;
-			public ShaderPass Pass => ShaderPass.COLOR_PRE;
-			public ResourceManager ResourceManager => Module.RESOURCES;
-
-			public void Load(ShaderProgram shader) {
-				shader.SetUniform("tex2d_sampler", 1);
-			}
-		}
+		// public static readonly IShaderOverlay[] OVERLAYS = {
+		// 	FragmentShaderOverlay.OVERLAY
+		// };
+		//
+		// public class FragmentShaderOverlay : IShaderOverlay, ILazySingleton<FragmentShaderOverlay> {
+		//
+		// 	public static FragmentShaderOverlay OVERLAY
+		// 		=> ILazySingleton<FragmentShaderOverlay>._instance.Value;
+		//
+		// 	public string Name => "texture2D";
+		// 	public string Path => "Overlays.Texture2D";
+		// 	public ShaderType Type => ShaderType.FragmentShader;
+		// 	public ShaderPass Pass => ShaderPass.COLOR_PRE;
+		// 	public ResourceManager ResourceManager => Module.RESOURCES;
+		//
+		// 	public void Load(ShaderProgram shader) {
+		// 		//shader.SetUniform("tex2d_sampler", 1);
+		// 	}
+		// }
 	}
 }

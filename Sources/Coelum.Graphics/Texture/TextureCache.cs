@@ -4,5 +4,5 @@ using Silk.NET.OpenGL;
 
 namespace Coelum.Graphics.Texture {
 	
-	class TextureCacheBase<TTexture> : CacheBase<Resource, TTexture> { }
+	class TextureCacheBase<TTexture> : CacheBase<IResource, TTexture> { }
 }

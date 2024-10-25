@@ -27,7 +27,7 @@ namespace Playground.Scenes {
 			_keyBindings = new(Id);
 			_freeCamera = new(_keyBindings);
 			
-			ShaderOverlays.AddRange(Texture2D.OVERLAYS);
+			ShaderOverlays.AddRange(Material.OVERLAYS);
 		}
 
 		public override void OnLoad(Window window) {
@@ -96,7 +96,7 @@ namespace Playground.Scenes {
 				_object = new Node3D() {
 					Position = new(0, 0, 0),
 					Model = new() {
-						Meshes = new[] { _mesh },
+						Meshes = new() { _mesh },
 					}
 				};
 			}
@@ -142,7 +142,7 @@ namespace Playground.Scenes {
 		public override void OnRender(float delta) {
 			base.OnRender(delta);
 			
-			PrimaryShader.DisableOverlays(Texture2D.OVERLAYS);
+			PrimaryShader.DisableOverlays(Material.OVERLAYS);
 			
 			//MainShader.SetUniform("color", new Vector4(1.0f, 1.0f, 1.0f, 1.0f));
 			_object?.Load(PrimaryShader);

@@ -17,7 +17,7 @@ namespace Coelum.Graphics.OpenGL {
 			Code = code;
 		}
 		
-		public Shader(ShaderType type, Resource resource) {
+		public Shader(ShaderType type, IResource resource) {
 			Type = type;
 
 			string? code = resource.ReadString();

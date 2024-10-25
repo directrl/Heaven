@@ -37,7 +37,7 @@ namespace Playground.Scenes {
 			
 			this.SetupKeyBindings(_keyBindings);
 			
-			ShaderOverlays.AddRange(Texture2D.OVERLAYS);
+			ShaderOverlays.AddRange(Material.OVERLAYS);
 			ShaderOverlays.AddRange(TextureArray.OVERLAYS);
 			ShaderOverlays.AddRange(InstancedNode<Node3D>.OVERLAYS);
 		}
@@ -105,7 +105,7 @@ namespace Playground.Scenes {
 						Position = new(x, y, z),
 						Model = new() {
 							Material = new() {
-								Color = new(RANDOM.NextSingle(), RANDOM.NextSingle(), RANDOM.NextSingle(), 1)
+								Albedo = new(RANDOM.NextSingle(), RANDOM.NextSingle(), RANDOM.NextSingle(), 1)
 							}
 						}
 					};
@@ -114,7 +114,7 @@ namespace Playground.Scenes {
 						Position = o1.Position,
 						Model = new() {
 							Material = o1.Model.Material,
-							Meshes = new[] { _mesh }
+							Meshes = new() { _mesh }
 						}
 					};
 					

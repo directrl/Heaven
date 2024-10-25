@@ -113,43 +113,43 @@ namespace Playground.Scenes {
 				AddChild(new Node3D() {
 					Position = new(0, 0, 0),
 					Model = new() {
-						Meshes = new[] { _mesh },
+						Meshes = new() { _mesh },
 					}
 				});
 				
 				AddChild(new Node3D() {
 					Position = new(1, 2, 0),
 					Model = new() {
-						Meshes = new[] { _mesh },
+						Meshes = new() { _mesh },
 						Material = new() {
-							Color = Color.FromArgb(200, 100, 50).ToVector4()
+							Albedo = Color.FromArgb(200, 100, 50).ToVector4()
 						}
 					},
 					InitialChildren = new() {
 						["meow"] = new Node3D() {
 							Position = new(0, 1, 0),
 							Model = new() {
-								Meshes = new[] { _mesh },
+								Meshes = new() { _mesh },
 								Material = new() {
-									Color = Color.FromArgb(0, 100, 50).ToVector4()
+									Albedo = Color.FromArgb(0, 100, 50).ToVector4()
 								}
 							},
 							InitialChildren = new() {
 								["bowwow"] = new Node3D() {
 									Position = new(-1, 0, -3),
 									Model = new() {
-										Meshes = new[] { _mesh },
+										Meshes = new() { _mesh },
 										Material = new() {
-											Color = Color.FromArgb(0, 50, 100).ToVector4()
+											Albedo = Color.FromArgb(0, 50, 100).ToVector4()
 										}
 									}
 								},
 								["awoo"] = new Node3D() {
 									Position = new(0, 1, 0),
 									Model = new() {
-										Meshes = new[] { _mesh },
+										Meshes = new() { _mesh },
 										Material = new() {
-											Color = Color.FromArgb(100, 30, 100).ToVector4()
+											Albedo = Color.FromArgb(100, 30, 100).ToVector4()
 										}
 									}
 								}

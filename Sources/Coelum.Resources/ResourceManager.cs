@@ -15,10 +15,10 @@ namespace Coelum.Resources {
 			Namespace = _namespace;
 		}
 
-		public virtual Resource Get(Resource.Type type, string name)
-			=> new(type, Namespace, name, _assembly);
+		public virtual IResource Get(ResourceType type, string name)
+			=> new Resource(type, Namespace, name, _assembly);
 
-		public virtual Resource this[Resource.Type type, string name]
-			=> new(type, Namespace, name, _assembly);
+		public virtual IResource this[ResourceType type, string name]
+			=> new Resource(type, Namespace, name, _assembly);
 	}
 }

@@ -5,6 +5,7 @@ namespace Coelum.Graphics.Node.Component {
 
 	public interface IShaderLoadable : INodeComponent {
 
+		[Obsolete]
 		public void Load(ShaderProgram shader);
 	}
 }
