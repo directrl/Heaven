@@ -1,15 +1,14 @@
 using Coelum.Node;
 using Coelum.Raven.Node.Component;
-using Coelum.Raven.Terminal;
 using Silk.NET.Maths;
 
 namespace Coelum.Raven.Node {
 	
-	public abstract class SpatialNode : NodeBase, ITerminalRenderable {
+	public abstract class SpatialNode : NodeBase, IRenderable {
 
 		public Vector2D<int> Position = new();
 		
-		public virtual void Render(TerminalBase terminal) {
+		public virtual void Render(RenderContext ctx) {
 			throw new NotImplementedException();
 		}
 	}

@@ -8,6 +8,8 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\Coelum.Common.Graphics\Coelum.Common.Graphics.csproj" />
+      <ProjectReference Include="..\..\Coelum.Debug\Coelum.Debug.csproj" />
+      <ProjectReference Include="..\Coelum.Raven.Debug\Coelum.Raven.Debug.csproj" />
     </ItemGroup>
 
     <ItemGroup>

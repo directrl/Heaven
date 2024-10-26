@@ -1,26 +1,37 @@
+using System.Drawing;
 using Coelum.Common.Graphics;
+using Coelum.Debug;
 using Coelum.Raven.Node.Component;
-using Coelum.Raven.Terminal;
+using Coelum.Raven.Window;
 
 namespace Coelum.Raven.Scene {
 	
 	public class RavenSceneBase : SceneBase {
-		
-		public TerminalBase Terminal { get; }
 
-		public RavenSceneBase(TerminalBase terminal, string id) : base(id) {
-			Terminal = terminal;
+		public Cell ClearCell { get; protected set; } = RenderContext.DEFAULT_CELL;
+
+		public RenderContext Context { get; private set; }
+
+		public RavenSceneBase(string id) : base(id) { }
+
+		public virtual void OnLoad(RenderWindow window) {
+			Context = window.Context;
+			Context.Reset();
+		}
+		
+		public override void OnLoad(WindowBase window) {
+			base.OnLoad(window);
+			Tests.Assert(window is RenderWindow);
+			
+			OnLoad((RenderWindow) window);
 		}
 
 		public override void OnRender(float delta) {
-			Terminal.Clear();
 			base.OnRender(delta);
 			
-			FindChildrenByComponent((ITerminalRenderable renderable) => {
-				renderable.Render(Terminal);
+			FindChildrenByComponent((IRenderable renderable) => {
+				renderable.Render(Context);
 			});
-			
-			Terminal.Refresh();
 		}
 	}
 }

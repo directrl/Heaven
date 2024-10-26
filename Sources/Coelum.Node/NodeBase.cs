@@ -6,6 +6,16 @@ namespace Coelum.Node {
 	
 	public class NodeBase {
 
+	#region Delegates
+		public delegate void RemovedEventHandler(NodeBase parent);
+		public delegate void AddedEventHandler(NodeBase parent);
+	#endregion
+
+	#region Events
+		public event RemovedEventHandler? Removed;
+		public event AddedEventHandler? Added;
+	#endregion
+
 		private static readonly Random RANDOM = new();
 		
 		public NodeBase? Parent { get; internal set; }
@@ -49,9 +59,14 @@ namespace Coelum.Node {
 			_children = new(children);
 		}
 
+		public void ClearChildren() {
+			_children.Clear();
+		}
+
 		public void AddChild(NodeBase child) {
 			child.Parent = this;
 			_children[child.Name] = child;
+			child.Added?.Invoke(this);
 		}
 		
 		public void AddChild(string newName, NodeBase child) {
@@ -60,19 +75,16 @@ namespace Coelum.Node {
 			}
 			
 			child._name = newName;
-			child.Parent = this;
-			_children[newName] = child;
+			AddChild(child);
 		}
 
 		public void RemoveChild(string name) {
-			var child = Children[name];
-			
-			_children.Remove(name);
-			child.Parent = null;
+			RemoveChild(Children[name]);
 		}
 		
 		public void RemoveChild(NodeBase child) {
 			_children.Remove(child.Name);
+			child.Removed?.Invoke(child.Parent);
 			child.Parent = null;
 		}
 
