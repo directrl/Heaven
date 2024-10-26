@@ -7,8 +7,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Coelum.Common.Input\Coelum.Common.Input.csproj" />
-      <ProjectReference Include="..\Coelum.Raven\Coelum.Raven.csproj" />
+      <ProjectReference Include="..\..\Coelum.Common.Graphics\Coelum.Common.Graphics.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Silk.NET.Maths" Version="2.21.0" />
     </ItemGroup>
 
 </Project>
