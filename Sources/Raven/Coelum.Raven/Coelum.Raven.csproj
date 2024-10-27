@@ -9,11 +9,18 @@
     <ItemGroup>
       <ProjectReference Include="..\..\Coelum.Common.Graphics\Coelum.Common.Graphics.csproj" />
       <ProjectReference Include="..\..\Coelum.Debug\Coelum.Debug.csproj" />
+      <ProjectReference Include="..\..\Coelum.Physics\Coelum.Physics.csproj" />
       <ProjectReference Include="..\Coelum.Raven.Debug\Coelum.Raven.Debug.csproj" />
     </ItemGroup>
 
     <ItemGroup>
       <PackageReference Include="Silk.NET.Maths" Version="2.21.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Reference Include="Silk.NET.Input.Common">
+        <HintPath>..\..\..\..\..\..\..\..\home\default\.nuget\packages\silk.net.input.common\2.21.0\lib\net5.0\Silk.NET.Input.Common.dll</HintPath>
+      </Reference>
     </ItemGroup>
 
 </Project>

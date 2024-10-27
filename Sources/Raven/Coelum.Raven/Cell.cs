@@ -14,14 +14,16 @@ namespace Coelum.Raven {
 			BackgroundColor = Color.FromArgb(0, 0, 0, 0);
 		}
 
-		public bool Equals(Cell other) {
-			return Equals((Cell?) other);
+		public Cell(char character, Color? foregroundColor = null, Color? backgroundColor = null) {
+			Character = character;
+			ForegroundColor = foregroundColor ?? Color.FromArgb(0, 0, 0, 0);
+			BackgroundColor = backgroundColor ?? Color.FromArgb(0, 0, 0, 0);
 		}
 
-		public bool Equals(Cell? other) {
-			return Character == other?.Character
-				&& ForegroundColor == other?.ForegroundColor
-				&& BackgroundColor == other?.BackgroundColor;
+		public bool Equals(Cell other) {
+			return Character == other.Character
+				&& ForegroundColor == other.ForegroundColor
+				&& BackgroundColor == other.BackgroundColor;
 		}
 
 		public override bool Equals(object obj) {

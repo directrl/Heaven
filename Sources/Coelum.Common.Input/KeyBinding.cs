@@ -6,7 +6,7 @@ namespace Coelum.Common.Input {
 	public class KeyBinding {
 		
 		public string Name { get; }
-		public Key[] Keys { get; set; }
+		public int[] Keys { get; set; }
 
 		public bool Pressed { get; internal set; }
 		/*public bool Released { get; internal set; }*/
@@ -20,9 +20,18 @@ namespace Coelum.Common.Input {
 			internal set => _down = value;
 		}
 
-		public KeyBinding(string name, params Key[] keys) {
+		public KeyBinding(string name, params int[] keys) {
 			Name = name;
 			Keys = keys;
+		}
+
+		public KeyBinding(string name, params Key[] keys) {
+			Name = name;
+			Keys = new int[keys.Length];
+
+			for(int i = 0; i < keys.Length; i++) {
+				Keys[i] = (int) keys[i];
+			}
 		}
 
 		public override string ToString() {

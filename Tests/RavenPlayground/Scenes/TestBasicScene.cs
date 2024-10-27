@@ -1,10 +1,14 @@
+using System.Diagnostics;
 using System.Drawing;
 using Coelum.Common.Input;
 using Coelum.Raven;
 using Coelum.Raven.Node;
+using Coelum.Raven.Node.Component;
 using Coelum.Raven.Scene;
-using Coelum.Raven.Shader.Fragment;
+using Coelum.Raven.Shader.Cell;
 using Coelum.Raven.Window;
+using RavenPlayground.Node;
+using Silk.NET.Input;
 
 namespace RavenPlayground.Scenes {
 	
@@ -12,9 +16,10 @@ namespace RavenPlayground.Scenes {
 
 		private Camera _camera;
 		
-		private Chara _player;
-		private Chara _object;
-		private Label _fps;
+		private CharNode _player;
+		private CharNode _object;
+		private LabelNode _fps;
+		private HouseNode _house;
 
 		private KeyBindings _keyBindings;
 		
@@ -25,68 +30,119 @@ namespace RavenPlayground.Scenes {
 
 		public TestBasicScene() : base("test-basic") {
 			_keyBindings = new(Id);
+			_up = _keyBindings.Register(new("lalala", (Key) ConsoleKey.V));
 		}
 
 		public override void OnLoad(RenderWindow window) {
 			base.OnLoad(window);
-			
-			
-			
+
 			_object = new('H') {
 				BackgroundColor = Color.Blue,
 				Position = new(-10, 10)
 			};
 			AddChild(_object);
 			
-			_player = new('@');
+			_house = new() {
+				Position = new(20, 2)
+			};
+			_object.AddChild(_house);
+
+			_player = new('@') {
+				BackgroundColor = Color.FromArgb(0, 0, 0, 0)
+			};
 			AddChild(_player);
 			
-			_fps = new($"FPS: NaN");
+			_fps = new("FPS: NaN");
 			AddChild(_fps);
 			
 			Context.Display.HideCursor();
 			_camera = new(Context);
-			AddChild(_camera);
-			
-			Context.FragmentShaders.Add(new BlendingShader(Context, BlendingShader.BlendingType.Hard));
+			_player.AddChild(_camera);
+
+			Task.Factory.StartNew(() => {
+				while (Console.ReadKey().Key == ConsoleKey.Escape)
+				{
+					Debug.WriteLine("Hello, World!");
+				}
+			});
+
+			Context.CellShaders.Add(new BlendingShader(Context, BlendingShader.BlendingType.Hard));
 		}
 
 		public override void OnUpdate(float delta) {
 			base.OnUpdate(delta);
 
 			_fps.Text = $"FPS: {1000 / delta}";
+			
+			//if(Console.KeyAvailable) {
+				//System.Diagnostics.Debug.WriteLine(_input.ReadByte());
+			//}
+			
+			//Console.Write(_kb.IsKeyPressed((Key) ConsoleKey.B));
+			
+			if(_up.Pressed) {
+				Debug.Write("pressed");
+			}
 
-			if(Console.KeyAvailable) {
+			if(_up.Down) {
+				Debug.Write("down");
+			}
+
+			/*if(Console.KeyAvailable) {
 				var key = Console.ReadKey(true);
 
 				switch(key.Key) {
 				#region Player
 					case ConsoleKey.W:
 						_player.Position.Y--;
+						
+						FindChildrenByComponentParallel((ICollidable collidable) => {
+							if(collidable.RelativeAABB.Collides(_player.Position)) {
+								_player.Position.Y++;
+							}
+						});
 						break;
 					case ConsoleKey.S:
 						_player.Position.Y++;
+						
+						FindChildrenByComponentParallel((ICollidable collidable) => {
+							if(collidable.RelativeAABB.Collides(_player.Position)) {
+								_player.Position.Y--;
+							}
+						});
 						break;
 					case ConsoleKey.A:
 						_player.Position.X--;
+						
+						FindChildrenByComponentParallel((ICollidable collidable) => {
+							if(collidable.RelativeAABB.Collides(_player.Position)) {
+								_player.Position.X++;
+							}
+						});
 						break;
 					case ConsoleKey.D:
 						_player.Position.X++;
+						
+						FindChildrenByComponentParallel((ICollidable collidable) => {
+							if(collidable.RelativeAABB.Collides(_player.Position)) {
+								_player.Position.X--;
+							}
+						});
 						break;
 				#endregion
 
 				#region View position
 					case ConsoleKey.R:
-						_camera.ViewMatrix.M21--;
+						_camera.Position.Y--;
 						break;
 					case ConsoleKey.G:
-						_camera.ViewMatrix.M21++;
+						_camera.Position.Y++;
 						break;
 					case ConsoleKey.F:
-						_camera.ViewMatrix.M11--;
+						_camera.Position.X--;
 						break;
 					case ConsoleKey.T:
-						_camera.ViewMatrix.M11++;
+						_camera.Position.X++;
 						break;
 				#endregion
 
@@ -123,7 +179,6 @@ namespace RavenPlayground.Scenes {
 				#region Clip size
 					case ConsoleKey.UpArrow:
 						_camera.ViewMatrix.M24--;
-						throw new Exception("lalala");
 						break;
 					case ConsoleKey.DownArrow:
 						_camera.ViewMatrix.M24++;
@@ -135,10 +190,32 @@ namespace RavenPlayground.Scenes {
 						_camera.ViewMatrix.M14++;
 						break;
 				#endregion
+					case ConsoleKey.Spacebar:
+						_camera.RecalculateViewMatrix();
+						break;
+					case ConsoleKey.Backspace:
+						Context.Clear(ref Context.BackBuffer);
+						Context.Clear(ref Context.FrontBuffer);
+						Context.Display.Clear();
+						break;
 					default:
 						break;
 				}
+			}*/
+			
+			_camera.RecalculateViewMatrix();
+
+			if(((ICollidable) _house).RelativeAABB.Collides(_player.Position)) {
+				_player.BackgroundColor = Color.ForestGreen;
+			} else {
+				_player.BackgroundColor = Color.MediumVioletRed;
 			}
+		}
+
+		public override void OnUnload() {
+			base.OnUnload();
+			
+			_keyBindings.Dispose();
 		}
 
 		public override void OnRender(float delta) {
@@ -163,6 +240,8 @@ namespace RavenPlayground.Scenes {
 			);*/
 			
 			base.OnRender(delta);
+			
+			//Context.DrawBoundingBox(_house, ((ICollidable) _house).AABB);
 		}
 	}
 }

@@ -3,7 +3,7 @@ using Silk.NET.Maths;
 
 namespace Coelum.Raven.Node {
 	
-	public class Label : SpatialNode {
+	public class LabelNode : SpatialNode {
 		
 		public string Text { get; set; }
 		public Color ForegroundColor { get; set; } = Color.White;
@@ -12,14 +12,14 @@ namespace Coelum.Raven.Node {
 		public bool Wrap { get; set; }
 		public Vector2D<float> Anchor { get; set; }
 		
-		public Label(string text, bool wrap = false) {
+		public LabelNode(string text, bool wrap = false) {
 			Text = text;
 			Wrap = wrap;
 		}
 		
 		public override void Render(RenderContext ctx) {
-			int x = Position.X - (int) Math.Round(Anchor.X * Text.Length);
-			int y = Position.Y - (int) Math.Round(Anchor.Y * 1);
+			int x = GlobalPosition.X - (int) Math.Round(Anchor.X * Text.Length);
+			int y = GlobalPosition.Y - (int) Math.Round(Anchor.Y * 1);
 			
 			for(int i = 0; i < Text.Length; i++) {
 				if(Text[i] == '\n') {

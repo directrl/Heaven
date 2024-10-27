@@ -12,7 +12,7 @@ namespace Coelum.Raven.Window {
 		public float Delta { get; private set; }
 		public float TargetDelta => 1000 / FramesPerSecond;
 		
-		public float FramesPerSecond { get; set; } = 60;
+		public float FramesPerSecond { get; set; } = 6000;
 		
 		public RenderContext Context { get; }
 
@@ -28,7 +28,7 @@ namespace Coelum.Raven.Window {
 				Scene?.OnUpdate(Delta);
 
 				var cc = RenderContext.DEFAULT_CELL;
-				if(Scene is not null && Scene is RavenSceneBase ravenScene) {
+				if(Scene is RavenSceneBase ravenScene) {
 					cc = ravenScene.ClearCell;
 				}
 				

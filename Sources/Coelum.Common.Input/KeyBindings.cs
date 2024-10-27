@@ -8,7 +8,7 @@ namespace Coelum.Common.Input {
 		public GameOptions Options { get; }
 		public Dictionary<string, KeyBinding> Bindings { get; } = new();
 
-		private readonly List<Key> _combo = new();
+		private readonly List<int> _combo = new();
 
 		public KeyBindings(string id) {
 			Options = new(Path.Join(
@@ -44,7 +44,7 @@ namespace Coelum.Common.Input {
 			Options.SetObject(binding.Name, binding);
 		}
 
-		public void Input(KeyAction action, Key key) {
+		public void Input(KeyAction action, int key) {
 			if(Bindings.Count <= 0) return;
 
 			switch(action) {

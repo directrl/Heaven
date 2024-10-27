@@ -9,7 +9,7 @@ namespace Coelum.Raven.Window {
 		private static bool _windowExists = false;
 
 		protected ConsoleWindow()
-			: base(new(new AnsiDisplay(Console.BufferWidth, Console.BufferHeight, Console.Out))) {
+			: base(new(new AnsiDisplay(new(Console.OpenStandardOutput())))) {
 
 			_windowExists = true;
 			Console.TreatControlCAsInput = true;

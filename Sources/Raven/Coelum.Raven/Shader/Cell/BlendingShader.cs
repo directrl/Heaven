@@ -1,6 +1,6 @@
-namespace Coelum.Raven.Shader.Fragment {
+namespace Coelum.Raven.Shader.Cell {
 	
-	public class BlendingShader : IFragmentShader {
+	public class BlendingShader : ICellShader {
 		
 		public RenderContext Context { get; }
 		public BlendingType Type { get; }
@@ -10,19 +10,21 @@ namespace Coelum.Raven.Shader.Fragment {
 			Type = type;
 		}
 
-		public void Process(ref IFragmentShader.Parameter input) {
+		public bool Process(ref ICellShader.Parameter input) {
 			var cell = Context[input.Position];
 
 			switch(Type) {
 				case BlendingType.Soft:
-					throw new NotImplementedException(); // TODO
+					throw new NotImplementedException();
 					break;
 				case BlendingType.Hard:
-					if(cell.HasValue && cell.Value.Character != ' ' && input.Cell.BackgroundColor.A == 0) {
+					if(cell.HasValue && input.Cell.BackgroundColor.A == 0) {
 						input.Cell.BackgroundColor = cell.Value.BackgroundColor;
 					}
 					break;
 			}
+
+			return true;
 		}
 
 		public enum BlendingType {

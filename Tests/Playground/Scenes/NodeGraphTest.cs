@@ -267,7 +267,7 @@ namespace Playground.Scenes {
 			if(_camera1Bind.Pressed) Camera = _camera1;
 			if(_camera2Bind.Pressed) Camera = _camera2;
 			
-			_keyBindings.Update(Window.Input.Keyboards[0]);
+			_keyBindings.Update(new SilkKeyboard(Window.Input.Keyboards[0]));
 		}
 	}
 }

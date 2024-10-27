@@ -1,15 +1,21 @@
 using Coelum.Node;
 using Coelum.Raven.Display;
+using Coelum.Raven.Node;
 using Coelum.Raven.Shader;
-using Coelum.Raven.Shader.Fragment;
+using Coelum.Raven.Shader.Cell;
 using Silk.NET.Maths;
 
 namespace Coelum.Raven {
 	
-	public class Camera : NodeBase {
+	public class Camera : SpatialNode, IShaderActivator {
 
 		private readonly IDisplay _display;
-		
+
+	#region Shaders
+		public List<ICellShader> CellShaders { get; } = new();
+		public List<ICellShader> SpatialShaders { get; } = new();
+	#endregion
+
 		/// <summary>
 		/// vX | vW (u) | cX | cW
 		/// vY | vH (u) | cY | cH
@@ -24,6 +30,16 @@ namespace Coelum.Raven {
 		public int ViewY {
 			get => ViewMatrix.M21;
 			set => ViewMatrix.M21 = value;
+		}
+
+		public int ViewWidth {
+			get => ViewMatrix.M12;
+			set => ViewMatrix.M12 = value;
+		}
+
+		public int ViewHeight {
+			get => ViewMatrix.M22;
+			set => ViewMatrix.M22 = value;
 		}
 
 		public int ClipX {
@@ -45,67 +61,37 @@ namespace Coelum.Raven {
 			get => ViewMatrix.M24;
 			set => ViewMatrix.M24 = value;
 		}
-
-		private FragmentShader _fragmentShader;
 		
 		public Camera(RenderContext ctx) {
 			_display = ctx.Display;
-			_fragmentShader = new(ctx, this);
-			
-			RecalculateViewMatrix();
-			// TODO recalculate on resize
 
-			Added += _ => {
-				ctx.FragmentShaders.Add(_fragmentShader);
-			};
-			
-			Removed += _ => {
-				ctx.FragmentShaders.Remove(_fragmentShader);
-			};
-		}
-
-		private void RecalculateViewMatrix() {
 			ViewMatrix = new(
 				0, _display.Width,
 				0, _display.Width,
-				0, _display.Width,
+				0, _display.Height,
 				0, _display.Height
 			);
+			
+			CellShaders.Add(new CameraShader(this));
+			
+			RecalculateViewMatrix();
+			ctx.Display.Resize += (_, _) => RecalculateViewMatrix();
+
+			Added += _ => ((IShaderActivator) this).ActivateShaders(ctx);
+			Removed += _ => ((IShaderActivator) this).DeactivateShaders(ctx);
 		}
-		
-		public class FragmentShader : IFragmentShader {
-		
-			public RenderContext Context { get; }
-			public Camera Camera { get; }
 
-			public FragmentShader(RenderContext ctx, Camera camera) {
-				Context = ctx;
-				Camera = camera;
-			}
-
-			public void Process(ref IFragmentShader.Parameter input) {
-				// x += ViewMatrix.M11;
-				// y += ViewMatrix.M21;
-				// 	
-				// int w = ViewMatrix.M12;
-				// int h = ViewMatrix.M22;
-				// 	
-				// int clipX = ViewMatrix.M13;
-				// int clipY = ViewMatrix.M23;
-				//
-				// int clipW = ViewMatrix.M14;
-				// int clipH = ViewMatrix.M24;
-				//
-				// if(x < clipX || x > (clipX + clipW)
-				//    || y < clipY || y > (clipY + clipH)) return;
-				// 	
-				// if(x >= 0 && x < w && y >= 0 && y < h) {
-				// 	BackBuffer[y, x] = value ?? default;
-				// }
-
-				input.Position.X += Camera.ViewX;
-				input.Position.Y += Camera.ViewY;
-			}
+		public void RecalculateViewMatrix() {
+			int widthRatio = Math.Max(_display.Width, ViewWidth) / Math.Min(_display.Width, ViewWidth);
+			int heightRatio = Math.Max(_display.Height, ViewHeight) / Math.Min(_display.Height, ViewHeight);
+			
+			// TODO is this correct?
+			ViewMatrix = new(
+				-GlobalPosition.X, _display.Width,
+				widthRatio * ClipX, widthRatio * ClipWidth,
+				-GlobalPosition.Y, _display.Height,
+				heightRatio * ClipY, heightRatio * ClipHeight
+			);
 		}
 	}
 }

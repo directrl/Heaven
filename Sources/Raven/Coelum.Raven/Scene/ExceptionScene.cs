@@ -1,6 +1,5 @@
 using System.Drawing;
 using Coelum.Raven.Node;
-using Coelum.Raven.Shader.Fragment;
 using Coelum.Raven.Window;
 
 namespace Coelum.Raven.Scene {
@@ -28,22 +27,21 @@ namespace Coelum.Raven.Scene {
 			});
 			Context.Render();
 			
-			var title = new Label($"UNHANDLED EXCEPTION: {_exception.Source ?? "No source available"}", true) {
+			var title = new LabelNode($"UNHANDLED EXCEPTION: {_exception.Source ?? "No source available"}", true) {
 				Anchor = new(0.5f, 0),
 				Position = new(Context.Display.Width / 2,  1),
 			};
 
-			var message = new Label(_exception.Message, true) {
+			var message = new LabelNode(_exception.Message, true) {
 				Anchor = new(0.5f, 0),
 				Position = new(title.Position.X, title.Position.Y + 1),
 			};
 
-			var stackTrace = new Label("Stack trace:\n" + (_exception.StackTrace ?? "No stack trace available"), true) {
+			var stackTrace = new LabelNode("Stack trace:\n" + (_exception.StackTrace ?? "No stack trace available"), true) {
 				Anchor = new(0, 0),
 				Position = new(0, message.Position.Y + 2),
 			};
 			
-			// TODO subchildren positioning
 			AddChild(title);
 			AddChild(message);
 			AddChild(stackTrace);

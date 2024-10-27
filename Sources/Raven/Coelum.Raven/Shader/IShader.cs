@@ -2,6 +2,6 @@ namespace Coelum.Raven.Shader {
 	
 	public interface IShader<TParam> {
 
-		public void Process(ref TParam input);
+		public bool Process(ref TParam input);
 	}
 }

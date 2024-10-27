@@ -1,12 +1,13 @@
 using System.Drawing;
 using Coelum.Debug;
 using Coelum.Raven.Display;
+using Coelum.Raven.Node;
 using Coelum.Raven.Shader;
 using Silk.NET.Maths;
 
 namespace Coelum.Raven {
 	
-	public class RenderContext {
+	public class RenderContext : IShaderActivator {
 
 		public static readonly Cell DEFAULT_CELL = new();
 		
@@ -16,22 +17,24 @@ namespace Coelum.Raven {
 		public Cell[,] FrontBuffer;
 
 	#region Shaders
-		public List<IFragmentShader> FragmentShaders { get; } = new();
+		public List<ICellShader> CellShaders { get; } = new();
+		public List<ICellShader> SpatialShaders { get; } = new();
 	#endregion
 
 		public RenderContext(IDisplay display) {
 			Display = display;
+			Display.Resize += (_, _) => Resize();
 			
-			BackBuffer = new Cell[display.Height, display.Width];
-			FrontBuffer = new Cell[display.Height, display.Width];
-
-			Clear(ref BackBuffer);
+			// initial resize
+			Resize();
 		}
 
 		public void Clear(ref Cell[,] buffer, Cell? value = null) {
+			var cell = value ?? DEFAULT_CELL;
+			
 			for(int y = 0; y < Display.Height; y++) {
 				for(int x = 0; x < Display.Width; x++) {
-					buffer[y, x] = value ?? DEFAULT_CELL;
+					buffer[y, x] = cell;
 				}
 			}
 		}
@@ -41,9 +44,17 @@ namespace Coelum.Raven {
 		}
 
 		public void Reset() {
-			FragmentShaders.Clear();
+			CellShaders.Clear();
 			Clear(ref BackBuffer);
 			Render();
+		}
+
+		public void Resize() {
+			BackBuffer = new Cell[Display.Height, Display.Width];
+			FrontBuffer = new Cell[Display.Height, Display.Width];
+			
+			Display.Clear();
+			Clear(ref BackBuffer);
 		}
 		
 		public Cell? this[int x, int y] {
@@ -62,22 +73,19 @@ namespace Coelum.Raven {
 				return BackBuffer[pos.Y, pos.X];
 			}
 			set {
-				Tests.Assert(value.HasValue);
-				
-				var frag = new IFragmentShader.Parameter() {
+				if(!value.HasValue) return;
+
+				var frag = new ICellShader.Parameter() {
 					Position = pos,
 					Cell = value.Value
 				};
 
-				foreach(var fragShader in FragmentShaders) {
-					fragShader.Process(ref frag);
+				foreach(var fragShader in CellShaders) {
+					if(!fragShader.Process(ref frag)) return;
 				}
-				
+
 				if(frag.Position.X < 0 || frag.Position.X >= Display.Width
-				   || frag.Position.Y < 0 || frag.Position.Y >= Display.Height) {
-					
-					return;
-				}
+				   || frag.Position.Y < 0 || frag.Position.Y >= Display.Height) return;
 
 				BackBuffer[frag.Position.Y, frag.Position.X] = frag.Cell;
 			}

@@ -6,7 +6,7 @@ namespace RavenPlayground {
 	
 	public class Playground : Heaven {
 		
-		public Playground() : base("playground") { }
+		public Playground() : base("raven-playground") { }
 
 		public override void Setup(string[] args) {
 			var window = ConsoleWindow.Create();
