@@ -14,7 +14,7 @@ using ImGuiNET;
 using Silk.NET.Input;
 using Silk.NET.OpenGL;
 
-namespace Playground.Scenes {
+namespace PhoenixPlayground.Scenes {
 	
 	public class TextureTest : Scene3D {
 		
@@ -177,22 +177,22 @@ namespace Playground.Scenes {
 				_objects = new();
 				
 				/*_mat1 = new() {
-					//Texture = Texture2D.Load(Playground.AppResources[ResourceType.TEXTURE, "one"]),
+					//Texture = Texture2D.Load(PhoenixPlayground.AppResources[ResourceType.TEXTURE, "one"]),
 					TextureLayer = 0,
 					Color = new(1, 1, 1, 1)
 				};
 				_mat2 = new() {
-					//Texture = Texture2D.Load(Playground.AppResources[ResourceType.TEXTURE, "two"]),
+					//Texture = Texture2D.Load(PhoenixPlayground.AppResources[ResourceType.TEXTURE, "two"]),
 					TextureLayer = 1,
 					Color = new(1, 1, 1, 1)
 				};
 				_mat3 = new() {
-					//Texture = Texture2D.Load(Playground.AppResources[ResourceType.TEXTURE, "three"]),
+					//Texture = Texture2D.Load(PhoenixPlayground.AppResources[ResourceType.TEXTURE, "three"]),
 					TextureLayer = 2,
 					Color = new(1, 1, 1, 1)
 				};
 				_mat4 = new() {
-					//Texture = Texture2D.Load(Playground.AppResources[ResourceType.TEXTURE, "four"]),
+					//Texture = Texture2D.Load(PhoenixPlayground.AppResources[ResourceType.TEXTURE, "four"]),
 					TextureLayer = 3,
 					Color = new(1, 1, 1, 1)
 				};*/
@@ -225,7 +225,7 @@ namespace Playground.Scenes {
 						Material = new() {
 							Albedo = new(1, 1, 1, 1),
 							Textures = new() {
-								(Material.TextureType.Diffuse, Texture2D.Load(Playground.AppResources[ResourceType.TEXTURE, "two"]))
+								(Material.TextureType.Diffuse, Texture2D.Load(PhoenixPlayground.AppResources[ResourceType.TEXTURE, "two"]))
 							}
 						}
 					}*/

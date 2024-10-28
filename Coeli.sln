@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Coelum.Core", "Sources\Coel
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{D210D6B3-356E-448A-9E38-C76B34C955C0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Playground", "Tests\Playground\Playground.csproj", "{FD3E522F-BBE0-43E7-BE2C-6DFD064B1DDD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PhoenixPlayground", "Tests\PhoenixPlayground\PhoenixPlayground.csproj", "{FD3E522F-BBE0-43E7-BE2C-6DFD064B1DDD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Coelum.Common.Input", "Sources\Coelum.Common.Input\Coelum.Common.Input.csproj", "{7EAC9C7A-5C8A-47A9-96E8-A7EC66E9A306}"
 EndProject

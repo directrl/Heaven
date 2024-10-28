@@ -14,7 +14,7 @@ using ImGuiNET;
 using Silk.NET.Input;
 using Silk.NET.OpenGL;
 
-namespace Playground.Scenes {
+namespace PhoenixPlayground.Scenes {
 	
 	public class InstancingTest : Scene3D {
 

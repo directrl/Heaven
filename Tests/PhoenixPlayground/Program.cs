@@ -5,7 +5,7 @@ using Silk.NET.Input;
 using Silk.NET.OpenGL;
 using Silk.NET.OpenGL.Extensions.ImGui;
 
-namespace Playground {
+namespace PhoenixPlayground {
 	
 	public class Program {
 

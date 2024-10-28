@@ -3,7 +3,7 @@ using Coelum.Phoenix.Camera;
 using Coelum.Common.Input;
 using Silk.NET.Input;
 
-namespace Playground {
+namespace PhoenixPlayground {
 	
 	public class FreeCamera {
 		

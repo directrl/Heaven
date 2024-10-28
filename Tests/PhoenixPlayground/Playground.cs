@@ -2,13 +2,13 @@ using Coelum.Core;
 using Coelum.Core.Logging;
 using Coelum.Debug;
 using Coelum.Phoenix;
-using Playground.Scenes;
+using PhoenixPlayground.Scenes;
 
-namespace Playground {
+namespace PhoenixPlayground {
 	
 	public class Playground : Heaven {
 
-		public Playground() : base("playground") {
+		public Playground() : base("phoenix-playground") {
 			Debugging.IgnoreMissingShaderUniforms = true;
 		}
 

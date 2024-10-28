@@ -14,7 +14,7 @@ using Silk.NET.Input;
 using Silk.NET.OpenGL;
 using IShaderRenderable = Coelum.Phoenix.Node.Component.IShaderRenderable;
 
-namespace Playground.Scenes {
+namespace PhoenixPlayground.Scenes {
 	
 	public class NodeGraphTest : Scene3D {
 		
