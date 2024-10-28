@@ -7,6 +7,7 @@ namespace Coelum.Resources {
 		public string Name { get; }
 		public ResourceType Type { get; }
 		
+		public string FullPath { get; }
 		public string UID { get; }
 		
 		public bool Cache { get; set; }
@@ -14,6 +15,8 @@ namespace Coelum.Resources {
 		public Stream? GetStream();
 		public byte[]? ReadBytes();
 		public string? ReadString(Encoding? encoding = null);
+
+		public string Export();
 
 		bool IEquatable<IResource>.Equals(IResource? other) {
 			return UID == (other?.UID ?? "");

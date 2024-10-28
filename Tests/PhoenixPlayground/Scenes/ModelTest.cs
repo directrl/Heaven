@@ -52,7 +52,12 @@ namespace PhoenixPlayground.Scenes {
 			}
 
 			if(_model == null) {
-				_model = ModelLoader.Load(Playground.AppResources[ResourceType.MODEL, "untitled.glb"]);
+				var m = Playground.AppResources[ResourceType.DIRECTORY, "Models/untitled"];
+				var p = m.Export();
+
+				m = Playground.ExternalResources[ResourceType.MODEL, Path.Combine(p, "untitled.gltf")];
+				
+				_model = ModelLoader.Load(m);
 				_node = new() {
 					Model = _model
 				};

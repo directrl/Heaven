@@ -12,6 +12,7 @@ namespace Coelum.Resources {
 		public string Name { get; }
 		public ResourceType Type { get; }
 
+		public string FullPath { get; }
 		public string UID { get; }
 
 		public bool Cache { get; set; } = false;
@@ -27,6 +28,10 @@ namespace Coelum.Resources {
 			Namespace = _namespace;
 			Name = name;
 
+			FullPath = _namespace;
+			if(!string.IsNullOrWhiteSpace(type.Path)) FullPath += "." + type.Path;
+			FullPath += "." + name + type.Extension;
+			
 			UID = _namespace + "/" + type.Path + "/" + name + type.Extension;
 		}
 
@@ -39,7 +44,7 @@ namespace Coelum.Resources {
 			
 			try {
 				stream = Assembly
-					.GetManifestResourceStream($"{Namespace}.{Type.Path}.{Name.Replace('/', '.')}{Type.Extension}");
+					.GetManifestResourceStream(FullPath.Replace('/', '.'));
 			} catch(Exception e) {
 				Log.Logger.Error($"Failed to get stream for resource [{this}]", e);
 				return null;
@@ -74,17 +79,51 @@ namespace Coelum.Resources {
 			if(data != null) return encoding.GetString(data);
 			return null;
 		}
-
-		public override string ToString() {
-			return UID;
-		}
-
-		public static bool operator==(Resource res1, IResource res2) {
-			return res1.UID == res2.UID;
-		}
 		
-		public static bool operator!=(Resource res1, IResource res2) {
-			return res1.UID != res2.UID;
+		public string Export() {
+			if(Type == ResourceType.DIRECTORY) {
+				string tempDirPath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+				
+				var resPaths = Assembly.GetManifestResourceNames();
+
+				foreach(var path in resPaths) {
+					if(!path.StartsWith(FullPath.Replace('/', '.'))) continue;
+					
+					string subPath = path.Replace((Namespace + "." + Name).Replace('/', '.'), "");
+					
+					int lastIndex = subPath.LastIndexOf('.');
+					if(lastIndex > 0) {
+						subPath = subPath[..lastIndex].Replace(".", "/") + subPath[lastIndex..];
+					}
+					
+					if(subPath.StartsWith('.')) continue;
+
+					string fullPath = tempDirPath + subPath;
+					var resource = new Resource(ResourceType.CUSTOM, Namespace, Name + subPath.Replace('/', '.'), Assembly);
+
+					var data = resource.ReadBytes();
+					if(data == null) throw new IOException("Could not read resource data");
+
+					Directory.CreateDirectory(Path.GetDirectoryName(fullPath));
+					File.Create(fullPath).Write(data);
+				}
+
+				return tempDirPath;
+			} else {
+				string tempFilePath = Path.GetTempFileName();
+
+				var data = ReadBytes();
+				if(data == null) throw new IOException("Could not read resource data");
+				
+				File.WriteAllBytes(tempFilePath, data);
+
+				return tempFilePath;
+			}
 		}
+
+		public override string ToString() => UID;
+		
+		public static bool operator==(Resource res1, IResource res2) => res1.UID == res2.UID;
+		public static bool operator!=(Resource res1, IResource res2) => res1.UID != res2.UID;
 	}
 }

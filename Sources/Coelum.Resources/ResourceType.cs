@@ -3,6 +3,7 @@ namespace Coelum.Resources {
 	public sealed class ResourceType {
 
 		public static readonly ResourceType CUSTOM = new("", "");
+		public static readonly ResourceType DIRECTORY = new("", "");
 		public static readonly ResourceType SHADER = new("Shaders", "");
 		public static readonly ResourceType TEXTURE = new("Textures", ".png");
 		public static readonly ResourceType MODEL = new("Models", "");

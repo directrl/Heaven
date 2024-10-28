@@ -42,7 +42,7 @@ namespace Coelum.Phoenix.ModelLoading {
 			}
 
 			if(resource is ExternalResource eResource) {
-				model = Create(eResource.Path, path: eResource.Path);
+				model = Create(eResource.FullPath, path: eResource.FullPath);
 			} else {
 				var data = resource.ReadBytes();
 				if(data == null) return null;

@@ -10,6 +10,7 @@ namespace Coelum.Resources {
 		public string Name { get; }
 		public ResourceType Type { get; }
 
+		public string FullPath => throw new NotSupportedException();
 		public string UID { get; }
 
 		public bool Cache {
@@ -33,26 +34,24 @@ namespace Coelum.Resources {
 		}
 
 		public byte[] ReadBytes() {
-			using(var stream = GetStream()) {
-				return Data.ToArray();
-			}
+			return Data.ToArray();
 		}
 		
 		public string? ReadString(Encoding? encoding = null) {
 			encoding ??= Encoding.UTF8;
 			return encoding.GetString(ReadBytes());
 		}
-		
-		public override string ToString() {
-			return UID;
+
+		public string Export() {
+			string tempFilePath = Path.GetTempFileName();
+			File.WriteAllBytes(tempFilePath, ReadBytes());
+
+			return tempFilePath;
 		}
 
-		public static bool operator==(RawResource res1, IResource res2) {
-			return res1.UID == res2.UID;
-		}
+		public override string ToString() => UID;
 		
-		public static bool operator!=(RawResource res1, IResource res2) {
-			return res1.UID != res2.UID;
-		}
+		public static bool operator==(RawResource res1, IResource res2) => res1.UID == res2.UID;
+		public static bool operator!=(RawResource res1, IResource res2) => res1.UID != res2.UID;
 	}
 }

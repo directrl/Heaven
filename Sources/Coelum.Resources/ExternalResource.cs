@@ -4,12 +4,11 @@ using Serilog;
 namespace Coelum.Resources {
 	
 	public struct ExternalResource : IResource {
-		
-		public string Path { get; }
 
 		public string Name { get; }
 		public ResourceType Type { get; }
 		
+		public string FullPath { get; }
 		public string UID { get; }
 
 		public bool Cache { get; set; } = false;
@@ -17,14 +16,14 @@ namespace Coelum.Resources {
 		public ExternalResource(ResourceType type, string path) {
 			Type = type;
 			Name = path;
-			Path = path;
+			FullPath = path;
 			
 			UID = $"EXT({type.Path}):" + path;
 		}
 
 		public Stream? GetStream() {
 			try {
-				return new FileStream(Path, FileMode.Open, FileAccess.Read);
+				return new FileStream(FullPath, FileMode.Open, FileAccess.Read);
 			} catch(Exception e) {
 				Log.Logger.Warning($"Failed to get stream for external resource {this}", e);
 				return null;
@@ -56,17 +55,12 @@ namespace Coelum.Resources {
 			if(data != null) return encoding.GetString(data);
 			return null;
 		}
-		
-		public override string ToString() {
-			return UID;
-		}
 
-		public static bool operator==(ExternalResource res1, IResource res2) {
-			return res1.UID == res2.UID;
-		}
+		public string Export() => throw new NotSupportedException();
 		
-		public static bool operator!=(ExternalResource res1, IResource res2) {
-			return res1.UID != res2.UID;
-		}
+		public override string ToString() => UID;
+
+		public static bool operator==(ExternalResource res1, IResource res2) => res1.UID == res2.UID;
+		public static bool operator!=(ExternalResource res1, IResource res2) => res1.UID != res2.UID;
 	}
 }
