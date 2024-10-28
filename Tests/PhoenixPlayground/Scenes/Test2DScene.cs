@@ -129,12 +129,10 @@ namespace PhoenixPlayground.Scenes {
 			base.OnRender(delta);
 			
 			//MainShader.SetUniform("color", new Vector4(1.0f, 0.0f, 0.0f, 1.0f));
-			_object?.Load(PrimaryShader);
-			_object?.Render();
+			_object?.Render(PrimaryShader);
 			
 			//MainShader.SetUniform("color", new Vector4(0.0f, 0.0f, 1.0f, 1.0f));
-			_object2?.Load(PrimaryShader);
-			_object2?.Render();
+			_object2?.Render(PrimaryShader);
 		}
 	}
 }

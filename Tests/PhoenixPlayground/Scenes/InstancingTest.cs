@@ -166,12 +166,10 @@ namespace PhoenixPlayground.Scenes {
 			base.OnRender(delta);
 
 			if(_instancing) {
-				_instObject?.Load(PrimaryShader);
 				_instObject?.Render(PrimaryShader);
 			} else {
 				foreach(var o in objects) {
-					o.Load(PrimaryShader);
-					o.Render();
+					o.Render(PrimaryShader);
 				}
 			}
 		}

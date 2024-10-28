@@ -8,7 +8,7 @@ using Silk.NET.OpenGL;
 
 namespace Coelum.Phoenix.Node {
 	
-	// TODO fix this
+	// TODO rewrite this
 	public class InstancedNode<TNode> : SpatialNode where TNode : SpatialNode {
 
 		private bool _ready = false;
@@ -152,16 +152,16 @@ namespace Coelum.Phoenix.Node {
 			Model?.Render(shader);
 		}
 
-		public unsafe override void Render() {
-			Tests.Assert(_ready, "Object is not ready! Did you forget to call Build() beforehand?");
-			
-			uint oc = (uint) NodeCount;
-			
-			foreach(var mesh in Model.Meshes) {
-				mesh.VAO.Bind();
-				Gl.DrawElementsInstanced(mesh.Type, mesh.VertexCount, DrawElementsType.UnsignedInt, null, oc);
-			}
-		}
+		// public unsafe override void Render() {
+		// 	Tests.Assert(_ready, "Object is not ready! Did you forget to call Build() beforehand?");
+		// 	
+		// 	uint oc = (uint) NodeCount;
+		// 	
+		// 	foreach(var mesh in Model.Meshes) {
+		// 		mesh.VAO.Bind();
+		// 		Gl.DrawElementsInstanced(mesh.Type, mesh.VertexCount, DrawElementsType.UnsignedInt, null, oc);
+		// 	}
+		// }
 		
 		public static readonly IShaderOverlay[] OVERLAYS = {
 			VertexShaderOverlay.OVERLAY,

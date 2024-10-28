@@ -25,19 +25,8 @@ namespace Coelum.Phoenix.Node {
 		public virtual void Render(ShaderProgram shader) {
 			if(Model == null) return;
 			
-			//Model.Load(shader);
 			shader.SetUniform("model", GlobalTransform);
 			Model?.Render(shader);
-		}
-		
-		[Obsolete]
-		public virtual void Render() {
-			
-		}
-
-		[Obsolete]
-		public void Load(ShaderProgram shader) {
-			
 		}
 	}
 }

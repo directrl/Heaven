@@ -84,7 +84,7 @@ namespace Coelum.Phoenix.Camera {
 			shader.SetUniform("projection", ProjectionMatrix);
 			shader.SetUniform("view", ViewMatrix);
 			
-			base.Load(shader);
+			base.Render(shader);
 		}
 
 		protected abstract void RecalculateProjectionMatrix();

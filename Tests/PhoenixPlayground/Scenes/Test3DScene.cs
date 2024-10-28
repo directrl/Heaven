@@ -146,8 +146,7 @@ namespace PhoenixPlayground.Scenes {
 			PrimaryShader.DisableOverlays(Material.OVERLAYS);
 			
 			//MainShader.SetUniform("color", new Vector4(1.0f, 1.0f, 1.0f, 1.0f));
-			_object?.Load(PrimaryShader);
-			_object?.Render();
+			_object?.Render(PrimaryShader);
 		}
 	}
 }
