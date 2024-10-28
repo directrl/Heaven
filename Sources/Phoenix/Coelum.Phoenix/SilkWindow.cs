@@ -92,6 +92,7 @@ namespace Coelum.Phoenix {
 
 			if(!SilkImpl.IsClosing) SilkImpl.DoUpdate();
 			if(SilkImpl.IsClosing) {
+				Close();
 				return false;
 			}
 

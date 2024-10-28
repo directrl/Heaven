@@ -20,7 +20,7 @@ namespace Coelum.Phoenix.Input {
 			if(scene.Window?.Input == null) return;
 			
 			foreach(var keyboard in scene.Window.Input.Keyboards) {
-				keyBindings.Update(keyboard);
+				keyBindings.Update(new SilkKeyboard(keyboard));
 			}
 		}
 
@@ -28,8 +28,8 @@ namespace Coelum.Phoenix.Input {
 			if(window.Input == null) throw new InvalidOperationException("Window input not initialized");
 			
 			foreach(var keyboard in window.Input.Keyboards) {
-				keyboard.KeyUp += (_, key, _) => keyBindings.Input(KeyAction.Release, key);
-				keyboard.KeyDown += (_, key, _) => keyBindings.Input(KeyAction.Press, key);
+				keyboard.KeyUp += (_, key, _) => keyBindings.Input(KeyAction.Release, (int) key);
+				keyboard.KeyDown += (_, key, _) => keyBindings.Input(KeyAction.Press, (int) key);
 			}
 		}
 	}

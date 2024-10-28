@@ -118,12 +118,6 @@ namespace Playground.Scenes {
 			};
 		}
 
-		public override void OnUnload() {
-			base.OnUnload();
-			
-			_keyBindings.Dispose();
-		}
-
 		public override void OnUpdate(float delta) {
 			base.OnUpdate(delta);
 

@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net6.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\Sources\Coelum.Common.Input\Coelum.Common.Input.csproj" />
+      <ProjectReference Include="..\..\Sources\Coelum.Core\Coelum.Core.csproj" />
+      <ProjectReference Include="..\..\Sources\Coelum.Physics\Coelum.Physics.csproj" />
+      <ProjectReference Include="..\..\Sources\Raven\Coelum.Raven\Coelum.Raven.csproj" />
+    </ItemGroup>
+
+</Project>

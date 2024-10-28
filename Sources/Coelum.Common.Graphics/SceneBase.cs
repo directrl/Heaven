@@ -24,11 +24,16 @@ namespace Coelum.Common.Graphics {
 	#endregion
 
 		public WindowBase? Window { get; private set; }
-		public GameOptions Options { get; }
+		public GameOptions? Options { get; }
 		
 		public string Id { get; }
 
-		protected SceneBase(string id) {
+		protected SceneBase(string? id) {
+			if(id == null) {
+				Id = "";
+				return;
+			}
+			
 			Id = id;
 
 			Directories.Create(Directories.ConfigurationRoot, "scenes");
@@ -36,13 +41,15 @@ namespace Coelum.Common.Graphics {
 		}
 
 		public virtual void OnLoad(WindowBase window) {
+			ClearChildren();
+			
 			Window = window;
 			Load?.Invoke(window);
 		}
 
 		public virtual void OnUnload() {
 			Window = null;
-			Options.Save();
+			Options?.Save();
 			Unload?.Invoke();
 		}
 
@@ -55,10 +62,6 @@ namespace Coelum.Common.Graphics {
 		}
 		
 		public virtual void OnRender(float delta) {
-			FindChildrenByComponent((IRenderable renderable) => {
-				renderable.Render(delta);
-			});
-			
 			Render?.Invoke(delta);
 		}
 	}

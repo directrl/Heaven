@@ -42,6 +42,9 @@ namespace Coelum.Core {
 			
 			EngineResources = new(eNamespace ?? "");
 			AppResources = new(aNamespace ?? "", Assembly.GetCallingAssembly());
+
+			// TODO ProcessExit doesn't get called for console applications :D
+			AppDomain.CurrentDomain.ProcessExit += (_, _) => Stop();
 		}
 
 		public abstract void Setup(string[] args);

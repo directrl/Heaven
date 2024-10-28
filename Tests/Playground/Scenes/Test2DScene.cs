@@ -5,6 +5,7 @@ using Coelum.Phoenix.Node;
 using Coelum.Phoenix.Scene;
 using Coelum.Phoenix.Texture;
 using Coelum.Common.Input;
+using Coelum.Phoenix.Input;
 using Coelum.Phoenix.UI;
 using ImGuiNET;
 using Silk.NET.Input;
@@ -90,11 +91,11 @@ namespace Playground.Scenes {
 			};
 
 			window.Input.Keyboards[0].KeyUp += (kb, k, sc) => {
-				_keyBindings.Input(KeyAction.Release, k);
+				_keyBindings.Input(KeyAction.Release, (int) k);
 			};
 			
 			window.Input.Keyboards[0].KeyDown += (kb, k, sc) => {
-				_keyBindings.Input(KeyAction.Press, k);
+				_keyBindings.Input(KeyAction.Press, (int) k);
 
 				float a = 10f;
 				
@@ -121,7 +122,7 @@ namespace Playground.Scenes {
 			var mouse = Window.Input.Mice[0];
 			//_freeCamera.Update(Camera, ref mouse, delta);
 			
-			_keyBindings.Update(Window.Input.Keyboards[0]);
+			_keyBindings.Update(new SilkKeyboard(Window.Input.Keyboards[0]));
 		}
 
 		public override void OnRender(float delta) {

@@ -7,8 +7,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Coelum.Configuration\Coelum.Configuration.csproj" />
-      <ProjectReference Include="..\Coelum.Node\Coelum.Node.csproj" />
+      <ProjectReference Include="..\..\Coelum.Common.Input\Coelum.Common.Input.csproj" />
+      <ProjectReference Include="..\Coelum.Raven\Coelum.Raven.csproj" />
     </ItemGroup>
 
 </Project>
