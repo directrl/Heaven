@@ -59,13 +59,6 @@ namespace RavenPlayground.Scenes {
 			_camera = new(Context);
 			_player.AddChild(_camera);
 
-			Task.Factory.StartNew(() => {
-				while (Console.ReadKey().Key == ConsoleKey.Escape)
-				{
-					Debug.WriteLine("Hello, World!");
-				}
-			});
-
 			Context.CellShaders.Add(new BlendingShader(Context, BlendingShader.BlendingType.Hard));
 		}
 
@@ -88,7 +81,7 @@ namespace RavenPlayground.Scenes {
 				Debug.Write("down");
 			}
 
-			/*if(Console.KeyAvailable) {
+			if(Console.KeyAvailable) {
 				var key = Console.ReadKey(true);
 
 				switch(key.Key) {
@@ -201,7 +194,7 @@ namespace RavenPlayground.Scenes {
 					default:
 						break;
 				}
-			}*/
+			}
 			
 			_camera.RecalculateViewMatrix();
 

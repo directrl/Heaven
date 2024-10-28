@@ -12,7 +12,7 @@ namespace Coelum.Raven.Window {
 		public float Delta { get; private set; }
 		public float TargetDelta => 1000 / FramesPerSecond;
 		
-		public float FramesPerSecond { get; set; } = 6000;
+		public float FramesPerSecond { get; set; } = 60;
 		
 		public RenderContext Context { get; }
 
