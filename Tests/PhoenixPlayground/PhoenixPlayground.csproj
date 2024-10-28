@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -11,6 +11,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Sources\Coelum.Core\Coelum.Core.csproj" />
     <ProjectReference Include="..\..\Sources\Coelum.Node\Coelum.Node.csproj" />
+    <ProjectReference Include="..\..\Sources\Coelum.World\Coelum.World.csproj" />
     <ProjectReference Include="..\..\Sources\Phoenix\Coelum.Phoenix.Input\Coelum.Phoenix.Input.csproj" />
     <ProjectReference Include="..\..\Sources\Phoenix\Coelum.Phoenix\Coelum.Phoenix.csproj" />
     <ProjectReference Include="..\..\Sources\Phoenix\Coelum.Phoenix.ModelLoading\Coelum.Phoenix.ModelLoading.csproj" />

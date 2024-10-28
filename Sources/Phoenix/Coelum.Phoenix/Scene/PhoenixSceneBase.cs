@@ -79,6 +79,7 @@ namespace Coelum.Phoenix.Scene {
 
 			base.OnRender(delta);
 			
+			// TODO
 			FindChildrenByComponent((IShaderRenderable renderable) => {
 				renderable.Render(PrimaryShader);
 			});
