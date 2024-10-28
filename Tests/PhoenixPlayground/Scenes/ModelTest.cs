@@ -52,51 +52,7 @@ namespace PhoenixPlayground.Scenes {
 			}
 
 			if(_model == null) {
-				_mesh = new Mesh(PrimitiveType.Triangles,
-				                 new float[] {
-					                 // VO
-					                 -0.5f, 0.5f, 0.5f,
-					                 // V1
-					                 -0.5f, -0.5f, 0.5f,
-					                 // V2
-					                 0.5f, -0.5f, 0.5f,
-					                 // V3
-					                 0.5f, 0.5f, 0.5f,
-					                 // V4
-					                 -0.5f, 0.5f, -0.5f,
-					                 // V5
-					                 0.5f, 0.5f, -0.5f,
-					                 // V6
-					                 -0.5f, -0.5f, -0.5f,
-					                 // V7
-					                 0.5f, -0.5f, -0.5f,
-				                 },
-				                 new uint[] {
-					                 // Front face
-					                 0, 1, 3, 3, 1, 2,
-					                 // Top Face
-					                 4, 0, 3, 5, 4, 3,
-					                 // Right face
-					                 3, 2, 7, 5, 3, 7,
-					                 // Left face
-					                 6, 1, 0, 6, 0, 4,
-					                 // Bottom face
-					                 2, 1, 6, 2, 6, 7,
-					                 // Back face
-					                 7, 6, 4, 7, 4, 5,
-				                 },
-				                 null,
-				                 null
-				) {
-					Material = new() {
-						// Textures = new() {
-						// 	(Material.TextureType.Diffuse, Texture2D.DefaultTexture)
-						// }
-					}
-				};
-				_model2 = new("test", new[] { _mesh });
-				
-				_model = ModelLoader.Load(Playground.AppResources[ResourceType.MODEL, "backpack/backpack.obj"]);
+				_model = ModelLoader.Load(Playground.AppResources[ResourceType.MODEL, "untitled.glb"]);
 				_node = new() {
 					Model = _model
 				};
@@ -129,11 +85,6 @@ namespace PhoenixPlayground.Scenes {
 
 		public override void OnRender(float delta) {
 			base.OnRender(delta);
-			GlobalOpenGL.Gl.Disable(EnableCap.CullFace);
-			
-			//_model?.Render(PrimaryShader);
-			//_model2.Load(PrimaryShader);
-			//_model2?.Render(PrimaryShader);
 		}
 	}
 }

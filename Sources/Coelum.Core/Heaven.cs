@@ -104,10 +104,11 @@ namespace Coelum.Core {
 		}
 
 		public void Stop() {
+			if(!Running) return;
+			Running = false;
+			
 			EngineLogger.Information("Shutting down");
 			AppLogger?.Information("Shutting down");
-			
-			Running = false;
 			
 			foreach(var window in Windows) {
 				window.Close();

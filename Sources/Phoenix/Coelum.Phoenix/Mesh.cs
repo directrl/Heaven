@@ -11,7 +11,7 @@ namespace Coelum.Phoenix {
 		public readonly VertexArrayObject VAO;
 
 		public PrimitiveType Type { get; }
-		public Material Material { get; set; } = new();
+		public int MaterialIndex { get; set; } = 0;
 		
 		public Mesh(PrimitiveType type,
 		            float[] vertices, uint[] indices, float[]? texCoords, float[]? normals) {
@@ -77,8 +77,6 @@ namespace Coelum.Phoenix {
 		}
 
 		public unsafe virtual void Render(ShaderProgram shader) {
-			Material.Load(shader);
-			
 			VAO.Bind();
 			Gl.DrawElements(Type, VertexCount, DrawElementsType.UnsignedInt, null);
 		}

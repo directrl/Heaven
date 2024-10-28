@@ -233,7 +233,7 @@ namespace PhoenixPlayground.Scenes {
 				
 				int wall = 16;
 
-				_instObject = new(new("", new[] { _mesh }), (int) Math.Pow(wall, 3));
+				_instObject = new(new("") { Meshes = new() { _mesh } }, (int) Math.Pow(wall, 3));
 
 				var tex1 = Texture2D.Load(Playground.AppResources[ResourceType.TEXTURE, "one"]);
 				var tex2 = Texture2D.Load(Playground.AppResources[ResourceType.TEXTURE, "two"]);

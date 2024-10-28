@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Dynamic;
 using System.Numerics;
+using Coelum.Debug;
 using Coelum.Phoenix;
 using Coelum.Phoenix.Texture;
 using Coelum.LanguageExtensions;
@@ -32,15 +33,28 @@ namespace Coelum.Phoenix.ModelLoading {
 				return model;
 			}
 
-			var data = resource.ReadBytes();
-			if(data == null) return null;
+			if(!resource.Name.EndsWith(".gltf") || !resource.Name.EndsWith(".glb")) {
+				Log.Warning("[MODEL LOADER] Loading non-glTF models is experimental and might not work correctly");
+			}
 
-			model = Create(resource.UID, ref data);
+			if(resource.Name.EndsWith(".gltf") && resource is not ExternalResource) {
+				throw new ArgumentException(".gltf models can only be loaded as an external resource", nameof(resource));
+			}
+
+			if(resource is ExternalResource eResource) {
+				model = Create(eResource.Path, path: eResource.Path);
+			} else {
+				var data = resource.ReadBytes();
+				if(data == null) return null;
+
+				model = Create(resource.UID, data: data);
+			}
+			
 			ModelCache.GLOBAL.Set(resource, model);
 			return model;
 		}
 
-		private unsafe static Model Create(string name, ref byte[] data, uint flags
+		private unsafe static Model Create(string name, byte[]? data = null, string? path = null, uint flags
 			                                   = (uint) (PostProcessSteps.GenerateSmoothNormals 
 				                                   | PostProcessSteps.JoinIdenticalVertices 
 				                                   | PostProcessSteps.Triangulate 
@@ -51,17 +65,24 @@ namespace Coelum.Phoenix.ModelLoading {
 				                                   | PostProcessSteps.OptimizeMeshes
 				                                   | PostProcessSteps.FlipUVs)) {
 			
+			Tests.Assert(data != null || path != null);
 			Log.Debug($"[MODEL LOADER] Creating model for [{name}]");
 
-			var scene = Ai.ImportFileFromMemory(data, (uint) data.Length, flags, (byte*) null);
+			var scene = path != null
+				? Ai.ImportFile(path, flags)
+				: Ai.ImportFileFromMemory(data, (uint) data.Length, flags, (byte*) null);
+			
 			if(scene == null || scene->MFlags == (uint) SceneFlags.Incomplete || scene->MRootNode == null) {
 				throw new LoadingException(Ai.GetErrorStringS());
 			}
 			
 			Log.Verbose("[MODEL LOADER] BEGIN PROCESSING");
 			var sw = Stopwatch.StartNew();
+
+			var model = new Model(name);
+			model.Materials.Clear(); // we don't want any default materials
 			
-			var model = new Model(name, new List<Mesh>());
+			ProcessScene(ref model, scene);
 			ProcessNode(ref model, scene, scene->MRootNode);
 			
 			Ai.FreeScene(scene);
@@ -69,6 +90,18 @@ namespace Coelum.Phoenix.ModelLoading {
 			sw.Stop();
 			Log.Verbose($"[MODEL LOADER] DONE IN {sw.ElapsedMilliseconds}ms");
 			return model;
+		}
+
+		private unsafe static void ProcessScene(ref Model model, AiScene* aiScene) {
+			for(int i = 0; i < aiScene->MNumMaterials; i++) {
+				var material = new Material();
+				material.Textures.Clear(); // we don't want any default textures
+			
+				ProcessMaterial(ref model, ref material,
+				                aiScene, aiScene->MMaterials[i]);
+				
+				model.Materials.Add(material);
+			}
 		}
 
 		private unsafe static void ProcessNode(ref Model model, AiScene* aiScene, AiNode* aiNode) {
@@ -105,7 +138,6 @@ namespace Coelum.Phoenix.ModelLoading {
 					var texCoord = aiMesh->MTextureCoords[0][i];
 					texCoords.Add(texCoord.X);
 					texCoords.Add(texCoord.Y);
-					//texCoords.Add(texCoord.Z);
 				}
 			}
 		#endregion
@@ -119,22 +151,15 @@ namespace Coelum.Phoenix.ModelLoading {
 				}
 			}
 		#endregion
-
-			var material = new Material() {
-				Textures = new()
-			};
-			
-			ProcessMaterial(ref model, ref material,
-			                aiScene, aiScene->MMaterials[aiMesh->MMaterialIndex]);
 			
 			var mesh = new Mesh(
 				PrimitiveType.Triangles,
-				positions.ToArrayNoCopy(),
-				indices.ToArrayNoCopy(),
-				texCoords.ToArrayNoCopy(),
-				normals.ToArrayNoCopy()
+				positions.ToArray(),
+				indices.ToArray(),
+				texCoords.ToArray(),
+				normals.ToArray()
 			) {
-				Material = material
+				MaterialIndex = (int) aiMesh->MMaterialIndex
 			};
 
 			model.Meshes.Add(mesh);
@@ -212,7 +237,14 @@ namespace Coelum.Phoenix.ModelLoading {
 					}
 				} else {
 					Log.Debug($"[MODEL LOADER: {model.Name}] Material texture path: {path.AsString}");
-					throw new NotImplementedException();
+
+					string? dirPath = Path.GetDirectoryName(model.Name);
+					if(dirPath == null) throw new ArgumentException(nameof(model.Name));
+
+					string filePath = Path.Combine(dirPath, Uri.UnescapeDataString(path.AsString));
+					
+					var textureResource = new ExternalResourceManager()[ResourceType.TEXTURE, filePath];
+					texture = Texture2D.Load(textureResource);
 				}
 
 				if(texture == null) {

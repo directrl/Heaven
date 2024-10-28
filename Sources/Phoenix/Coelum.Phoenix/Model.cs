@@ -1,21 +1,34 @@
 using Coelum.Phoenix.OpenGL;
+using Coelum.Resources;
 
 namespace Coelum.Phoenix {
 	
 	public class Model {
 
-		public string Name { get; init; }
-		public List<Mesh> Meshes { get; init; }
+		public string Name { get; }
 
-		public Model(string name, Mesh[] meshes)
-			: this(name, meshes.ToList()) { }
-		public Model(string name, List<Mesh> meshes) {
+		public List<Mesh> Meshes { get; init; } = new();
+		public List<Material> Materials { get; init; } = new() { new() };
+
+		public long VertexCount {
+			get {
+				long c = 0;
+				
+				foreach(var mesh in Meshes) {
+					c += mesh.VertexCount;
+				}
+
+				return c;
+			}
+		}
+
+		public Model(string name) {
 			Name = name;
-			Meshes = meshes;
 		}
 		
 		public virtual void Render(ShaderProgram shader) {
 			foreach(var mesh in Meshes) {
+				Materials[mesh.MaterialIndex].Load(shader);
 				mesh.Render(shader);
 			}
 		}

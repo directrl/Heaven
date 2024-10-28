@@ -96,7 +96,9 @@ namespace PhoenixPlayground.Scenes {
 			if(_object == null && _mesh != null) {
 				_object = new Node3D() {
 					Position = new(0, 0, 0),
-					Model = new("", new[] { _mesh })
+					Model = new("") {
+						Meshes = new() { _mesh }
+					}
 				};
 			}
 			

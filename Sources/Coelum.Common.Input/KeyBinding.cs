@@ -1,4 +1,5 @@
 using Coelum.Debug;
+using Newtonsoft.Json;
 using Silk.NET.Input;
 
 namespace Coelum.Common.Input {
@@ -20,6 +21,7 @@ namespace Coelum.Common.Input {
 			internal set => _down = value;
 		}
 
+		[JsonConstructor]
 		public KeyBinding(string name, params int[] keys) {
 			Name = name;
 			Keys = keys;
