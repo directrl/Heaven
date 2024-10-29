@@ -10,19 +10,20 @@ namespace Coelum.Phoenix.OpenGL {
 	
 	// TODO cache
 	public class ShaderProgram : IDisposable {
+		
+		public const string UNIFORM_PREFIX = "u_";
+		public const string UNIFORM_SUFFIX = "";
 
 		private readonly Shader[] _program;
 		private readonly List<IShaderOverlay> _overlays = new();
+		private readonly Dictionary<string, int> _uniformLocations = new();
 		
 		private readonly ResourceManager? _preprocessorResources;
 		
 		private bool _ready;
 		private bool _bound;
-		
-		public uint Id { get; }
 
-		public string UniformPrefix { get; set; } = "u_";
-		public string UniformSuffix { get; set; } = "";
+		public uint Id { get; }
 
 		public ShaderProgram(ResourceManager? preprocessorResources, params Shader[] program) {
 			_preprocessorResources = preprocessorResources;
@@ -132,7 +133,8 @@ namespace Coelum.Phoenix.OpenGL {
 		}
 		
 		public int GetUniformLocation(string name) {
-			int location = Gl.GetUniformLocation(Id, UniformPrefix + name + UniformSuffix);
+			if(_uniformLocations.TryGetValue(name, out var location)) return location;
+			location = Gl.GetUniformLocation(Id, UNIFORM_PREFIX + name + UNIFORM_SUFFIX);
 
 			if(location < 0) {
 				if(Debugging.Enabled && Debugging.IgnoreMissingShaderUniforms) {
@@ -141,6 +143,8 @@ namespace Coelum.Phoenix.OpenGL {
 				} else {
 					throw new PlatformException($"Could not find the uniform location for [{name}]");
 				}
+			} else {
+				_uniformLocations[name] = location;
 			}
 
 			return location;

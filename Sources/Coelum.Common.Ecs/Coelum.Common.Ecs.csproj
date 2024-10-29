@@ -4,6 +4,7 @@
         <TargetFramework>net8.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <LangVersion>11</LangVersion>
     </PropertyGroup>
 
     <ItemGroup Condition="'$(Configuration)' == 'Debug'">
@@ -12,6 +13,11 @@
   
     <ItemGroup Condition="'$(Configuration)' == 'Release'">
         <PackageReference Include="Flecs.NET.Release" Version="4.0.2" />
+    </ItemGroup>
+  
+    <ItemGroup>
+      <ProjectReference Include="..\Coelum.Common.Graphics\Coelum.Common.Graphics.csproj" />
+      <ProjectReference Include="..\Coelum.Debug\Coelum.Debug.csproj" />
     </ItemGroup>
 
 </Project>

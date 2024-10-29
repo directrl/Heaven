@@ -47,7 +47,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Coelum.Raven.Debug", "Sourc
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Coelum.Physics", "Sources\Coelum.Physics\Coelum.Physics.csproj", "{ACA058DA-F842-4E67-BBA6-42B60B4D017F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Coelum.World", "Sources\Coelum.World\Coelum.World.csproj", "{E0CD8B0C-B58E-4FEB-8EDA-83EE1CBAA8CD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Coelum.Common.Ecs", "Sources\Coelum.Common.Ecs\Coelum.Common.Ecs.csproj", "{E0CD8B0C-B58E-4FEB-8EDA-83EE1CBAA8CD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Coelum.Phoenix.Ecs", "Sources\Phoenix\Coelum.Phoenix.Ecs\Coelum.Phoenix.Ecs.csproj", "{E8A2065C-B57B-48CF-B15E-0E672EC47104}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -134,6 +136,10 @@ Global
 		{E0CD8B0C-B58E-4FEB-8EDA-83EE1CBAA8CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E0CD8B0C-B58E-4FEB-8EDA-83EE1CBAA8CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E0CD8B0C-B58E-4FEB-8EDA-83EE1CBAA8CD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E8A2065C-B57B-48CF-B15E-0E672EC47104}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E8A2065C-B57B-48CF-B15E-0E672EC47104}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E8A2065C-B57B-48CF-B15E-0E672EC47104}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E8A2065C-B57B-48CF-B15E-0E672EC47104}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{6AFCE2E4-0486-4DE0-8C02-DC257CCE2DC7} = {ECDD9609-5209-4544-910F-099A50C8542D}
@@ -157,5 +163,6 @@ Global
 		{7BF8D91E-5FDF-4839-94B6-A0F89CB21BDB} = {E134A923-6235-4356-89BA-A8A06A1F2EDA}
 		{ACA058DA-F842-4E67-BBA6-42B60B4D017F} = {ECDD9609-5209-4544-910F-099A50C8542D}
 		{E0CD8B0C-B58E-4FEB-8EDA-83EE1CBAA8CD} = {ECDD9609-5209-4544-910F-099A50C8542D}
+		{E8A2065C-B57B-48CF-B15E-0E672EC47104} = {192F0C92-256C-4049-A24D-2092B9E60738}
 	EndGlobalSection
 EndGlobal

@@ -149,7 +149,7 @@ namespace Coelum.Phoenix.Node {
 			Tests.Assert(_ready, "Object is not ready! Did you forget to call Build() beforehand?");
 			
 			shader.SetUniform("instance", true);
-			Model?.Render(shader);
+			//Model?.Render(shader);
 		}
 
 		// public unsafe override void Render() {

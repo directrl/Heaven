@@ -1,3 +1,4 @@
+using System.Numerics;
 using Coelum.Phoenix.OpenGL;
 using Coelum.Resources;
 
@@ -26,7 +27,9 @@ namespace Coelum.Phoenix {
 			Name = name;
 		}
 		
-		public virtual void Render(ShaderProgram shader) {
+		public virtual void Render(Matrix4x4 matrix, ShaderProgram shader) {
+			shader.SetUniform("model", matrix);
+			
 			foreach(var mesh in Meshes) {
 				Materials[mesh.MaterialIndex].Load(shader);
 				mesh.Render(shader);

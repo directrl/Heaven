@@ -7,8 +7,11 @@ using Coelum.Phoenix.Input;
 using Coelum.Phoenix.Node;
 using Coelum.Phoenix.Scene;
 using Coelum.Phoenix.UI;
-using Coelum.World;
-using Coelum.World.Components;
+using Coelum.Common.Ecs;
+using Coelum.Common.Ecs.Component;
+using Coelum.Phoenix.Ecs;
+using Coelum.Phoenix.Ecs.Component;
+using Coelum.Phoenix.Ecs.System;
 using Flecs.NET.Bindings;
 using Flecs.NET.Core;
 using ImGuiNET;
@@ -16,15 +19,12 @@ using PhoenixPlayground.Prefabs;
 
 namespace PhoenixPlayground.Scenes {
 	
-	public class WorldTest : Scene3D, IWorldContainer<Renderable, Tickable> {
+	public class WorldTest : Scene3D {
 
 		private static readonly Random RANDOM = new();
 		
-		public World World { get; init; }
-		
-		public Query<Renderable> RenderableQuery { get; }
-		public Query<Renderable, Position3D, Rotation3D, Scale3D> Renderable2Query { get; }
-		public Query<Tickable> TickableQuery { get; }
+		public World World { get; }
+		public PrefabManager PrefabManager { get; }
 
 		private KeyBindings _keyBindings;
 		private FreeCamera _freeCamera;
@@ -32,14 +32,9 @@ namespace PhoenixPlayground.Scenes {
 		private DebugUI _debug;
 
 		public WorldTest() : base("world-test") {
-			World = World.Create();
-			World.Import<Ecs.Units>();
-			World.Import<Ecs.Stats>();
-
-			RenderableQuery = World.QueryBuilder<Renderable>().Build();
-			Renderable2Query = World.QueryBuilder<Renderable, Position3D, Rotation3D, Scale3D>().Build();
-			TickableQuery = World.QueryBuilder<Tickable>().Build();
-
+			World = this.CreateWorld();
+			PrefabManager = new(World);
+			
 			_keyBindings = new(Id);
 			_freeCamera = new(_keyBindings);
 			
@@ -50,11 +45,13 @@ namespace PhoenixPlayground.Scenes {
 
 		public override void OnLoad(SilkWindow window) {
 			base.OnLoad(window);
+			
+			PrefabManager.Add<TestEntity>();
 
 			Camera = new PerspectiveCamera(window) {
 				FOV = 60
 			};
-
+			
 			_debug = new(this);
 			_debug.AdditionalInfo += (_, _) => {
 				if(ImGui.Begin("Camera")) {
@@ -65,15 +62,21 @@ namespace PhoenixPlayground.Scenes {
 				}
 			};
 
-			World.App().EnableRest();
-			World.Set(default(flecs.EcsRest));
-			
-			TestEntity.AddPrefab(World);
-
-			for(int i = 0; i < 1024; i++) {
-				TestEntity.Create(World)
-				          .Set<Scale3D>(new(RANDOM.NextSingle() + 0.5f, RANDOM.NextSingle() + 0.5f, RANDOM.NextSingle() + 0.5f))
-				          .Set<Position3D>(new(RANDOM.Next(-64, 64), RANDOM.Next(-64, 64), RANDOM.Next(-64, 64)));
+			for(int i = 0; i < 32 * 1024; i++) {
+				PrefabManager.Create<TestEntity>()
+					          .Set<Transform>(
+						          new Transform3D(
+							          rotation: new(RANDOM.NextSingle(),
+							                        RANDOM.NextSingle(),
+							                        RANDOM.NextSingle()),
+							          scale: new(RANDOM.NextSingle() + 0.5f,
+							                     RANDOM.NextSingle() + 0.5f,
+							                     RANDOM.NextSingle() + 0.5f),
+							          position: new(RANDOM.Next(-128, 128),
+							                        RANDOM.Next(-128, 128),
+							                        RANDOM.Next(-128, 128))
+							          )
+						          );
 			}
 			
 			// AddChild(new Node3D() {
@@ -92,23 +95,15 @@ namespace PhoenixPlayground.Scenes {
 			_freeCamera.Update(Camera, ref mouse, delta);
 			
 			this.UpdateKeyBindings(_keyBindings);
-
-			World.Progress(delta);
 		}
 
 		public override void OnRender(float delta) {
 			base.OnRender(delta);
 			
-			Renderable2Query.Each((Entity e, ref Renderable renderable, ref Position3D p, ref Rotation3D r, ref Scale3D s) => {
-				var scaleMatrix = Matrix4x4.CreateScale(s.X, s.Y, s.Z);
-				var positionMatrix = Matrix4x4.CreateTranslation(p.X, p.Y, p.Z);
-				var rotationMatrix = Matrix4x4.CreateFromYawPitchRoll(r.Y, r.X, r.Z);
-				
-				var modelMatrix = scaleMatrix * positionMatrix * rotationMatrix;
-
-				PrimaryShader.SetUniform("model", modelMatrix);
-				renderable.Render.Invoke(delta, PrimaryShader);
-			});
+			// Renderable2Query.Each((Entity e, ref Transform t, ref RenderableModel m) => {
+			// 	PrimaryShader.SetUniform("model", t.Matrix);
+			// 	m.Model.Render(PrimaryShader);
+			// });
 		}
 	}
 }
