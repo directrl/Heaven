@@ -21,10 +21,7 @@ namespace PhoenixPlayground.Prefabs {
 		
 		public Entity Create(World world) {
 			return world.Entity()
-			            .IsA<TestEntity>()
-			            /*.Set<Renderable>(new((delta, shader) => {
-				            MODEL.Render(shader);
-			            }))*/;
+			            .IsA<TestEntity>();
 		}
 	}
 }

@@ -64,24 +64,18 @@ namespace PhoenixPlayground.Scenes {
 
 			for(int i = 0; i < 32 * 1024; i++) {
 				PrefabManager.Create<TestEntity>()
-					          .Set<Transform>(
-						          new Transform3D(
-							          rotation: new(RANDOM.NextSingle(),
-							                        RANDOM.NextSingle(),
-							                        RANDOM.NextSingle()),
-							          scale: new(RANDOM.NextSingle() + 0.5f,
-							                     RANDOM.NextSingle() + 0.5f,
-							                     RANDOM.NextSingle() + 0.5f),
-							          position: new(RANDOM.Next(-128, 128),
-							                        RANDOM.Next(-128, 128),
-							                        RANDOM.Next(-128, 128))
-							          )
-						          );
+				             .Set<Transform>(
+					             new Transform3D(
+						             rotation: new(RANDOM.NextSingle(),
+		                                           RANDOM.NextSingle(),
+		                                           RANDOM.NextSingle()), 
+						             scale: new(RANDOM.NextSingle() + 0.5f,
+						                        RANDOM.NextSingle() + 0.5f,
+						                        RANDOM.NextSingle() + 0.5f),
+		                             position: new(RANDOM.Next(-128, 128), 
+		                                           RANDOM.Next(-128, 128),
+		                                           RANDOM.Next(-128, 128))));
 			}
-			
-			// AddChild(new Node3D() {
-			// 	Model = TestEntity.MODEL
-			// });
 
 			window.GetMice()[0].MouseMove += (_, pos) => {
 				_freeCamera.CameraMove(Camera, pos);
@@ -95,15 +89,6 @@ namespace PhoenixPlayground.Scenes {
 			_freeCamera.Update(Camera, ref mouse, delta);
 			
 			this.UpdateKeyBindings(_keyBindings);
-		}
-
-		public override void OnRender(float delta) {
-			base.OnRender(delta);
-			
-			// Renderable2Query.Each((Entity e, ref Transform t, ref RenderableModel m) => {
-			// 	PrimaryShader.SetUniform("model", t.Matrix);
-			// 	m.Model.Render(PrimaryShader);
-			// });
 		}
 	}
 }

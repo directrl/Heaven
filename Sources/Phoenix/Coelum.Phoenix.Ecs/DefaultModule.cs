@@ -12,7 +12,14 @@ namespace Coelum.Phoenix.Ecs {
 
 		public void InitModule(World world) {
 			world.Module<DefaultModule>();
+
+		#region Components
 			world.Component<RenderableModel>();
+			
+			world.Component<Transform>();
+			world.Component<Transform2D>();
+			world.Component<Transform3D>();
+		#endregion
 		}
 
 		public void Setup(World world, PhoenixSceneBase scene) {

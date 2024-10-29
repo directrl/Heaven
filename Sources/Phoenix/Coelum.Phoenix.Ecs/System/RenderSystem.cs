@@ -15,7 +15,7 @@ namespace Coelum.Phoenix.Ecs.System {
 			            .Kind(0)
 			            .Cached()
 			            .Each((ref Transform transform, ref RenderableModel renderable) => {
-				            renderable.Model?.Render(transform.Matrix, scene.PrimaryShader);
+				            renderable.Model.Render(transform.Matrix, scene.PrimaryShader);
 			            });
 		}
 	}

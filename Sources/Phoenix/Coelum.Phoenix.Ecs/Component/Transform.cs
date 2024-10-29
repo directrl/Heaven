@@ -1,6 +1,6 @@
 using System.Numerics;
 
-namespace Coelum.Common.Ecs.Component {
+namespace Coelum.Phoenix.Ecs.Component {
 
 	public abstract class Transform {
 
