@@ -12,7 +12,6 @@ using Coelum.Phoenix.UI;
 using ImGuiNET;
 using Silk.NET.Input;
 using Silk.NET.OpenGL;
-using IShaderRenderable = Coelum.Phoenix.Node.Component.IShaderRenderable;
 
 namespace PhoenixPlayground.Scenes {
 	
@@ -227,7 +226,7 @@ namespace PhoenixPlayground.Scenes {
 					ImGui.Separator();
 					int childrenTotal = 0;
 
-					void DrawChildren(NodeBase node) {
+					void DrawChildren(Node node) {
 						int i = 0;
 
 						foreach(var child in node.Children.Values) {

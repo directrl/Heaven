@@ -3,7 +3,7 @@ using Coelum.Node;
 
 namespace Coelum.Common.Graphics {
 	
-	public abstract class SceneBase : RootNode {
+	public abstract class SceneBase : NodeRoot {
 		
 	#region Delegates
 		public delegate void LoadEventHandler(WindowBase window);
@@ -41,8 +41,6 @@ namespace Coelum.Common.Graphics {
 		}
 
 		public virtual void OnLoad(WindowBase window) {
-			ClearChildren();
-			
 			Window = window;
 			Load?.Invoke(window);
 		}

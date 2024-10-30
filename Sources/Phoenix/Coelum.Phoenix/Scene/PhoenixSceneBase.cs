@@ -9,6 +9,7 @@ using Coelum.Node;
 using Coelum.Phoenix.Node.Component;
 using Coelum.Phoenix.OpenGL;
 using Silk.NET.OpenGL;
+using Renderable = Coelum.Phoenix.Component.Renderable;
 
 namespace Coelum.Phoenix.Scene {
 	
@@ -79,9 +80,12 @@ namespace Coelum.Phoenix.Scene {
 
 			base.OnRender(delta);
 			
-			FindChildrenByComponent((IShaderRenderable renderable) => {
-				renderable.Render(PrimaryShader);
-			});
+			// FindChildrenByComponent((ShaderRenderable renderable) => {
+			// 	renderable.Render(PrimaryShader);
+			// });
+			QueryComponent<Renderable>()
+				.Each(renderable => renderable.Render(PrimaryShader))
+				.Execute();
 		}
 	}
 }

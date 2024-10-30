@@ -7,7 +7,7 @@ using Shader = Coelum.Phoenix.OpenGL.Shader;
 
 namespace Coelum.Phoenix.Node {
 	
-	public abstract class SpatialNode : NodeBase, IShaderRenderable {
+	public abstract class SpatialNode : Coelum.Node.Node, ShaderRenderable {
 
 		public virtual Model? Model { get; init; }
 		public abstract Matrix4x4 LocalTransform { get; }

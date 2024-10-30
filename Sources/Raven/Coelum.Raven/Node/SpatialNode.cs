@@ -4,7 +4,7 @@ using Silk.NET.Maths;
 
 namespace Coelum.Raven.Node {
 	
-	public abstract class SpatialNode : NodeBase, ISpatial, IRenderable {
+	public abstract class SpatialNode : Coelum.Node.Node, ISpatial, IRenderable {
 
 		public Vector2D<int> Position;
 		public Vector2D<int> LocalPosition {

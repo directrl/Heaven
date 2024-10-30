@@ -1,10 +1,10 @@
 using Coelum.Node;
 using Coelum.Phoenix.OpenGL;
 
-namespace Coelum.Phoenix.Node.Component {
+namespace Coelum.Phoenix.Component {
 	
-	public interface IShaderRenderable : INodeComponent {
-
+	public interface Renderable : NodeComponent {
+		
 		public void Render(ShaderProgram shader);
 	}
 }
