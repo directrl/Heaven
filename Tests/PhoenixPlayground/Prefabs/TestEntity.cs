@@ -6,6 +6,7 @@ using Coelum.Phoenix.Ecs.Component;
 using Coelum.Phoenix.ModelLoading;
 using Coelum.Resources;
 using Flecs.NET.Core;
+using Tickable = Coelum.Common.Ecs.Component.Tickable;
 
 namespace PhoenixPlayground.Prefabs {
 	
@@ -16,7 +17,7 @@ namespace PhoenixPlayground.Prefabs {
 			
 			world.Prefab<TestEntity>()
 			     .Set<RenderableModel>(new(model))
-			     .Set<Transform>(new Transform3D());
+			     .Set<Transform>(new Transform3D(scale: new(0.1f, 0.1f, 0.1f)));
 		}
 		
 		public Entity Create(World world) {

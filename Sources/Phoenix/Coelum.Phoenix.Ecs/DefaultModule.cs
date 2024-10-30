@@ -1,9 +1,12 @@
+global using FlEcs = Flecs.NET.Core.Ecs;
+
 using Coelum.Common.Ecs;
 using Coelum.Common.Ecs.Component;
 using Coelum.Common.Ecs.System;
 using Coelum.Phoenix.Ecs.Component;
 using Coelum.Phoenix.Ecs.System;
 using Coelum.Phoenix.Scene;
+using Flecs.NET.Bindings;
 using Flecs.NET.Core;
 
 namespace Coelum.Phoenix.Ecs {
@@ -26,6 +29,7 @@ namespace Coelum.Phoenix.Ecs {
 			var sys = RenderSystem.Create(world, scene);
 			scene.Render += sys.Run;
 
+			TransformSystem.Create(world);
 			TickSystem.Create(world);
 		}
 	}
