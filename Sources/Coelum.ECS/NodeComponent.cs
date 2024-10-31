@@ -1,4 +1,4 @@
-namespace Coelum.Node {
+namespace Coelum.ECS {
 
 	public interface NodeComponent { }
 }

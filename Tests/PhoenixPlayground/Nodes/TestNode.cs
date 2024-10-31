@@ -1,10 +1,8 @@
-using Coelum.Node;
+using Coelum.ECS;
 using Coelum.Phoenix;
-using Coelum.Phoenix.Component;
+using Coelum.Phoenix.ECS.Component;
 using Coelum.Phoenix.ModelLoading;
 using Coelum.Resources;
-using PhoenixPlayground;
-using Renderable = Coelum.Phoenix.Node.Component.Renderable;
 
 namespace PhoenixPlayground.Nodes {
 	

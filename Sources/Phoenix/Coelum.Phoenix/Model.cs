@@ -22,7 +22,7 @@ namespace Coelum.Phoenix {
 			}
 		}
 
-		public Model(string name) {
+		public Model(string name = "") {
 			Name = name;
 		}
 		

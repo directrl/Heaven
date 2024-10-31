@@ -1,15 +1,16 @@
 using System.Drawing;
 using Coelum.Phoenix;
 using Coelum.Phoenix.Camera;
-using Coelum.Phoenix.Node;
 using Coelum.Phoenix.Scene;
 using Coelum.Phoenix.Texture;
 using Coelum.Common.Input;
 using Coelum.LanguageExtensions;
-using Coelum.Node;
+using Coelum.ECS;
+using Coelum.Phoenix.ECS.Component;
 using Coelum.Phoenix.Input;
 using Coelum.Phoenix.UI;
 using ImGuiNET;
+using PhoenixPlayground.Nodes;
 using Silk.NET.Input;
 using Silk.NET.OpenGL;
 
@@ -40,180 +41,63 @@ namespace PhoenixPlayground.Scenes {
 			_camera2Bind = _keyBindings.Register(new("camera2", Key.Number2));
 			
 			this.SetupKeyBindings(_keyBindings);
+			
+			ShaderOverlays.AddRange(Material.OVERLAYS);
 		}
 
 		public override void OnLoad(SilkWindow window) {
 			base.OnLoad(window);
 
 			_camera1 = new PerspectiveCamera(window) {
-				FOV = 60,
-				Position = new(0, 0, -3)
+				FOV = 60
 			};
+			_camera1.GetComponent<Transform, Transform3D>().Position = new(0, 0, -3);
 
 			_camera2 = new OrthographicCamera(window) {
-				FOV = 3,
-				Position = new(2, 2, 2)
+				FOV = 3
 			};
+			_camera2.GetComponent<Transform, Transform3D>().Position = new(2, 2, 2);
 
 			Camera = _camera1;
 
-			if(_mesh == null) {
-				_mesh = new(PrimitiveType.Triangles,
-					new float[] {
-						0.5f, 0.5f, 0.0f,
-						0.5f, -0.5f, 0.0f,
-						-0.5f, -0.5f, 0.0f,
-						-0.5f, 0.5f, 0.0f
-					},
-					new uint[] {
-						1, 2, 3,
-						1, 2, 3
-					},
-					null, null);
+			{
+				Add(new ColorCube(Color.AntiqueWhite));
+
+				var c1 = new ColorCube(Color.Chocolate) {
+					Name = "meow"
+				};
+				c1.GetComponent<Transform, Transform3D>().Position = new(1, 2, 2);
+
+				var c3 = new ColorCube(Color.ForestGreen) {
+					Name = "awoo",
+					Children = new[] { c1 }
+				};
+				c3.GetComponent<Transform, Transform3D>().Position = new(-1, 0, -3);
+
+				var c4 = new ColorCube(Color.DimGray) {
+					Name = "rawr"
+				};
+				c4.GetComponent<Transform, Transform3D>().Position = new(0, 2, 0);
 				
-				_mesh = new Mesh(PrimitiveType.Triangles,
-					new float[] {
-						// VO
-						-0.5f, 0.5f, 0.5f,
-						// V1
-						-0.5f, -0.5f, 0.5f,
-						// V2
-						0.5f, -0.5f, 0.5f,
-						// V3
-						0.5f, 0.5f, 0.5f,
-						// V4
-						-0.5f, 0.5f, -0.5f,
-						// V5
-						0.5f, 0.5f, -0.5f,
-						// V6
-						-0.5f, -0.5f, -0.5f,
-						// V7
-						0.5f, -0.5f, -0.5f,
-					},
-					new uint[] {
-						// Front face
-						0, 1, 3, 3, 1, 2,
-						// Top Face
-						4, 0, 3, 5, 4, 3,
-						// Right face
-						3, 2, 7, 5, 3, 7,
-						// Left face
-						6, 1, 0, 6, 0, 4,
-						// Bottom face
-						2, 1, 6, 2, 6, 7,
-						// Back face
-						7, 6, 4, 7, 4, 5,
-					},
-					null,
-					null
-				);
+				var c2 = new ColorCube(Color.Fuchsia) {
+					Name = "bowwow",
+					Children = new[] {
+						c3, c4
+					}
+				};
+				c2.GetComponent<Transform, Transform3D>().Position = new(0, 1, 0);
+
+				// c3.Add(c1);
+				// c2.Add(c3, c4);
+
+				Add(c2);
+				//c3.Add(c1);
 			}
 
-			if(_mesh != null) {
-				/*AddChild(new Node3D() {
-					Position = new(0, 0, 0),
-					Model = new() {
-						Meshes = new() { _mesh },
-					}
-				});
-				
-				AddChild(new Node3D() {
-					Position = new(1, 2, 0),
-					Model = new() {
-						Meshes = new() { _mesh },
-						Material = new() {
-							Albedo = Color.FromArgb(200, 100, 50).ToVector4()
-						}
-					},
-					InitialChildren = new() {
-						["meow"] = new Node3D() {
-							Position = new(0, 1, 0),
-							Model = new() {
-								Meshes = new() { _mesh },
-								Material = new() {
-									Albedo = Color.FromArgb(0, 100, 50).ToVector4()
-								}
-							},
-							InitialChildren = new() {
-								["bowwow"] = new Node3D() {
-									Position = new(-1, 0, -3),
-									Model = new() {
-										Meshes = new() { _mesh },
-										Material = new() {
-											Albedo = Color.FromArgb(0, 50, 100).ToVector4()
-										}
-									}
-								},
-								["awoo"] = new Node3D() {
-									Position = new(0, 1, 0),
-									Model = new() {
-										Meshes = new() { _mesh },
-										Material = new() {
-											Albedo = Color.FromArgb(100, 30, 100).ToVector4()
-										}
-									}
-								}
-							}
-						}
-					}
-				});*/
-
-				/*int wall = 16;
-				
-				for(int y = 0; y < (wall * 2); y += 2) {
-					var n = new Node3D() {
-						Position = new(0, y, 0),
-						Model = new() {
-							Material = new() {
-								Color = new(RANDOM.NextSingle(), RANDOM.NextSingle(),
-								            RANDOM.NextSingle(), 1)
-							},
-							Meshes = new[] { _mesh }
-						}
-					};
-					
-					for(int x = 0; x < (wall * 2); x += 2) {
-						if(x == 0) continue;
-						
-						var n1 = new Node3D() {
-							Position = new(x, y, 0),
-							Model = new() {
-								Material = new() {
-									Color = new(RANDOM.NextSingle(), RANDOM.NextSingle(),
-									            RANDOM.NextSingle(), 1)
-								},
-								Meshes = new[] { _mesh }
-							}
-						};
-						
-						for(int z = 0; z < (wall * 2); z += 2) {
-							if(z == 0) continue;
-							
-							var n2 = new Node3D() {
-								Position = new(x, y, z),
-								Model = new() {
-									Material = new() {
-										Color = new(RANDOM.NextSingle(), RANDOM.NextSingle(),
-										            RANDOM.NextSingle(), 1)
-									},
-									Meshes = new[] { _mesh }
-								}
-							};
-
-							n1.Children.Add(n2);
-						}
-						
-						n.Children.Add(n1);
-					}
-					
-					Children.Add(n);
-				}*/
-			}
-			
 			_overlay = new(this);
 			_overlay.Render += (delta, args) => {
 				if(ImGui.Begin("Info")) {
-					ImGui.Text($"Camera position: {Camera?.Position.ToString() ?? "Unknown"}");
+					ImGui.Text($"Camera position: {Camera?.GetComponent<Transform, Transform3D>().Position.ToString() ?? "Unknown"}");
 					ImGui.Text($"Camera pitch: {Camera?.Pitch.ToString() ?? "Unknown"}");
 					ImGui.Text($"Camera yaw: {Camera?.Yaw.ToString() ?? "Unknown"}");
 
@@ -224,32 +108,19 @@ namespace PhoenixPlayground.Scenes {
 					}
 					
 					ImGui.Separator();
-					int childrenTotal = 0;
-
-					void DrawChildren(Node node) {
-						int i = 0;
-
-						foreach(var child in node.Children.Values) {
-							ImGui.PushID(i);
-							if(ImGui.TreeNode("", $"{child.GetType().Name}: {child}")) {
-								ImGui.Text($"Parent: {child.Parent}");
-								ImGui.Separator();
-								DrawChildren(child);
-								ImGui.TreePop();
-							}
-							ImGui.PopID();
-						}
-					}
+					int childCount = 0;
 					
-					DrawChildren(this);
+					QueryChildren()
+						.Each(node => {
+							childCount++;
+							ImGui.Text($"{node.Path}: {node}");
+						})
+						.Execute();
+					
 					ImGui.Separator();
-					ImGui.Text($"Children node count: {Children.Count}");
-					ImGui.Text($"Children total: {childrenTotal}");
-					
+					ImGui.Text($"Child count: {childCount}");
 					ImGui.End();
 				}
-				
-				//ImGui.ShowDemoWindow();
 			};
 
 			window.GetMice()[0].MouseMove += (_, pos) => {

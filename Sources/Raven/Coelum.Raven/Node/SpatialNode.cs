@@ -1,10 +1,9 @@
-using Coelum.Node;
 using Coelum.Raven.Node.Component;
 using Silk.NET.Maths;
 
 namespace Coelum.Raven.Node {
 	
-	public abstract class SpatialNode : Coelum.Node.Node, ISpatial, IRenderable {
+	public abstract class SpatialNode : Node ISpatial, IRenderable {
 
 		public Vector2D<int> Position;
 		public Vector2D<int> LocalPosition {

@@ -21,7 +21,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Coelum.Resources", "Sources
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Coelum.LanguageExtensions", "Sources\Coelum.LanguageExtensions\Coelum.LanguageExtensions.csproj", "{D8D85418-DC76-440D-9DF9-E09E5374AB54}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Coelum.Node", "Sources\Coelum.Node\Coelum.Node.csproj", "{66E09772-49AA-4843-8118-7A3AC9E7D9BA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Coelum.ECS", "Sources\Coelum.ECS\Coelum.ECS.csproj", "{66E09772-49AA-4843-8118-7A3AC9E7D9BA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Coelum.Common.Graphics", "Sources\Coelum.Common.Graphics\Coelum.Common.Graphics.csproj", "{DBBF7798-314D-4AAA-A65D-7D539EE5C761}"
 EndProject

@@ -1,4 +1,3 @@
-using Coelum.Node;
 using Coelum.Raven.Display;
 using Coelum.Raven.Node;
 using Coelum.Raven.Shader;

@@ -3,13 +3,11 @@ using System.Drawing;
 using Coelum.Configuration;
 using Coelum.Debug;
 using Coelum.Common.Graphics;
-using Coelum.Phoenix.Node;
 using Coelum.Phoenix.Texture;
-using Coelum.Node;
-using Coelum.Phoenix.Node.Component;
+using Coelum.ECS;
+using Coelum.Phoenix.ECS.Component;
+using Coelum.Phoenix.ECS.System;
 using Coelum.Phoenix.OpenGL;
-using Silk.NET.OpenGL;
-using Renderable = Coelum.Phoenix.Component.Renderable;
 
 namespace Coelum.Phoenix.Scene {
 	
@@ -38,6 +36,8 @@ namespace Coelum.Phoenix.Scene {
 		public override void OnLoad(WindowBase window) {
 			base.OnLoad(window);
 			
+			this.ClearSystems();
+			
 			Tests.Assert(window is SilkWindow, "Phoenix renderer scenes work only with" +
 			             "Pheonix renderer windows!");
 			OnLoad((SilkWindow) window);
@@ -45,6 +45,9 @@ namespace Coelum.Phoenix.Scene {
 			Tests.Assert(PrimaryShader != null, "The primary shader cannot be null");
 			PrimaryShader.Validate();
 			PrimaryShader.AddOverlays(ShaderOverlays);
+			
+			this.System("RenderPre", new RenderSystem(PrimaryShader));
+			this.System("UpdatePost", new TransformSystem());
 
 			var pWindow = (SilkWindow) window;
 
@@ -69,7 +72,13 @@ namespace Coelum.Phoenix.Scene {
 				Options.Set("window_y", newPosition.Y);
 			};
 		}
-		
+
+		public override void OnUpdate(float delta) {
+			this.Process("UpdatePre", delta);
+			base.OnUpdate(delta);
+			this.Process("UpdatePost", delta);
+		}
+
 		public override void OnRender(float delta) {
 			Gl.ClearColor(ClearColor);
 			
@@ -78,14 +87,9 @@ namespace Coelum.Phoenix.Scene {
 			
 			PrimaryShader.EnableOverlays(ShaderOverlays);
 
+			this.Process("RenderPre", delta);
 			base.OnRender(delta);
-			
-			// FindChildrenByComponent((ShaderRenderable renderable) => {
-			// 	renderable.Render(PrimaryShader);
-			// });
-			QueryComponent<Renderable>()
-				.Each(renderable => renderable.Render(PrimaryShader))
-				.Execute();
+			this.Process("RenderPost", delta);
 		}
 	}
 }

@@ -1,6 +1,7 @@
 using System.Numerics;
 using Coelum.Phoenix.Camera;
 using Coelum.Common.Input;
+using Coelum.Phoenix.ECS.Component;
 using Silk.NET.Input;
 
 namespace PhoenixPlayground {
@@ -44,12 +45,12 @@ namespace PhoenixPlayground {
 				: CursorMode.Normal;
 
 			if(_cameraUp.Down) {
-				camera.Position.Y += CAMERA_SPEED * delta;
+				camera.GetComponent<Transform, Transform3D>().Position += new Vector3(0, CAMERA_SPEED * delta, 0);
 				//camera.MoveUp(CAMERA_SPEED * delta);
 			}
 			
 			if(_cameraDown.Down) {
-				camera.Position.Y -= CAMERA_SPEED * delta;
+				camera.GetComponent<Transform, Transform3D>().Position -= new Vector3(0, CAMERA_SPEED * delta, 0);
 				//camera.MoveDown(CAMERA_SPEED * delta);
 			}
 			

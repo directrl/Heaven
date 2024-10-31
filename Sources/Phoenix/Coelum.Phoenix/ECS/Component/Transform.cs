@@ -1,7 +1,7 @@
 using System.Numerics;
-using Coelum.Node;
+using Coelum.ECS;
 
-namespace Coelum.Phoenix.Component {
+namespace Coelum.Phoenix.ECS.Component {
 	
 	public class Transform : NodeComponent {
 		

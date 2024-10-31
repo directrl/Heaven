@@ -1,5 +1,5 @@
 using Coelum.Configuration;
-using Coelum.Node;
+using Coelum.ECS;
 
 namespace Coelum.Common.Graphics {
 	

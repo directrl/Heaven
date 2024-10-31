@@ -122,7 +122,7 @@
     <ProjectReference Include="..\..\Coelum.Debug\Coelum.Debug.csproj" />
     <ProjectReference Include="..\..\Coelum.Common.Graphics\Coelum.Common.Graphics.csproj" />
     <ProjectReference Include="..\..\Coelum.LanguageExtensions\Coelum.LanguageExtensions.csproj" />
-    <ProjectReference Include="..\..\Coelum.Node\Coelum.Node.csproj" />
+    <ProjectReference Include="..\..\Coelum.ECS\Coelum.ECS.csproj" />
     <ProjectReference Include="..\..\Coelum.Resources\Coelum.Resources.csproj" />
   </ItemGroup>
 
