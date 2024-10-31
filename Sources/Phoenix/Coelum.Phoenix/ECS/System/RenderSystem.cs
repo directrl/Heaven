@@ -16,8 +16,6 @@ namespace Coelum.Phoenix.ECS.System {
 		private void Invoke(NodeRoot root, float delta) {
 			root.Query<Renderable, Transform>()
 			    .Each((node, renderable, transform) => {
-				    if(node.Name == "meow") Console.WriteLine("meowwww");
-				    
 				    _shader.SetUniform("model", transform.GlobalMatrix);
 				    renderable.Render(_shader);
 			    })

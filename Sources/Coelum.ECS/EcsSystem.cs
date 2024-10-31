@@ -9,8 +9,8 @@ namespace Coelum.ECS {
 		protected Action<NodeRoot, float> Action { get; init; }
 		
 		public string Name { get; }
-		
-		public bool Enabled { get; set; }
+
+		public bool Enabled = true;
 		public TimeSpan ExecutionTime { get; private set; }
 
 		protected EcsSystem(string name) {
@@ -23,6 +23,8 @@ namespace Coelum.ECS {
 		}
 		
 		public void Invoke(NodeRoot root, float delta) {
+			if(!Enabled) return;
+			
 			_timer.Restart();
 			Action.Invoke(root, delta);
 			_timer.Stop();

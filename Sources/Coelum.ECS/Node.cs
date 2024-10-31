@@ -1,3 +1,6 @@
+using System.Security.Cryptography;
+using Coelum.Debug;
+
 namespace Coelum.ECS {
 	
 	public class Node {
@@ -23,26 +26,33 @@ namespace Coelum.ECS {
 																 .Select(s => s[_RANDOM.Next(s.Length)])
 																 .ToArray());
 
+		private string? _path;
 		public string Path {
-			get {
-				if(Parent != null) {
-					return Parent.Path + "." + Name;
-				}
-
-				return Name;
-			}
+			get => _path ?? Name;
+			private set => _path = value;
 		}
 		
 		public NodeRoot Root { get; set; }
-		public Node? Parent { get; private set; }
+
+		private Node? _parent;
+		public Node? Parent {
+			get => _parent;
+			private set {
+				_parent = value;
+				if(_parent != null) Path = _parent.Path + "." + Name;
+			}
+		}
 
 		internal Node[] _defaultChildren = Array.Empty<Node>();
 		public Node[] Children { init => _defaultChildren = value; }
 		
-		//public List<NodeComponent> Components { get; } = new();
 		public Dictionary<Type, NodeComponent> Components { get; protected set; } = new();
 		
 		public void Add(params Node[] nodes) {
+			Tests.Assert(Root != null,
+			             "Root is unexpectedly null. If you are adding children to it before adding it to a root node," +
+			             " make sure to forward-declare Root in the object initializer");
+			
 			foreach(var node in nodes) {
 				node.Parent = this;
 				Root.Add(node);

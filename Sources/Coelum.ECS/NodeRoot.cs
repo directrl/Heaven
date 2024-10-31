@@ -97,6 +97,16 @@ namespace Coelum.ECS {
 		// 	return children;
 		// }
 
+		public Query<string, List<EcsSystem>> QuerySystems() {
+			return new(
+				each => {
+					foreach((var phase, var systems) in _systems) {
+						each?.Invoke(phase, systems);
+					}
+				}
+			);
+		}
+
 		public Query<Node> QueryChildren() {
 			return new(
 				each => {
