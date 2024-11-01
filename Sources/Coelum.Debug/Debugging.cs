@@ -6,7 +6,7 @@ namespace Coelum.Debug {
 		public static bool Verbose { get; set; }
 		
 		public static bool DumpShaders { get; set; }
-		public static bool IgnoreMissingShaderUniforms { get; set; }
+		public static bool IgnoreMissingShaderUniforms { get; set; } = true;
 		public static bool WireframeRendering { get; set; }
 		
 	#if DEBUG
