@@ -7,6 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Coelum.Debug\Coelum.Debug.csproj" />
       <ProjectReference Include="..\Coelum.LanguageExtensions\Coelum.LanguageExtensions.csproj" />
     </ItemGroup>
 

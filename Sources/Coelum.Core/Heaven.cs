@@ -55,23 +55,27 @@ namespace Coelum.Core {
 			EngineOptions.FromArgs(args);
 			
 		#region Engine logger
+		#if DEBUG
+			string? path = "";
+		#else
+			string? path = null;
+		#endif
+			
 			var loggerConfig = LoggerFactory
-				.CreateDefaultConfiugration(LoggerPurpose.Engine,
-					Debugging.Enabled ? "" : null);
+				.CreateDefaultConfiugration(LoggerPurpose.Engine, path);
 
-			if(Debugging.Enabled) {
-				Console.WriteLine("Debugging enabled; disabled logging to file");
-				loggerConfig.MinimumLevel.Debug();
+			if(path == "") {
+				Console.WriteLine("Running in debug configuration; disabled logging to file");
 			}
 			
+			if(Debugging.Enabled) loggerConfig.MinimumLevel.Debug();
 			if(Debugging.Verbose) loggerConfig.MinimumLevel.Verbose();
 			Log.Logger = EngineLogger = loggerConfig.CreateLogger();
 		#endregion
 
 		#region Application logger
 			loggerConfig = LoggerFactory
-				.CreateDefaultConfiugration(LoggerPurpose.Application,
-					Debugging.Enabled ? "" : null);
+				.CreateDefaultConfiugration(LoggerPurpose.Application, path);
 			
 			if(Debugging.Enabled) loggerConfig.MinimumLevel.Debug();
 			if(Debugging.Verbose) loggerConfig.MinimumLevel.Verbose();

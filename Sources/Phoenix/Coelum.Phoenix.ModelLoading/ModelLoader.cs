@@ -33,7 +33,7 @@ namespace Coelum.Phoenix.ModelLoading {
 				return model;
 			}
 
-			if(!resource.Name.EndsWith(".gltf") || !resource.Name.EndsWith(".glb")) {
+			if(!resource.Name.EndsWith(".gltf") && !resource.Name.EndsWith(".glb")) {
 				Log.Warning("[MODEL LOADER] Loading non-glTF models is experimental and might not work correctly");
 			}
 
@@ -216,7 +216,7 @@ namespace Coelum.Phoenix.ModelLoading {
 			uint texCount = Ai.GetMaterialTextureCount(aiMaterial, textureType);
 
 			if(texCount == 0) {
-				Log.Warning($"[MODEL LOADER: {model.Name}] No textures found for material; is the model exported correctly?");
+				Log.Warning($"[MODEL LOADER: {model.Name}] Material has no textures");
 			}
 			
 			for(uint i = 0; i < texCount; i++) {

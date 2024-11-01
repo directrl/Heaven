@@ -1,4 +1,5 @@
 using System.Drawing;
+using System.Numerics;
 using Coelum.Phoenix;
 using Coelum.Phoenix.Camera;
 using Coelum.Phoenix.Scene;
@@ -16,7 +17,7 @@ using Silk.NET.OpenGL;
 
 namespace PhoenixPlayground.Scenes {
 	
-	public class NodeGraphTest : Scene3D {
+	public class NodeGraphStressTest : Scene3D {
 		
 		private static readonly Random RANDOM = new();
 		
@@ -27,72 +28,76 @@ namespace PhoenixPlayground.Scenes {
 		private KeyBindings _keyBindings;
 		private FreeCamera _freeCamera;
 
-		private Camera3D _camera1;
-		private Camera3D _camera2;
+		private float _moved = 0;
+		private EcsSystem _moveStressTest;
 
-		private KeyBinding _camera1Bind;
-		private KeyBinding _camera2Bind;
-
-		public NodeGraphTest() : base("node-graph-stresstest") {
+		public NodeGraphStressTest() : base("node-graph-stresstest") {
 			_keyBindings = new(Id);
 			_freeCamera = new(_keyBindings);
-
-			_camera1Bind = _keyBindings.Register(new("camera1", Key.Number1));
-			_camera2Bind = _keyBindings.Register(new("camera2", Key.Number2));
 			
 			this.SetupKeyBindings(_keyBindings);
 			
 			ShaderOverlays.AddRange(Material.OVERLAYS);
+
+			_moveStressTest = new("move test", (root, delta) => {
+				root.Query<Transform>()
+				    .Parallel(true)
+				    .Each((node, t) => {
+					    if(t is not Transform3D t3d) return;
+
+					    if(node.Name == "rootChild") {
+						    t3d.Position = new(
+							    MathF.Sin((float) Window.SilkImpl.Time) * 5,
+							    0,
+							    MathF.Cos((float) Window.SilkImpl.Time) * 5
+							);
+
+						    t3d.Rotation += new Vector3(delta / 4, -delta / 4, delta / 4);
+					    } else {
+						    //t3d.Rotation += new Vector3(delta / 2, delta / 2, -delta / 2);
+					    }
+				    })
+				    .Execute();
+			}) {
+				Enabled = false
+			};
 		}
 
 		public override void OnLoad(SilkWindow window) {
 			base.OnLoad(window);
-
-			_camera1 = new PerspectiveCamera(window) {
+			
+			Camera = new PerspectiveCamera(window) {
 				FOV = 60
 			};
-			_camera1.GetComponent<Transform, Transform3D>().Position = new(0, 0, -3);
-
-			_camera2 = new OrthographicCamera(window) {
-				FOV = 3
-			};
-			_camera2.GetComponent<Transform, Transform3D>().Position = new(2, 2, 2);
-
-			Camera = _camera1;
+			Camera.GetComponent<Transform, Transform3D>().Position = new(0, 0, -3);
 
 			{
-				Add(new ColorCube(Color.AntiqueWhite));
-
-				var c1 = new ColorCube(Color.Chocolate) {
-					Name = "meow"
+				var size = 24;
+				var rootChild = new TestNode() {
+					Root = this,
+					Name = "rootChild"
 				};
-				c1.GetComponent<Transform, Transform3D>().Position = new(1, 2, 2);
 
-				var c3 = new ColorCube(Color.ForestGreen) {
-					Name = "awoo",
-					Children = new[] { c1 }
-				};
-				c3.GetComponent<Transform, Transform3D>().Position = new(-1, 0, -3);
-
-				var c4 = new ColorCube(Color.DimGray) {
-					Name = "rawr"
-				};
-				c4.GetComponent<Transform, Transform3D>().Position = new(0, 2, 0);
-				
-				var c2 = new ColorCube(Color.Fuchsia) {
-					Name = "bowwow",
-					Children = new[] {
-						c3, c4
+				for(int y = 8; y < size + 8; y++) {
+					for(int x = -size / 2; x < size / 2; x++) {
+						for(int z = -size / 2; z < size / 2; z++) {
+							var n = new ColorCube(new Color().Randomize());
+							
+							n.GetComponent<Transform, Transform3D>().Position = new(
+								x,
+								y,
+								z
+							);
+							
+							rootChild.Add(n);
+						}
 					}
-				};
-				c2.GetComponent<Transform, Transform3D>().Position = new(0, 1, 0);
-
-				// c3.Add(c1);
-				// c2.Add(c3, c4);
-
-				Add(c2);
-				//c3.Add(c1);
+				}
+				
+				Add(rootChild);
 			}
+			
+			System("UpdatePre", _moveStressTest);
 
 			_overlay = new DebugUI(this);
 			_overlay.AdditionalInfo += (delta, args) => {
@@ -115,12 +120,16 @@ namespace PhoenixPlayground.Scenes {
 					QueryChildren()
 						.Each(node => {
 							childCount++;
-							ImGui.Text($"{node.Path}: {node}");
+							//ImGui.Text($"{node.Path}: {node}");
 						})
 						.Execute();
 					
 					ImGui.Separator();
 					ImGui.Text($"Child count: {childCount}");
+					
+					ImGui.Separator();
+					ImGui.Checkbox("Move test", ref _moveStressTest.Enabled);
+					
 					ImGui.End();
 				}
 			};
@@ -135,9 +144,6 @@ namespace PhoenixPlayground.Scenes {
 
 			var mouse = Window.GetMice()[0];
 			if(Camera != null) _freeCamera.Update(Camera, ref mouse, delta);
-
-			if(_camera1Bind.Pressed) Camera = _camera1;
-			if(_camera2Bind.Pressed) Camera = _camera2;
 			
 			_keyBindings.Update(new SilkKeyboard(Window.Input.Keyboards[0]));
 		}

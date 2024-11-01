@@ -8,7 +8,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Coelum.Configuration\Coelum.Configuration.csproj" />
-      <ProjectReference Include="..\Coelum.Node\Coelum.Node.csproj" />
+      <ProjectReference Include="..\Coelum.ECS\Coelum.ECS.csproj" />
     </ItemGroup>
 
 </Project>

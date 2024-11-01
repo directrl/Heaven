@@ -11,6 +11,13 @@ using ShadingModel = Silk.NET.OpenGL.ShadingModel;
 namespace Coelum.Phoenix {
 	
 	public class Material {
+		
+		private static readonly Dictionary<TextureType, string> _UNIFORM_NAMES = new() {
+			{ TextureType.Diffuse, "material.tex_diffuse" },
+			{ TextureType.Specular, "material.tex_specular" },
+			{ TextureType.Normal, "material.tex_normal" },
+			{ TextureType.Height, "material.tex_height" },
+		};
 
 		public Vector4 Albedo = new(1, 1, 1, 1);
 		public Vector4 AmbientColor = new(1, 1, 1, 1);
@@ -30,9 +37,9 @@ namespace Coelum.Phoenix {
 			int textureUnit = 0;
 			
 			foreach(var (type, texture) in Textures) {
-				string uniformName = $"material.tex_{type.ToString().ToLower()}";
+				if(type == TextureType.Unknown) continue;
 			
-				shader.SetUniform(uniformName, textureUnit);
+				shader.SetUniform(_UNIFORM_NAMES[type], textureUnit);
 				texture.Bind(textureUnit);
 
 				textureUnit++;
