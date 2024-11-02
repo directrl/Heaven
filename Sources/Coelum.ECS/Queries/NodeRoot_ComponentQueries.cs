@@ -31,10 +31,10 @@ namespace Coelum.ECS {
 					   || !_componentNodeMap.ContainsKey(typeof(TComponent2))) return;
 					
 					foreach(var node in _componentNodeMap[typeof(TComponent1)]) {
-						var c1 = node.GetComponent<TComponent1>();
-						var c2 = node.GetComponent<TComponent2>();
+						bool r1 = node.TryGetComponent<TComponent1>(out var c1);
+						bool r2 = node.TryGetComponent<TComponent2>(out var c2);
 						
-						if(c1 != null && c2 != null) each?.Invoke(node, c1, c2);
+						if(r1 && r2) each?.Invoke(node, c1, c2);
 					}
 				},
 				each => {
@@ -42,10 +42,10 @@ namespace Coelum.ECS {
 					   || !_componentNodeMap.ContainsKey(typeof(TComponent2))) return;
 					
 					Parallel.ForEach(_componentNodeMap[typeof(TComponent1)], node => {
-						var c1 = node.GetComponent<TComponent1>();
-						var c2 = node.GetComponent<TComponent2>();
+						bool r1 = node.TryGetComponent<TComponent1>(out var c1);
+						bool r2 = node.TryGetComponent<TComponent2>(out var c2);
 						
-						if(c1 != null && c2 != null) each?.Invoke(node, c1, c2);
+						if(r1 && r2) each?.Invoke(node, c1, c2);
 					});
 				}
 			);

@@ -1,4 +1,5 @@
 using Coelum.Debug;
+using Coelum.ECS.Tags;
 using Serilog;
 
 namespace Coelum.ECS {
@@ -13,6 +14,8 @@ namespace Coelum.ECS {
 		private Dictionary<Type, List<Node>> _componentNodeMap = new();
 
 		private Dictionary<string, List<EcsSystem>> _systems = new();
+
+		public int ChildCount => _nodes.Count;
 		
 		public void Load(IEcsModule module) {
 			module.Load(this);
@@ -47,6 +50,10 @@ namespace Coelum.ECS {
 			foreach(var type in node.Components.Keys) {
 				if(!_componentNodeMap.ContainsKey(type)) {
 					_componentNodeMap[type] = new();
+				}
+
+				if(type == typeof(Singleton) && _componentNodeMap[type].Contains(node)) {
+					throw new InvalidOperationException("Cannot add more than one instance of a singleton node type");
 				}
 				
 				_componentNodeMap[type].Add(node);

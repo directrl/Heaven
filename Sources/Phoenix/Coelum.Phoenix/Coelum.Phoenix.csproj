@@ -115,6 +115,15 @@
     <EmbeddedResource Update="..\..\..\Resources\Coeli\Resources\Shaders\Overlays\Material\call.frag">
       <Link>Resources\Shaders\Overlays\Material\call.frag</Link>
     </EmbeddedResource>
+    <EmbeddedResource Update="..\..\..\Resources\Coeli\Resources\Shaders\Overlays\Lighting\call.frag">
+      <Link>Resources\Shaders\Overlays\Lighting\call.frag</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Update="..\..\..\Resources\Coeli\Resources\Shaders\Overlays\Lighting\header.frag">
+      <Link>Resources\Shaders\Overlays\Lighting\header.frag</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Update="..\..\..\Resources\Coeli\Resources\Shaders\Structures\scene_env.glsl">
+      <Link>Resources\Shaders\Structures\scene_env.glsl</Link>
+    </EmbeddedResource>
   </ItemGroup>
 
   <ItemGroup>

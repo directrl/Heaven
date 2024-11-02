@@ -2,6 +2,7 @@ using System.Drawing;
 using Coelum.Common.Graphics;
 using Coelum.Debug;
 using Coelum.Phoenix.Camera;
+using Coelum.Phoenix.ECS.Nodes;
 using Coelum.Phoenix.ECS.System;
 using Coelum.Phoenix.OpenGL;
 using Coelum.Resources;
@@ -105,8 +106,11 @@ namespace Coelum.Phoenix {
 			
 			PrimaryShader.Bind();
 			PrimaryShaderSetup?.Invoke(PrimaryShader);
-			
-			PrimaryShader.EnableOverlays(ShaderOverlays);
+
+			var environment = QuerySingleton<SceneEnvironment>();
+			if(environment != null) {
+				environment.Load(PrimaryShader);
+			}
 
 			this.Process("RenderPre", delta);
 			base.OnRender(delta);

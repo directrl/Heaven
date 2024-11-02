@@ -1,0 +1,1 @@
+final_color *= u_scene_env.ambient_light;
