@@ -8,7 +8,7 @@ namespace Coelum.Phoenix.ECS.System {
 		
 		private ShaderProgram _shader;
 
-		public CameraSystem(ShaderProgram shader) : base("Camera") {
+		public CameraSystem(ShaderProgram shader) : base("Camera Render") {
 			_shader = shader;
 			Action = ActionImpl;
 		}

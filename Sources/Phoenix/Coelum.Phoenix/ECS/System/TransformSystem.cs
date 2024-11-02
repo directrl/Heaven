@@ -6,7 +6,7 @@ namespace Coelum.Phoenix.ECS.System {
 	
 	public class TransformSystem : EcsSystem {
 
-		public TransformSystem() : base("Transform") {
+		public TransformSystem() : base("Object Transform") {
 			Action = ActionImpl;
 		}
 

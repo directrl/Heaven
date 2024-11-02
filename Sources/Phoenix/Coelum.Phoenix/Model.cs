@@ -15,7 +15,7 @@ namespace Coelum.Phoenix {
 				long c = 0;
 				
 				foreach(var mesh in Meshes) {
-					c += mesh.VertexCount;
+					c += mesh.Vertices.Length;
 				}
 
 				return c;
@@ -29,7 +29,7 @@ namespace Coelum.Phoenix {
 		public virtual void Render(ShaderProgram shader) {
 			foreach(var mesh in Meshes) {
 				Materials[mesh.MaterialIndex].Load(shader);
-				mesh.Render(shader);
+				mesh.Render();
 			}
 		}
 	}

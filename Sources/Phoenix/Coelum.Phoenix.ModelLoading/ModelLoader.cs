@@ -115,30 +115,25 @@ namespace Coelum.Phoenix.ModelLoading {
 		}
 
 		private unsafe static void ProcessMesh(ref Model model, AiScene* aiScene, AiMesh* aiMesh) {
-			var positions = new List<float>();
+			var vertices = new Vertex[aiMesh->MNumVertices];
 			var indices = new List<uint>();
-			var texCoords = new List<float>();
-			var normals = new List<float>();
 
 		#region Vertices
 			for(int i = 0; i < aiMesh->MNumVertices; i++) {
-				var vertex = aiMesh->MVertices[i];
-				positions.Add(vertex.X);
-				positions.Add(vertex.Y);
-				positions.Add(vertex.Z);
+				var vertex = new Vertex() {
+					Position = aiMesh->MVertices[i]
+				};
 
 				if(aiMesh->MNormals != null) {
-					var normal = aiMesh->MNormals[i];
-					normals.Add(normal.X);
-					normals.Add(normal.Y);
-					normals.Add(normal.Z);
+					vertex.Normal = aiMesh->MNormals[i];
 				}
 
 				if(aiMesh->MTextureCoords[0] != null) {
-					var texCoord = aiMesh->MTextureCoords[0][i];
-					texCoords.Add(texCoord.X);
-					texCoords.Add(texCoord.Y);
+					var texCoords = aiMesh->MTextureCoords[0][i];
+					vertex.TexCoords = new(texCoords.X, texCoords.Y);
 				}
+
+				vertices[i] = vertex;
 			}
 		#endregion
 
@@ -154,10 +149,8 @@ namespace Coelum.Phoenix.ModelLoading {
 			
 			var mesh = new Mesh(
 				PrimitiveType.Triangles,
-				positions.ToArray(),
-				indices.ToArray(),
-				texCoords.ToArray(),
-				normals.ToArray()
+				vertices,
+				indices.ToArray()
 			) {
 				MaterialIndex = (int) aiMesh->MMaterialIndex
 			};
