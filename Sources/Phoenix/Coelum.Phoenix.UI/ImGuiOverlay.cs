@@ -1,6 +1,5 @@
 using Coelum.Configuration;
 using Coelum.Phoenix.OpenGL;
-using Coelum.Phoenix.Scene;
 using ImGuiNET;
 using Silk.NET.OpenGL.Extensions.ImGui;
 using Silk.NET.Windowing;
@@ -14,7 +13,7 @@ namespace Coelum.Phoenix.UI {
 		
 		protected ImGuiController Controller { get; }
 		
-		public ImGuiOverlay(PhoenixSceneBase scene) {
+		public ImGuiOverlay(PhoenixScene scene) {
 			if(scene.Window?.Input == null) {
 				throw new ArgumentException("Scene must already have a window with input assigned! "
 					+ "Are you creating an overlay in the constructor instead of in Load()?");

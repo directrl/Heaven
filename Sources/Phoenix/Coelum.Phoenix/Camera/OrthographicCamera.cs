@@ -6,7 +6,7 @@ namespace Coelum.Phoenix.Camera {
 		
 		public OrthographicCamera(SilkWindow window) : base(window) { }
 
-		protected override void RecalculateProjectionMatrix() {
+		internal override void RecalculateProjectionMatrix() {
 			ProjectionMatrix = Matrix4x4.CreateOrthographic(
 				Width * FOV / 1000,
 				Height * FOV / 1000,

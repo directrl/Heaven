@@ -3,7 +3,7 @@ using Coelum.Debug;
 
 namespace Coelum.ECS {
 	
-	public class Node {
+	public partial class Node {
 		
 		private static readonly Random _RANDOM = new();
 		
@@ -32,7 +32,7 @@ namespace Coelum.ECS {
 			private set => _path = value;
 		}
 		
-		public NodeRoot Root { get; set; }
+		public NodeRoot? Root { get; set; }
 
 		private Node? _parent;
 		public Node? Parent {
@@ -46,7 +46,7 @@ namespace Coelum.ECS {
 		internal Node[] _defaultChildren = Array.Empty<Node>();
 		public Node[] Children { init => _defaultChildren = value; }
 		
-		public Dictionary<Type, NodeComponent> Components { get; protected set; } = new();
+		public Dictionary<Type, INodeComponent> Components { get; protected set; } = new();
 		
 		public void Add(params Node[] nodes) {
 			Tests.Assert(Root != null,
@@ -60,30 +60,12 @@ namespace Coelum.ECS {
 		}
 
 		public void Remove(params Node[] nodes) {
+			Tests.Assert(Root != null);
+			
 			foreach(var node in nodes) {
 				node.Parent = null;
 				Root.Remove(node);
 			}
-		}
-
-		public TComponent AddComponent<TComponent>(TComponent component) where TComponent : NodeComponent {
-			Components[typeof(TComponent)] = component;
-			return component;
-		}
-
-		public TComponent GetComponent<TComponent>() where TComponent : NodeComponent {
-			return (TComponent) Components[typeof(TComponent)];
-		}
-		
-		public TRealComponent GetComponent<TBaseComponent, TRealComponent>()
-			where TRealComponent : NodeComponent
-			where TBaseComponent : NodeComponent {
-			
-			return (TRealComponent) Components[typeof(TBaseComponent)];
-		}
-
-		public bool HasComponent<TComponent>() where TComponent : NodeComponent {
-			return Components.ContainsKey(typeof(TComponent));
 		}
 	}
 }

@@ -7,15 +7,13 @@ namespace Coelum.Phoenix.ECS.System {
 	public class TransformSystem : EcsSystem {
 
 		public TransformSystem() : base("Transform") {
-			Action = Invoke;
+			Action = ActionImpl;
 		}
 
-		private void Invoke(NodeRoot root, float delta) {
+		private void ActionImpl(NodeRoot root, float delta) {
 			root.Query<Transform>()
 			    .Parallel(true)
 			    .Each((node, t) => {
-				    //if(!t.Dirty) return;
-
 				    switch(t) {
 					    case Transform2D t2d:
 						    t.LocalMatrix =
@@ -32,21 +30,11 @@ namespace Coelum.Phoenix.ECS.System {
 				    }
 
 				    var p = node.Parent;
-				    if(p != null) {
-					    if(!p.HasComponent<Transform>()) {
-						    t.GlobalMatrix = t.LocalMatrix;
-						    t.Dirty = false;
-					    }
-					    
+				    if(p != null && p.HasComponent<Transform>()) {
 					    var pt = p.GetComponent<Transform>();
-					    
-					    //if(!pt.Dirty) {
-						    t.GlobalMatrix = t.LocalMatrix * pt.GlobalMatrix;
-						    t.Dirty = false;
-					    //}
+					    t.GlobalMatrix = t.LocalMatrix * pt.GlobalMatrix;
 				    } else {
 					    t.GlobalMatrix = t.LocalMatrix;
-					    t.Dirty = false;
 				    }
 			    })
 			    .Execute();

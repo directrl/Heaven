@@ -1,17 +1,15 @@
-using System.Collections.Concurrent;
 using System.Drawing;
-using Coelum.Configuration;
-using Coelum.Debug;
 using Coelum.Common.Graphics;
-using Coelum.Phoenix.Texture;
-using Coelum.ECS;
-using Coelum.Phoenix.ECS.Component;
+using Coelum.Debug;
+using Coelum.Phoenix.Camera;
 using Coelum.Phoenix.ECS.System;
 using Coelum.Phoenix.OpenGL;
+using Coelum.Resources;
+using Silk.NET.OpenGL;
 
-namespace Coelum.Phoenix.Scene {
+namespace Coelum.Phoenix {
 	
-	public abstract class PhoenixSceneBase : SceneBase {
+	public abstract class PhoenixScene : SceneBase {
 
 	#region Delegates
 		public delegate void ShaderSetupEventHandler(ShaderProgram shader);
@@ -19,7 +17,6 @@ namespace Coelum.Phoenix.Scene {
 
 	#region Events
 		public event ShaderSetupEventHandler? PrimaryShaderSetup;
-		public event ShaderSetupEventHandler? SecondaryShaderSetup;
 	#endregion
 
 		public Color ClearColor { get; protected set; } = Color.Black;
@@ -30,24 +27,48 @@ namespace Coelum.Phoenix.Scene {
 		public new SilkWindow? Window
 			=> base.Window == null ? null : (SilkWindow) base.Window;
 
-		protected PhoenixSceneBase(string id) : base(id) { }
+		protected CameraBase? CurrentCamera {
+			get {
+				CameraBase? currentCamera = null;
+				
+				QueryChildren()
+					.Each(node => {
+						if(node is CameraBase { Current: true } camera) {
+							currentCamera = camera;
+						}
+					})
+					.Execute();
+
+				return currentCamera;
+			}
+		}
+
+		protected PhoenixScene(string id) : base(id) { }
 
 		public virtual void OnLoad(SilkWindow window) { }
 		public override void OnLoad(WindowBase window) {
+			PrimaryShader = new(
+				Module.RESOURCES,
+				new(ShaderType.FragmentShader,
+				    Module.RESOURCES[ResourceType.SHADER, "scene.frag"]),
+				new(ShaderType.VertexShader,
+				    Module.RESOURCES[ResourceType.SHADER, "scene.vert"])
+			);
+			
+			ClearSystems();
 			base.OnLoad(window);
 			
-			this.ClearSystems();
-			
 			Tests.Assert(window is SilkWindow, "Phoenix renderer scenes work only with" +
-			             "Pheonix renderer windows!");
+			             "Phoenix renderer windows!");
 			OnLoad((SilkWindow) window);
 			
 			Tests.Assert(PrimaryShader != null, "The primary shader cannot be null");
 			PrimaryShader.Validate();
 			PrimaryShader.AddOverlays(ShaderOverlays);
 			
-			this.System("RenderPre", new RenderSystem(PrimaryShader));
-			this.System("UpdatePost", new TransformSystem());
+			AddSystem("RenderPre", new CameraSystem(PrimaryShader));
+			AddSystem("RenderPre", new RenderSystem(PrimaryShader));
+			AddSystem("UpdatePost", new TransformSystem());
 
 			var pWindow = (SilkWindow) window;
 

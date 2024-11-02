@@ -4,36 +4,42 @@ namespace Coelum.Phoenix.ECS.Component {
 	
 	public class Transform3D : Transform {
 	
-		private Vector3 _position;
-		public Vector3 Position {
-			get => _position;
-			set {
-				Dirty = true;
-				_position = value;
-			}
-		}
+		public Vector3 Position;
+		public Vector3 Rotation;
+		public Vector3 Scale;
 
-		private Vector3 _rotation;
-		public Vector3 Rotation {
-			get => _rotation;
-			set {
-				Dirty = true;
-				_rotation = value;
-			}
-		}
+		public Vector3 GlobalPosition {
+			get {
+				if(Owner is { Parent: not null } && Owner.Parent
+				                                         .TryGetComponent<Transform, Transform3D>(out var pt)) {
+					return Position + pt.GlobalPosition;
+				}
 
-		private Vector3 _scale;
-		public Vector3 Scale {
-			get => _scale;
-			set {
-				Dirty = true;
-				_scale = value;
+				return Position;
 			}
 		}
 		
-		public Vector3 GlobalPosition { get; internal set; }
-		public Vector3 GlobalRotation { get; internal set; }
-		public Vector3 GlobalScale { get; internal set; }
+		public Vector3 GlobalRotation {
+			get {
+				if(Owner is { Parent: not null } && Owner.Parent
+				                                         .TryGetComponent<Transform, Transform3D>(out var pt)) {
+					return Rotation + pt.GlobalRotation;
+				}
+
+				return Rotation;
+			}
+		}
+		
+		public Vector3 GlobalScale {
+			get {
+				if(Owner is { Parent: not null } && Owner.Parent
+				                                         .TryGetComponent<Transform, Transform3D>(out var pt)) {
+					return Scale * pt.GlobalScale;
+				}
+
+				return Scale;
+			}
+		}
 
 		public Transform3D(Vector3? position = null,
 		                   Vector3? rotation = null,

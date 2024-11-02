@@ -7,7 +7,7 @@ namespace Coelum.Phoenix.Camera {
 		
 		public PerspectiveCamera(SilkWindow window) : base(window) { }
 
-		protected override void RecalculateProjectionMatrix() {
+		internal override void RecalculateProjectionMatrix() {
 			ProjectionMatrix = Matrix4x4.CreatePerspectiveFieldOfView(
 				FOV.ToRadians(),
 				Width / Height,

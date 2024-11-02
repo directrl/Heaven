@@ -1,12 +1,11 @@
 using Coelum.Common.Input;
 using Coelum.Phoenix;
-using Coelum.Phoenix.Scene;
 
 namespace Coelum.Phoenix.Input {
 	
 	public static class SceneExtensions {
 		
-		public static void SetupKeyBindings(this PhoenixSceneBase scene, KeyBindings keyBindings) {
+		public static void SetupKeyBindings(this PhoenixScene scene, KeyBindings keyBindings) {
 			if(scene.Window == null) {
 				scene.Load += window => DoSetupKeyBindings((SilkWindow) window, keyBindings);
 			} else {
@@ -16,7 +15,7 @@ namespace Coelum.Phoenix.Input {
 			scene.Unload += keyBindings.Dispose;
 		}
 
-		public static void UpdateKeyBindings(this PhoenixSceneBase scene, KeyBindings keyBindings) {
+		public static void UpdateKeyBindings(this PhoenixScene scene, KeyBindings keyBindings) {
 			if(scene.Window?.Input == null) return;
 			
 			foreach(var keyboard in scene.Window.Input.Keyboards) {

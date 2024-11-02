@@ -4,19 +4,19 @@ using Coelum.Phoenix.OpenGL;
 
 namespace Coelum.Phoenix.ECS.System {
 	
-	public class RenderSystem : EcsSystem {
-
+	internal class CameraSystem : EcsSystem {
+		
 		private ShaderProgram _shader;
 
-		public RenderSystem(ShaderProgram shader) : base("Render") {
+		public CameraSystem(ShaderProgram shader) : base("Camera") {
 			_shader = shader;
 			Action = ActionImpl;
 		}
 
 		private void ActionImpl(NodeRoot root, float delta) {
-			root.Query<Renderable, Transform>()
-			    .Each((node, renderable, transform) => {
-				    _shader.SetUniform("model", transform.GlobalMatrix);
+			root.Query<CameraRenderable>()
+			    .Each((node, renderable) => {
+				    if(!renderable.Camera.Current) return;
 				    renderable.Render(_shader);
 			    })
 			    .Execute();

@@ -1,7 +1,6 @@
 using System.Drawing;
 using Coelum.Phoenix;
 using Coelum.Phoenix.Camera;
-using Coelum.Phoenix.Scene;
 using Coelum.Phoenix.Texture;
 using Coelum.Common.Input;
 using Coelum.LanguageExtensions;
@@ -16,7 +15,7 @@ using Silk.NET.OpenGL;
 
 namespace PhoenixPlayground.Scenes {
 	
-	public class NodeGraphTest : Scene3D {
+	public class NodeGraphTest : PhoenixScene {
 		
 		private static readonly Random RANDOM = new();
 		
@@ -49,16 +48,17 @@ namespace PhoenixPlayground.Scenes {
 			base.OnLoad(window);
 
 			_camera1 = new PerspectiveCamera(window) {
-				FOV = 60
+				FOV = 60,
+				Current = true
 			};
 			_camera1.GetComponent<Transform, Transform3D>().Position = new(0, 0, -3);
+			Add(_camera1);
 
 			_camera2 = new OrthographicCamera(window) {
 				FOV = 3
 			};
 			_camera2.GetComponent<Transform, Transform3D>().Position = new(2, 2, 2);
-
-			Camera = _camera1;
+			Add(_camera2);
 
 			{
 				Add(new ColorCube(Color.AntiqueWhite));
@@ -97,17 +97,17 @@ namespace PhoenixPlayground.Scenes {
 			_overlay = new DebugUI(this);
 			_overlay.AdditionalInfo += (delta, args) => {
 				ImGui.Separator();
+
+				var camera = (Camera3D) CurrentCamera;
 				
 				/*if(ImGui.Begin("Info"))*/ {
-					ImGui.Text($"Camera position: {Camera?.GetComponent<Transform, Transform3D>().Position.ToString() ?? "Unknown"}");
-					ImGui.Text($"Camera pitch: {Camera?.Pitch.ToString() ?? "Unknown"}");
-					ImGui.Text($"Camera yaw: {Camera?.Yaw.ToString() ?? "Unknown"}");
+					ImGui.Text($"Camera position: {camera.GetComponent<Transform, Transform3D>().Position.ToString() ?? "Unknown"}");
+					ImGui.Text($"Camera pitch: {camera.Pitch.ToString() ?? "Unknown"}");
+					ImGui.Text($"Camera yaw: {camera.Yaw.ToString() ?? "Unknown"}");
 
-					if(Camera != null) {
-						var fov = Camera.FOV;
-						ImGui.SliderFloat("Camera FOV", ref fov, 1f, 179.9f);
-						Camera.FOV = fov;
-					}
+					var fov = camera.FOV;
+					ImGui.SliderFloat("Camera FOV", ref fov, 1f, 179.9f);
+					camera.FOV = fov;
 					
 					ImGui.Separator();
 					int childCount = 0;
@@ -126,7 +126,8 @@ namespace PhoenixPlayground.Scenes {
 			};
 
 			window.GetMice()[0].MouseMove += (_, pos) => {
-				if(Camera != null) _freeCamera.CameraMove(Camera, pos);
+				var camera = CurrentCamera;
+				if(camera is Camera3D c3d) _freeCamera.CameraMove(c3d, pos);
 			};
 		}
 
@@ -134,10 +135,11 @@ namespace PhoenixPlayground.Scenes {
 			base.OnUpdate(delta);
 
 			var mouse = Window.GetMice()[0];
-			if(Camera != null) _freeCamera.Update(Camera, ref mouse, delta);
+			var camera = CurrentCamera;
+			if(camera is Camera3D c3d) _freeCamera.Update(c3d, ref mouse, delta);
 
-			if(_camera1Bind.Pressed) Camera = _camera1;
-			if(_camera2Bind.Pressed) Camera = _camera2;
+			if(_camera1Bind.Pressed) _camera1.Current = true;
+			if(_camera2Bind.Pressed) _camera2.Current = true;
 			
 			_keyBindings.Update(new SilkKeyboard(Window.Input.Keyboards[0]));
 		}

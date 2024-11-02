@@ -4,36 +4,42 @@ namespace Coelum.Phoenix.ECS.Component {
 	
 	public class Transform2D : Transform {
 
-		private Vector2 _position;
-		public Vector2 Position {
-			get => _position;
-			set {
-				Dirty = true;
-				_position = value;
-			}
-		}
+		public Vector2 Position;
+		public float Rotation;
+		public Vector2 Scale;
+		
+		public Vector2 GlobalPosition {
+			get {
+				if(Owner is { Parent: not null } && Owner.Parent
+				                                         .TryGetComponent<Transform, Transform2D>(out var pt)) {
+					return Position + pt.GlobalPosition;
+				}
 
-		private float _rotation;
-		public float Rotation {
-			get => _rotation;
-			set {
-				Dirty = true;
-				_rotation = value;
-			}
-		}
-
-		private Vector2 _scale;
-		public Vector2 Scale {
-			get => _scale;
-			set {
-				Dirty = true;
-				_scale = value;
+				return Position;
 			}
 		}
 		
-		public Vector2 GlobalPosition { get; internal set; }
-		public float GlobalRotation { get; internal set; }
-		public Vector2 GlobalScale { get; internal set; }
+		public float GlobalRotation {
+			get {
+				if(Owner is { Parent: not null } && Owner.Parent
+				                                         .TryGetComponent<Transform, Transform2D>(out var pt)) {
+					return Rotation + pt.GlobalRotation;
+				}
+
+				return Rotation;
+			}
+		}
+		
+		public Vector2 GlobalScale {
+			get {
+				if(Owner is { Parent: not null } && Owner.Parent
+				                                         .TryGetComponent<Transform, Transform2D>(out var pt)) {
+					return Scale * pt.GlobalScale;
+				}
+
+				return Scale;
+			}
+		}
 
 		public Transform2D(Vector2? position = null,
 		                   float rotation = 0,

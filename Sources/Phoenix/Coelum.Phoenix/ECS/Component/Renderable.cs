@@ -3,8 +3,8 @@ using Coelum.Phoenix.OpenGL;
 
 namespace Coelum.Phoenix.ECS.Component {
 	
-	public interface Renderable : NodeComponent {
-		
-		public void Render(ShaderProgram shader);
+	public interface Renderable : INodeComponent {
+
+		public abstract void Render(ShaderProgram shader);
 	}
 }

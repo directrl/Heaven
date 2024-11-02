@@ -1,5 +1,4 @@
 using Coelum.ECS;
-using Coelum.Phoenix.Scene;
 using ImGuiNET;
 
 namespace Coelum.Phoenix.UI {
@@ -12,10 +11,10 @@ namespace Coelum.Phoenix.UI {
 
 		private const int ECS_SYSTEM_TIME_RESOLUTION = 512;
 
-		private readonly PhoenixSceneBase _scene;
-		private readonly Dictionary<EcsSystem, (float Max, float[] Values)> _ecsSystemTimes = new();
+		private readonly PhoenixScene _scene;
+		private readonly Dictionary<EcsSystem, (float MaxTime, float[] Times)> _ecsSystems = new();
 
-		public DebugUI(PhoenixSceneBase scene) : base(scene) {
+		public DebugUI(PhoenixScene scene) : base(scene) {
 			_scene = scene;
 		}
 
@@ -35,38 +34,58 @@ namespace Coelum.Phoenix.UI {
 			}
 
 			if(ImGui.Begin("ECS Debug", ImGuiWindowFlags.AlwaysAutoResize)) {
+				ImGui.BeginTabBar("ecs_phases");
+				
 				_scene.QuerySystems()
 				      .Each((phase, systems) => {
-					      ImGui.Text($"Phase: {phase}");
+					      if(!ImGui.BeginTabItem(phase)) return;
+					      
 					      foreach(var system in systems) {
-						      if(!_ecsSystemTimes.ContainsKey(system)) {
-							      _ecsSystemTimes[system] = (0, new float[ECS_SYSTEM_TIME_RESOLUTION]);
-							      return;
+						      if(!_ecsSystems.ContainsKey(system)) {
+							      _ecsSystems[system] = (0, new float[ECS_SYSTEM_TIME_RESOLUTION]);
 						      }
 
-						      var times = _ecsSystemTimes[system];
-						      times.Max = 0;
+						      var debugData = _ecsSystems[system];
+						      debugData.MaxTime = 0;
 						      
 						      for(int i = 1; i < ECS_SYSTEM_TIME_RESOLUTION; i++) {
-							      times.Values[i - 1] = times.Values[i];
+							      debugData.Times[i - 1] = debugData.Times[i];
 
-							      if(times.Values[i] > times.Max) {
-								      times.Max = times.Values[i];
+							      if(debugData.Times[i] > debugData.MaxTime) {
+								      debugData.MaxTime = debugData.Times[i];
 							      }
 						      }
 
 						      float timeUs = (float) system.ExecutionTime.TotalSeconds * 1_000_000;
-						      times.Values[ECS_SYSTEM_TIME_RESOLUTION - 1] = timeUs;
+						      debugData.Times[ECS_SYSTEM_TIME_RESOLUTION - 1] = timeUs;
 
-						      _ecsSystemTimes[system] = times;
+						      _ecsSystems[system] = debugData;
 						      
-						      ImGui.PlotHistogram($"{system.Name}: {timeUs:F2}us",
-						                          ref _ecsSystemTimes[system].Values[0], ECS_SYSTEM_TIME_RESOLUTION, 0, 
-						                          "", 0, times.Max, new(500, 50));
+						      ImGui.SeparatorText($"{system.Name}: {(system.Enabled ? "On" : "Off")}");
+						      ImGui.SameLine();
+						      ImGui.Checkbox($"{phase}/{system.Name}", ref system.Enabled);
+
+						      ImGui.PlotHistogram($"{timeUs:F2}us",
+						                          ref _ecsSystems[system].Times[0], ECS_SYSTEM_TIME_RESOLUTION, 0, 
+						                          "", 0, debugData.MaxTime, new(500, 50));
+						      
+						      if(!system.Enabled) {
+							      for(int i = 0; i <= 2; i++) {
+								      int step = (int) Math.Pow(10, i);
+								      
+								      if(ImGui.Button($"Step {step}x")) {
+									      system.Step(step);
+								      }
+								      if(i != 2) ImGui.SameLine();
+							      }
+						      }
 					      }
-					      ImGui.Separator();
+					      
+					      ImGui.EndTabItem();
 				      })
 				      .Execute();
+				
+				ImGui.EndTabBar();
 			}
 		
 			Controller.Render();
