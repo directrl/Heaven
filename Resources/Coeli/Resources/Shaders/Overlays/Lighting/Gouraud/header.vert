@@ -1,0 +1,1 @@
+out vec3 gouraud_light_final;

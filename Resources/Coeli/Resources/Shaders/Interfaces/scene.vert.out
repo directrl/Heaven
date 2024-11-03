@@ -1,3 +1,5 @@
 {
 	vec2 tex_coords;
+	vec3 normal;
+	vec3 frag_pos;
 }

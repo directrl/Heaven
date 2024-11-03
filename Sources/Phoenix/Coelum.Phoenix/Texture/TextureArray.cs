@@ -115,6 +115,8 @@ namespace Coelum.Phoenix.Texture {
 
 			public string Name => "textureArray";
 			public string Path => "Overlays.TextureArray";
+			public bool HasHeader => true;
+			public bool HasCall => true;
 			public ShaderType Type => ShaderType.FragmentShader;
 			public ShaderPass Pass => ShaderPass.COLOR_PRE;
 			public ResourceManager ResourceManager => Module.RESOURCES;

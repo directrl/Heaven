@@ -7,11 +7,16 @@ namespace Coelum.Phoenix.OpenGL {
 
 		public string Name { get; }
 		public string Path { get; }
-
+		
+		public bool HasHeader { get; }
+		public bool HasCall { get; }
+		
 		public ShaderType Type { get; }
 		public ShaderPass Pass { get; }
 
 		public ResourceManager ResourceManager { get; }
+
+		
 
 		public void Load(ShaderProgram shader);
 

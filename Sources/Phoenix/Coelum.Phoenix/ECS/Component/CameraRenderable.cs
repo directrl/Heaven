@@ -1,3 +1,4 @@
+using System.Numerics;
 using Coelum.ECS;
 using Coelum.Phoenix.Camera;
 using Coelum.Phoenix.OpenGL;
@@ -18,6 +19,14 @@ namespace Coelum.Phoenix.ECS.Component {
 
 			shader.SetUniform("projection", Camera.ProjectionMatrix);
 			shader.SetUniform("view", Camera.ViewMatrix);
+
+			if(Camera is Camera3D) {
+				shader.SetUniform("camera_pos",
+				                  Camera.GetComponent<Transform, Transform3D>().Position);
+			} else {
+				shader.SetUniform("camera_pos",
+				                  new Vector3(Camera.GetComponent<Transform, Transform2D>().Position, 0));
+			}
 		}
 	}
 }

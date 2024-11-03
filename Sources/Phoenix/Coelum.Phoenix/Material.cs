@@ -24,6 +24,9 @@ namespace Coelum.Phoenix {
 		public Vector4 DiffuseColor = new(1, 1, 1, 1);
 		public Vector4 SpecularColor = new(1, 1, 1, 1);
 
+		public float Shininess = 0.3f;
+		public float Reflectivity = 0.5f;
+
 		public List<(TextureType, Texture2D)> Textures { get; init; } = new() {
 			(TextureType.Diffuse, Texture2D.DefaultTexture)
 		};
@@ -34,6 +37,9 @@ namespace Coelum.Phoenix {
 			shader.SetUniform("material.diffuse_color", DiffuseColor);
 			shader.SetUniform("material.specular_color", SpecularColor);
 
+			shader.SetUniform("material.shininess", Shininess);
+			shader.SetUniform("material.reflectivity", Reflectivity);
+			
 			int textureUnit = 0;
 			
 			foreach(var (type, texture) in Textures) {
@@ -56,9 +62,26 @@ namespace Coelum.Phoenix {
 		}
 
 		public static readonly IShaderOverlay[] OVERLAYS = {
-			FragmentShaderOverlay.OVERLAY
+			FragmentShaderOverlay.OVERLAY,
+			VertexShaderOverlay.OVERLAY
 		};
 
+		public class VertexShaderOverlay : IShaderOverlay, ILazySingleton<VertexShaderOverlay> {
+			
+			public static VertexShaderOverlay OVERLAY
+				=> ILazySingleton<VertexShaderOverlay>._instance.Value;
+
+			public string Name => "material";
+			public string Path => "Overlays.Material";
+			public bool HasHeader => true;
+			public bool HasCall => false;
+			public ShaderType Type => ShaderType.VertexShader;
+			public ShaderPass Pass => ShaderPass.POSITION_PRE;
+			public ResourceManager ResourceManager => Module.RESOURCES;
+
+			public void Load(ShaderProgram shader) { }
+		}
+		
 		public class FragmentShaderOverlay : IShaderOverlay, ILazySingleton<FragmentShaderOverlay> {
 			
 			public static FragmentShaderOverlay OVERLAY
@@ -66,6 +89,8 @@ namespace Coelum.Phoenix {
 
 			public string Name => "material";
 			public string Path => "Overlays.Material";
+			public bool HasHeader => true;
+			public bool HasCall => true;
 			public ShaderType Type => ShaderType.FragmentShader;
 			public ShaderPass Pass => ShaderPass.COLOR_PRE;
 			public ResourceManager ResourceManager => Module.RESOURCES;

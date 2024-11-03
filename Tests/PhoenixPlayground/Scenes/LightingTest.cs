@@ -1,4 +1,5 @@
 using System.Drawing;
+using System.Numerics;
 using Coelum.Common.Input;
 using Coelum.ECS;
 using Coelum.Phoenix;
@@ -6,7 +7,10 @@ using Coelum.Phoenix.Camera;
 using Coelum.Phoenix.ECS.Component;
 using Coelum.Phoenix.ECS.Nodes;
 using Coelum.Phoenix.Input;
+using Coelum.Phoenix.Lighting;
+using Coelum.Phoenix.ModelLoading;
 using Coelum.Phoenix.UI;
+using Coelum.Resources;
 using ImGuiNET;
 using PhoenixPlayground.Components;
 using PhoenixPlayground.Nodes;
@@ -19,16 +23,27 @@ namespace PhoenixPlayground.Scenes {
 		private KeyBindings _keyBindings;
 		private FreeCamera _freeCamera;
 
+	#region Keybindings
+		private KeyBinding _phong;
+		private KeyBinding _gouraud;
+	#endregion
+		
 		private EcsSystem _testCubeMove;
+		private EcsSystem _testCubeRotate;
 
 		public LightingTest() : base("light-test") {
 			_keyBindings = new(Id);
 			_freeCamera = new(_keyBindings);
+
+			_phong = _keyBindings.Register(new("phong", Key.Number1));
+			_gouraud = _keyBindings.Register(new("gouraud", Key.Number2));
 			
 			this.SetupKeyBindings(_keyBindings);
 			
 			ShaderOverlays.AddRange(Material.OVERLAYS);
 			ShaderOverlays.AddRange(SceneEnvironment.OVERLAYS);
+			ShaderOverlays.AddRange(PhongShading.OVERLAYS);
+			ShaderOverlays.AddRange(GouraudShading.OVERLAYS);
 
 			_testCubeMove = new("cube move", (root, delta) => {
 				root.Query<Transform, TestLightMove>()
@@ -40,6 +55,17 @@ namespace PhoenixPlayground.Scenes {
 						    0,
 						    MathF.Cos((float) Window.SilkImpl.Time) * 3
 					    );
+				    })
+				    .Execute();
+			});
+			
+			_testCubeRotate = new("cube rotate", (root, delta) => {
+				root.Query<Transform, TestCubeRotate>()
+				    .Each((node, t, _) => {
+					    if(t is not Transform3D t3d) return;
+
+					    float rot = delta * 0.6f;
+					    t3d.Rotation -= new Vector3(rot, rot, -rot);
 				    })
 				    .Execute();
 			});
@@ -60,18 +86,21 @@ namespace PhoenixPlayground.Scenes {
 			Add(camera);
 
 			{
-				var centerCube = new ColorCube(Color.IndianRed);
+				var centerCube = new ModelNode(ModelLoader.Load(Playground.AppResources[ResourceType.MODEL, "crt.glb"]));
+				centerCube.AddComponent(new TestCubeRotate());
 
 				var lightCube = new ColorCube(Color.AntiqueWhite);
 				lightCube.AddComponent(new TestLightMove());
+				lightCube.AddComponent(new Light());
 				lightCube.GetComponent<Transform, Transform3D>()
 				         .Scale = new(0.5f);
 				
 				Add(centerCube);
-				centerCube.Add(lightCube);
+				Add(lightCube);
 			}
 			
 			AddSystem("UpdatePre", _testCubeMove); // TODO phases should be enums or smth
+			AddSystem("UpdatePre", _testCubeRotate);
 
 			_ = new DebugUI(this);
 
@@ -85,6 +114,18 @@ namespace PhoenixPlayground.Scenes {
 
 			var mouse = Window.GetMice()[0];
 			if(CurrentCamera is Camera3D c3d) _freeCamera.Update(c3d, ref mouse, delta);
+
+			if(_phong.Pressed) {
+				Playground.AppLogger.Information("Switching to Phong shading");
+				PrimaryShader.DisableOverlays(GouraudShading.OVERLAYS);
+				PrimaryShader.EnableOverlays(PhongShading.OVERLAYS);
+			}
+			
+			if(_gouraud.Pressed) {
+				Playground.AppLogger.Information("Switching to Gouraud shading");
+				PrimaryShader.EnableOverlays(GouraudShading.OVERLAYS);
+				PrimaryShader.DisableOverlays(PhongShading.OVERLAYS);
+			}
 			
 			_keyBindings.Update(new SilkKeyboard(Window.Input.Keyboards[0]));
 		}

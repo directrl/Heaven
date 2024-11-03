@@ -66,6 +66,8 @@ namespace Coelum.Phoenix.OpenGL {
 		public static readonly ShaderPass POSITION_PRE = new("POSITION_PRE");
 		public static readonly ShaderPass POSITION_POST = new("POSITION_POST");
 		
+		public static readonly ShaderPass RETURN = new("RETURN");
+		
 		internal string Name { get; }
 
 		internal ShaderPass(string name) {

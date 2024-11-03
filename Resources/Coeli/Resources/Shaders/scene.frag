@@ -2,6 +2,9 @@
 
 out vec4 out_frag_color;
 
+//$include Uniforms.camera_matrices.glsl
+//$include Uniforms.model_matrices.glsl
+
 in VERT_OUT
 //$include Interfaces.scene.vert.out
 vert_in;

@@ -24,7 +24,7 @@ namespace Coelum.Phoenix.OpenGL {
 		private bool _ready;
 		private bool _bound;
 		
-		public uint Id { get; }
+		public uint Id { get; private set; }
 		public ReadOnlyDictionary<IShaderOverlay, bool> Overlays => new(_overlays);
 		
 		public ShaderProgram(ResourceManager? preprocessorResources, params Shader[] program) {
@@ -63,7 +63,6 @@ namespace Coelum.Phoenix.OpenGL {
 				}
 
 				_overlays[overlay] = true;
-				overlay.Load(this);
 			}
 		}
 		
@@ -127,6 +126,17 @@ namespace Coelum.Phoenix.OpenGL {
 			Log.Information($"[SHADER PROGRAM] Building took {sw.ElapsedMilliseconds}ms");
 		}
 
+		public void Rebuild() {
+			Dispose();
+			Id = Gl.CreateProgram();
+
+			if(Id == 0) {
+				throw new PlatformException("Could not create a GL shader program");
+			}
+			
+			Build();
+		}
+
 		public void Validate() {
 			Gl.ValidateProgram(Id);
 
@@ -149,9 +159,12 @@ namespace Coelum.Phoenix.OpenGL {
 			Tests.Assert(_bound);
 			Tests.Assert(_overlays.ContainsKey(overlay));
 			
-			if(!SetUniform($"overlay_{overlay.Name}", _overlays[overlay])) {
-				throw new ArgumentException($"Could not bind shader overlay [{overlay.Name}]",
-				                            nameof(overlay));
+			overlay.Load(this);
+			if(overlay.HasCall) {
+				if(!SetUniform($"overlay_{overlay.Name}", _overlays[overlay])) {
+					throw new ArgumentException($"Could not bind shader overlay [{overlay.Name}]",
+					                            nameof(overlay));
+				}
 			}
 		}
 		
@@ -226,6 +239,9 @@ namespace Coelum.Phoenix.OpenGL {
 			
 			if(!_ready) return;
 			Gl.DeleteProgram(Id);
+			
+			_ready = false;
+			_bound = false;
 		}
 
 		public class LinkingException : Exception {

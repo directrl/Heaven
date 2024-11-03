@@ -124,6 +124,39 @@
     <EmbeddedResource Update="..\..\..\Resources\Coeli\Resources\Shaders\Structures\scene_env.glsl">
       <Link>Resources\Shaders\Structures\scene_env.glsl</Link>
     </EmbeddedResource>
+    <EmbeddedResource Update="..\..\..\Resources\Coeli\Resources\Shaders\Overlays\Lighting\header.vert">
+      <Link>Resources\Shaders\Overlays\Lighting\header.vert</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Update="..\..\..\Resources\Coeli\Resources\Shaders\Overlays\Lighting\call.vert">
+      <Link>Resources\Shaders\Overlays\Lighting\call.vert</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Update="..\..\..\Resources\Coeli\Resources\Shaders\Overlays\Lighting\Phong\call.frag">
+      <Link>Resources\Shaders\Overlays\Lighting\Phong\call.frag</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Update="..\..\..\Resources\Coeli\Resources\Shaders\Overlays\Lighting\Phong\header.frag">
+      <Link>Resources\Shaders\Overlays\Lighting\Phong\header.frag</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Update="..\..\..\Resources\Coeli\Resources\Shaders\Overlays\Lighting\Gouraud\call.vert">
+      <Link>Resources\Shaders\Overlays\Lighting\Gouraud\call.vert</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Update="..\..\..\Resources\Coeli\Resources\Shaders\Overlays\Lighting\Gouraud\header.vert">
+      <Link>Resources\Shaders\Overlays\Lighting\Gouraud\header.vert</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Update="..\..\..\Resources\Coeli\Resources\Shaders\Overlays\Lighting\Gouraud\call.frag">
+      <Link>Resources\Shaders\Overlays\Lighting\Gouraud\call.frag</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Update="..\..\..\Resources\Coeli\Resources\Shaders\Overlays\Lighting\Gouraud\header.frag">
+      <Link>Resources\Shaders\Overlays\Lighting\Gouraud\header.frag</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Update="..\..\..\Resources\Coeli\Resources\Shaders\Overlays\SceneEnvironment\header.frag">
+      <Link>Resources\Shaders\Overlays\SceneEnvironment\header.frag</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Update="..\..\..\Resources\Coeli\Resources\Shaders\Overlays\SceneEnvironment\header.vert">
+      <Link>Resources\Shaders\Overlays\SceneEnvironment\header.vert</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Update="..\..\..\Resources\Coeli\Resources\Shaders\Overlays\Material\header.vert">
+      <Link>Resources\Shaders\Overlays\Material\header.vert</Link>
+    </EmbeddedResource>
   </ItemGroup>
 
   <ItemGroup>

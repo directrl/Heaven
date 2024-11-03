@@ -86,22 +86,24 @@ namespace Coelum.Phoenix.OpenGL {
 			switch(args[0]) {
 				case tokenHeader:
 					foreach(var overlay in shader.Overlays) {
-						result += $"uniform bool u_overlay_{overlay.Name};\n";
-						result += Include(
-							shader,
-							$"//$include {overlay.Path}.header.{overlay.GetExtension()}",
-							resources
-						);
-						result += "\n";
-
-						totalHeaders++;
+						if(overlay.HasHeader) {
+							result += $"uniform bool u_overlay_{overlay.Name};\n";
+							result += Include(
+								shader,
+								$"//$include {overlay.Path}.header.{overlay.GetExtension()}",
+								resources
+							);
+							result += "\n";
+							
+							totalHeaders++;
+						}
 					}
 					break;
 				case tokenCall:
 					var pass = new ShaderPass(args[1]);
 
 					foreach(var overlay in shader.Overlays) {
-						if(overlay.Pass.Name == pass.Name) {
+						if(overlay.HasCall && overlay.Pass.Name == pass.Name) {
 							result += $"if(u_overlay_{overlay.Name}) {{\n";
 							result += Include(
 								shader,
@@ -109,9 +111,9 @@ namespace Coelum.Phoenix.OpenGL {
 								resources
 							);
 							result += "}\n";
+							
+							totalCalls++;
 						}
-
-						totalCalls++;
 					}
 					break;
 			}

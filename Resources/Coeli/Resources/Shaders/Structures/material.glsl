@@ -3,6 +3,9 @@ struct Material {
 	vec4 ambient_color;
 	vec4 diffuse_color;
 	vec4 specular_color;
+	
+	float shininess;
+	float reflectivity;
 
 	sampler2D tex_diffuse;
 	sampler2D tex_specular;

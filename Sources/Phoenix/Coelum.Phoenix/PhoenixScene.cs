@@ -70,6 +70,9 @@ namespace Coelum.Phoenix {
 			AddSystem("RenderPre", new CameraSystem(PrimaryShader));
 			AddSystem("RenderPre", new RenderSystem(PrimaryShader));
 			AddSystem("UpdatePost", new TransformSystem());
+			
+			// TODO right now this will be trying to push scene_env even with lighting not enabled
+			AddSystem("RenderPre", new LightSystem(PrimaryShader));
 
 			var pWindow = (SilkWindow) window;
 
