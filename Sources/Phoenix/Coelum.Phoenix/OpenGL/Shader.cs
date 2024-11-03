@@ -39,6 +39,19 @@ namespace Coelum.Phoenix.OpenGL {
 			Gl.CompileShader(id);
 
 			if(Gl.GetShader(id, GLEnum.CompileStatus) == 0) {
+				Console.WriteLine("===== FAULTING SHADER CODE BEGIN =====");
+
+				{
+					string[] c = Code.Split("\n");
+
+					for(int i = 0; i < c.Length; i++) {
+						Console.WriteLine($"{i + 1}: {c[i]}");
+					}
+				}
+				
+				Console.WriteLine("===== FAULTING SHADER CODE END =====");
+				Console.WriteLine();
+				
 				throw new CompilationException(id);
 			}
 

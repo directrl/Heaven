@@ -24,6 +24,21 @@ namespace Coelum.Phoenix.UI {
 			if(ImGui.Begin("Standard Debug UI", ImGuiWindowFlags.AlwaysAutoResize)) {
 				ImGui.BeginTabBar("std");
 
+				if(ImGui.BeginTabItem("Scene")) {
+					ImGui.Text($"Children count: {_scene.ChildCount}");
+
+					if(ImGui.Button("Reload scene")) {
+						var window = _scene.Window;
+
+						if(window != null) {
+							window.Scene = null;
+							window.Scene = _scene;
+						}
+					}
+					
+					ImGui.EndTabItem();
+				}
+
 				if(ImGui.BeginTabItem("Deltas")) {
 					float rndMs = (_scene.Window?.RenderDelta ?? 0) * 1000;
 					float updMs = (_scene.Window?.UpdateDelta ?? 0) * 1000;

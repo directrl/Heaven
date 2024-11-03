@@ -18,8 +18,10 @@ namespace Coelum.Phoenix.ECS.System {
 			root.Query<Transform, Light>()
 			    .Each((node, t, light) => {
 				    if(t is Transform3D t3d) {
-					    _shader.SetUniform("scene_env.light_pos", t3d.GlobalPosition);
-					    _shader.SetUniform("scene_env.light_color", light.Color.ToVector3());
+					    // _shader.SetUniform("scene_env.light_pos", t3d.GlobalPosition);
+					    // _shader.SetUniform("scene_env.light_color", light.Color.ToVector3());
+					    
+					    light.Load(_shader);
 				    }
 			    })
 			    .Execute();

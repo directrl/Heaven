@@ -57,6 +57,7 @@ namespace Coelum.Phoenix {
 			);
 			
 			ClearSystems();
+			ClearNodes();
 			base.OnLoad(window);
 			
 			Tests.Assert(window is SilkWindow, "Phoenix renderer scenes work only with" +

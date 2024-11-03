@@ -26,10 +26,20 @@ namespace PhoenixPlayground.Scenes {
 	#region Keybindings
 		private KeyBinding _phong;
 		private KeyBinding _gouraud;
+
+		private KeyBinding _lightXpos;
+		private KeyBinding _lightXneg;
+		private KeyBinding _lightYpos;
+		private KeyBinding _lightYneg;
+		private KeyBinding _lightZpos;
+		private KeyBinding _lightZneg;
 	#endregion
 		
 		private EcsSystem _testCubeMove;
 		private EcsSystem _testCubeRotate;
+
+		private Camera3D? _camera;
+		private Node _lightCube;
 
 		public LightingTest() : base("light-test") {
 			_keyBindings = new(Id);
@@ -37,24 +47,41 @@ namespace PhoenixPlayground.Scenes {
 
 			_phong = _keyBindings.Register(new("phong", Key.Number1));
 			_gouraud = _keyBindings.Register(new("gouraud", Key.Number2));
+
+			_lightXpos = _keyBindings.Register(new("x1", Key.U));
+			_lightXneg = _keyBindings.Register(new("x2", Key.J));
+			_lightYpos = _keyBindings.Register(new("y1", Key.I));
+			_lightYneg = _keyBindings.Register(new("y2", Key.K));
+			_lightZpos = _keyBindings.Register(new("z1", Key.O));
+			_lightZneg = _keyBindings.Register(new("z2", Key.L));
 			
 			this.SetupKeyBindings(_keyBindings);
 			
 			ShaderOverlays.AddRange(Material.OVERLAYS);
 			ShaderOverlays.AddRange(SceneEnvironment.OVERLAYS);
 			ShaderOverlays.AddRange(PhongShading.OVERLAYS);
-			ShaderOverlays.AddRange(GouraudShading.OVERLAYS);
+			//ShaderOverlays.AddRange(GouraudShading.OVERLAYS);
 
 			_testCubeMove = new("cube move", (root, delta) => {
-				root.Query<Transform, TestLightMove>()
-				    .Each((node, t, _) => {
+				root.Query<Transform, Light>()
+				    .Each((node, t, l) => {
 					    if(t is not Transform3D t3d) return;
-					    
-					    t3d.Position = new(
-						    MathF.Sin((float) Window.SilkImpl.Time) * 3,
-						    0,
-						    MathF.Cos((float) Window.SilkImpl.Time) * 3
-					    );
+
+					    if(l is DirectionalLight) {
+						    t3d.Rotation = new(
+							    -MathF.PI,
+							    MathF.Sin((float) Window.SilkImpl.Time) * (MathF.PI / 2),
+							    0
+							);
+						    
+						    Console.WriteLine(((DirectionalLight)l).Direction);
+					    } else {
+						    t3d.Position = new(
+							    MathF.Sin((float) Window.SilkImpl.Time) * 6,
+							    0,
+							    MathF.Cos((float) Window.SilkImpl.Time) * 6
+						    );
+					    }
 				    })
 				    .Execute();
 			});
@@ -75,34 +102,65 @@ namespace PhoenixPlayground.Scenes {
 			base.OnLoad(window);
 			
 			Add(new SceneEnvironment() {
-				AmbientLight = Color.FromArgb(64, 64, 64)
+				AmbientLight = Color.FromArgb(16, 16, 16)
 			});
 
-			var camera = new PerspectiveCamera(window) {
-				FOV = 60,
-				Current = true
-			};
-			camera.GetComponent<Transform, Transform3D>().Position = new(0, 0, -3);
-			Add(camera);
+			if(_camera == null) {
+				_camera = new PerspectiveCamera(window) {
+					FOV = 60,
+					Current = true
+				};
+				_camera.GetComponent<Transform, Transform3D>().Position = new(0, 0, -3);
+			}
+			Add(_camera);
 
 			{
-				var centerCube = new ModelNode(ModelLoader.Load(Playground.AppResources[ResourceType.MODEL, "crt.glb"]));
-				centerCube.AddComponent(new TestCubeRotate());
+				// var centerCube = new ModelNode(ModelLoader.Load(Playground.AppResources[ResourceType.MODEL, "crt.glb"]));
+				// centerCube.AddComponent(new TestCubeRotate());
 
-				var lightCube = new ColorCube(Color.AntiqueWhite);
-				lightCube.AddComponent(new TestLightMove());
-				lightCube.AddComponent(new Light());
-				lightCube.GetComponent<Transform, Transform3D>()
-				         .Scale = new(0.5f);
+				var crt = ModelLoader.Load(Playground.AppResources[ResourceType.MODEL, "crt.glb"]);
+
+				for(int i = 0; i < 4; i++) {
+					Vector3 pos = new();
+
+					int max = 10;
+					if(i == 0) pos = new(0, 0, max);
+					else if(i == 1) pos = new(0, 0, -max);
+					else if(i == 2) pos = new(max, 0, 0);
+					else pos = new(-max, 0, 0);
+					
+					var model = new ModelNode(crt);
+					model.AddComponent(new TestCubeRotate());
+					model.GetComponent<Transform, Transform3D>()
+					     .Position = pos;
+					
+					Add(model);
+				}
+
+				_lightCube = new ColorCube(Color.AntiqueWhite);
+				_lightCube.AddComponent(new TestLightMove());
+				_lightCube.AddComponent<Light>(new PointLight() {
+					Distance = 64,
+				});
+				_lightCube.GetComponent<Transform, Transform3D>()
+				          .Scale = new(0.5f);
+				// lightCube.GetComponent<Transform, Transform3D>()
+				//          .Position = new(0.0f, 0.0f, -4f);
 				
-				Add(centerCube);
-				Add(lightCube);
+				Add(_lightCube);
 			}
 			
 			AddSystem("UpdatePre", _testCubeMove); // TODO phases should be enums or smth
 			AddSystem("UpdatePre", _testCubeRotate);
 
-			_ = new DebugUI(this);
+			var debug = new DebugUI(this);
+			debug.AdditionalInfo += (_, _) => {
+				if(_lightCube.TryGetComponent<Light, PointLight>(out var pl)) {
+					int dist = pl.Distance;
+					ImGui.SliderInt("Light distance", ref dist, 0, 1000);
+					pl.Distance = dist;
+				}
+			};
 
 			window.GetMice()[0].MouseMove += (_, pos) => {
 				if(CurrentCamera is Camera3D c3d) _freeCamera.CameraMove(c3d, pos);
@@ -126,6 +184,14 @@ namespace PhoenixPlayground.Scenes {
 				PrimaryShader.EnableOverlays(GouraudShading.OVERLAYS);
 				PrimaryShader.DisableOverlays(PhongShading.OVERLAYS);
 			}
+
+			float change = delta * 0.5f;
+			if(_lightXpos.Down) _lightCube.GetComponent<Transform, Transform3D>().Rotation.X += change;
+			if(_lightXneg.Down) _lightCube.GetComponent<Transform, Transform3D>().Rotation.X -= change;
+			if(_lightYpos.Down) _lightCube.GetComponent<Transform, Transform3D>().Rotation.Y += change;
+			if(_lightYneg.Down) _lightCube.GetComponent<Transform, Transform3D>().Rotation.Y -= change;
+			if(_lightZpos.Down) _lightCube.GetComponent<Transform, Transform3D>().Rotation.Z += change;
+			if(_lightZneg.Down) _lightCube.GetComponent<Transform, Transform3D>().Rotation.Z -= change;
 			
 			_keyBindings.Update(new SilkKeyboard(Window.Input.Keyboards[0]));
 		}

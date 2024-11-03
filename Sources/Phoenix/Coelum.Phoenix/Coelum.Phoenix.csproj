@@ -157,6 +157,15 @@
     <EmbeddedResource Update="..\..\..\Resources\Coeli\Resources\Shaders\Overlays\Material\header.vert">
       <Link>Resources\Shaders\Overlays\Material\header.vert</Link>
     </EmbeddedResource>
+    <EmbeddedResource Update="..\..\..\Resources\Coeli\Resources\Shaders\Structures\light.glsl">
+      <Link>Resources\Shaders\Structures\light.glsl</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Update="..\..\..\Resources\Coeli\Resources\Shaders\Overlays\Lighting\Phong\header.vert">
+      <Link>Resources\Shaders\Overlays\Lighting\Phong\header.vert</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Update="..\..\..\Resources\Coeli\Resources\Shaders\Overlays\Lighting\common.glsl">
+      <Link>Resources\Shaders\Overlays\Lighting\common.glsl</Link>
+    </EmbeddedResource>
   </ItemGroup>
 
   <ItemGroup>
