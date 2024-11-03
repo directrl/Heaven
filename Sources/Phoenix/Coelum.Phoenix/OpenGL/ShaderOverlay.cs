@@ -3,6 +3,7 @@ using Silk.NET.OpenGL;
 
 namespace Coelum.Phoenix.OpenGL {
 	
+	// TODO overlay dependencies
 	public interface IShaderOverlay {
 
 		public string Name { get; }
