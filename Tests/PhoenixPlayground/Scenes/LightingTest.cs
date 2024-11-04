@@ -42,6 +42,8 @@ namespace PhoenixPlayground.Scenes {
 		private Camera3D? _camera;
 		private Node _controlledLight;
 
+		private bool _doGouraud = false;
+
 		public LightingTest() : base("light-test") {
 			_keyBindings = new(Id);
 			_freeCamera = new(_keyBindings);
@@ -61,7 +63,7 @@ namespace PhoenixPlayground.Scenes {
 			ShaderOverlays.AddRange(Material.OVERLAYS);
 			ShaderOverlays.AddRange(SceneEnvironment.OVERLAYS);
 			ShaderOverlays.AddRange(PhongShading.OVERLAYS);
-			//ShaderOverlays.AddRange(GouraudShading.OVERLAYS);
+			ShaderOverlays.AddRange(GouraudShading.OVERLAYS);
 
 			_testCubeMove = new("cube move", (root, delta) => {
 				root.Query<Transform, Light>()
@@ -231,14 +233,12 @@ namespace PhoenixPlayground.Scenes {
 
 			if(_phong.Pressed) {
 				Playground.AppLogger.Information("Switching to Phong shading");
-				PrimaryShader.DisableOverlays(GouraudShading.OVERLAYS);
-				PrimaryShader.EnableOverlays(PhongShading.OVERLAYS);
+				_doGouraud = false;
 			}
 			
 			if(_gouraud.Pressed) {
 				Playground.AppLogger.Information("Switching to Gouraud shading");
-				PrimaryShader.EnableOverlays(GouraudShading.OVERLAYS);
-				PrimaryShader.DisableOverlays(PhongShading.OVERLAYS);
+				_doGouraud = true;
 			}
 
 			float change = delta * 0.5f;
@@ -250,6 +250,15 @@ namespace PhoenixPlayground.Scenes {
 			if(_lightZneg.Down) _controlledLight.GetComponent<Transform, Transform3D>().Rotation.Z -= change;
 			
 			_keyBindings.Update(new SilkKeyboard(Window.Input.Keyboards[0]));
+
+			PrimaryShader.Bind();
+			if(_doGouraud) {
+				PrimaryShader.EnableOverlays(GouraudShading.OVERLAYS);
+				PrimaryShader.DisableOverlays(PhongShading.OVERLAYS);
+			} else {
+				PrimaryShader.DisableOverlays(GouraudShading.OVERLAYS);
+				PrimaryShader.EnableOverlays(PhongShading.OVERLAYS);
+			}
 		}
 	}
 }

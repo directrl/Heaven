@@ -8,23 +8,8 @@ namespace Coelum.Phoenix.Lighting {
 	public static class GouraudShading {
 
 		public static readonly ShaderOverlay[] OVERLAYS = {
-			FragmentShaderOverlay.OVERLAY,
 			VertexShaderOverlay.OVERLAY
 		};
-		
-		public class FragmentShaderOverlay : ShaderOverlay, ILazySingleton<FragmentShaderOverlay> {
-			
-			public static FragmentShaderOverlay OVERLAY
-				=> ILazySingleton<FragmentShaderOverlay>._instance.Value;
-
-			public override string Name => "lighting_gouraud";
-			public override string Path => "Overlays.Lighting.Gouraud";
-			
-			public override ShaderType Type => ShaderType.FragmentShader;
-			public override ShaderPass Pass => ShaderPass.COLOR_PRE;
-			
-			public override ResourceManager ResourceManager => Module.RESOURCES;
-		}
 		
 		public class VertexShaderOverlay : ShaderOverlay, ILazySingleton<VertexShaderOverlay> {
 			

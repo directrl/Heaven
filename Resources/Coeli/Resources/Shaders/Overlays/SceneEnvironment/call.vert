@@ -1,1 +1,0 @@
-vert_out.color += u_scene_env.ambient_color;

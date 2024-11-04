@@ -1,1 +1,0 @@
-final_color *= vec4(gouraud_light_final, 1.0);
