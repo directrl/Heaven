@@ -12,6 +12,7 @@ namespace Coelum.Phoenix.OpenGL {
 
 		#region First pass
 			string newCode = "";
+			
 			foreach(string line in shader.Code.Replace("\r\n", "\n").Split('\n')) {
 				newCode += line.Replace("//$", "//-") + "\n";
 				if(string.IsNullOrWhiteSpace(line)) continue;
@@ -19,18 +20,29 @@ namespace Coelum.Phoenix.OpenGL {
 				newCode += Include(shader, line.Trim(), resources);
 				newCode += Overlay(shader, line.Trim(), resources);
 			}
+			
 			shader.Code = newCode;
 		#endregion
 			
 		#region Second pass
-			if(shader.Code.Contains("//$include")) {
+			int pass = 1;
+			
+			while(shader.Code.Contains("//$include")) {
+				if(pass > 20) {
+					throw new Exception("More than 20 shader preprocessor include passes detected. "
+					                    + "Check for possible recursive includes");
+				}
+				
 				newCode = "";
+				
 				foreach(string line in shader.Code.Replace("\r\n", "\n").Split('\n')) {
 					newCode += line.Replace("//$", "//-") + "\n";
 					if(string.IsNullOrWhiteSpace(line)) continue;
 					newCode += Include(shader, line.Trim(), resources);
 				}
+				
 				shader.Code = newCode;
+				pass++;
 			}
 		#endregion
 			

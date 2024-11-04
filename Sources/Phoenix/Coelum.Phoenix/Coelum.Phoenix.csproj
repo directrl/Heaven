@@ -172,6 +172,9 @@
     <EmbeddedResource Update="..\..\..\Resources\Coeli\Resources\Shaders\Overlays\SceneEnvironment\call.vert">
       <Link>Resources\Shaders\Overlays\SceneEnvironment\call.vert</Link>
     </EmbeddedResource>
+    <EmbeddedResource Update="..\..\..\Resources\Coeli\Resources\Shaders\Overlays\Lighting\common_header.glsl">
+      <Link>Resources\Shaders\Overlays\Lighting\common_header.glsl</Link>
+    </EmbeddedResource>
   </ItemGroup>
 
   <ItemGroup>
