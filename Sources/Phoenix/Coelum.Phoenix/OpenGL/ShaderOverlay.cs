@@ -3,23 +3,33 @@ using Silk.NET.OpenGL;
 
 namespace Coelum.Phoenix.OpenGL {
 	
-	// TODO overlay dependencies
-	public interface IShaderOverlay {
+	// TODO overlay parameters/variables
+	public abstract class ShaderOverlay {
 
-		public string Name { get; }
-		public string Path { get; }
+		public abstract string Name { get; }
+		public abstract string Path { get; }
+
+		public virtual bool HasHeader { get; } = true;
+		public virtual bool HasCall { get; } = true;
 		
-		public bool HasHeader { get; }
-		public bool HasCall { get; }
+		public abstract ShaderType Type { get; }
+		public abstract ShaderPass Pass { get; }
+
+		public abstract ResourceManager ResourceManager { get; }
 		
-		public ShaderType Type { get; }
-		public ShaderPass Pass { get; }
-
-		public ResourceManager ResourceManager { get; }
-
+		/// <summary>
+		/// Gets called when the overlay is included into the shader program code for the first time.
+		/// This can be used for checking if some dependencies are met.
+		/// </summary>
+		/// <param name="shader">The shader program the overlay is being included into</param>
+		public virtual void Include(ShaderProgram shader) { }
 		
-
-		public void Load(ShaderProgram shader);
+		/// <summary>
+		/// Gets called each time the shader program gets bound.
+		/// This can be used for setting constant uniforms or default values.
+		/// </summary>
+		/// <param name="shader">The shader program the overlay is included in</param>
+		public virtual void Load(ShaderProgram shader) { }
 
 		public string GetExtension() {
 			switch(Type) {

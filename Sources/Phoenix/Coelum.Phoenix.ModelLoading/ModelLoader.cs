@@ -190,6 +190,9 @@ namespace Coelum.Phoenix.ModelLoading {
 
 			if(texCount == 0) {
 				Log.Warning($"[MODEL LOADER: {model.Name}] Material has no textures");
+				
+				material.Textures.Add((Material.TextureType.Diffuse, Texture2D.DefaultTexture));
+				return;
 			}
 			
 			for(uint i = 0; i < texCount; i++) {

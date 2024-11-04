@@ -22,4 +22,5 @@ struct Light {
 	
 	// spot light
 	float cutoff;
+	float outer_cutoff;
 };

@@ -2,6 +2,7 @@ using System.Drawing;
 using System.Numerics;
 using Coelum.Common.Input;
 using Coelum.ECS;
+using Coelum.LanguageExtensions;
 using Coelum.Phoenix;
 using Coelum.Phoenix.Camera;
 using Coelum.Phoenix.ECS.Component;
@@ -103,7 +104,7 @@ namespace PhoenixPlayground.Scenes {
 			base.OnLoad(window);
 			
 			Add(new SceneEnvironment() {
-				AmbientLight = Color.DarkSlateGray
+				AmbientColor = Color.FromArgb(32, 32, 32)
 			});
 
 			if(_camera == null) {
@@ -144,17 +145,7 @@ namespace PhoenixPlayground.Scenes {
 					Add(model);
 				}
 
-				_lightCube = new ColorCube(Color.AntiqueWhite) {
-					Name = "light cube center"
-				};
-				_lightCube.AddComponent(new TestLightMove());
-				_lightCube.AddComponent<Light>(new PointLight() {
-					Distance = 64,
-				});
-				_lightCube.GetComponent<Transform, Transform3D>()
-				          .Scale = new(0.5f);
-
-				var lightCube2 = new ColorCube(Color.Bisque) {
+				var lightCube2 = new ModelNode(ModelLoader.Load(Playground.AppResources[ResourceType.MODEL, "light.glb"])) {
 					Name = "spot light cube"
 				};
 				lightCube2.AddComponent<Light>(new SpotLight() {
@@ -162,8 +153,8 @@ namespace PhoenixPlayground.Scenes {
 				});
 				lightCube2.GetComponent<Transform, Transform3D>()
 				          .Position = new(0.0f, 5.0f, -0f);
-				lightCube2.GetComponent<Transform, Transform3D>()
-				          .Rotation = new(0.0f, 1.0f, 0.0f);
+				// lightCube2.GetComponent<Transform, Transform3D>()
+				//           .Rotation = new(0.0f, 1.0f, 0.0f);
 
 				_lightCube = lightCube2;
 				//Add(_lightCube);
@@ -175,7 +166,17 @@ namespace PhoenixPlayground.Scenes {
 
 			var debug = new DebugUI(this);
 			debug.AdditionalInfo += (_, _) => {
+				if(CurrentCamera is Camera3D c3d) {
+					ImGui.Text($"Camera pos: {c3d.GetComponent<Transform, Transform3D>().GlobalPosition}");
+					ImGui.Text($"Camera yaw: {c3d.Yaw}");
+					ImGui.Text($"Camera pitch: {c3d.Pitch}");
+					ImGui.Separator();
+				}
+				
 				ImGui.Text($"Rot: {_lightCube.GetComponent<Transform, Transform3D>().GlobalRotation}");
+				ImGui.Text($"Yaw: {_lightCube.GetComponent<Transform, Transform3D>().GlobalYaw.ToDegrees()}");
+				ImGui.Text($"Pitch: {_lightCube.GetComponent<Transform, Transform3D>().GlobalPitch.ToDegrees()}");
+				ImGui.Text($"Roll: {_lightCube.GetComponent<Transform, Transform3D>().GlobalRoll.ToDegrees()}");
 				
 				Query<Light>()
 					.Each((node, l) => {
@@ -187,12 +188,16 @@ namespace PhoenixPlayground.Scenes {
 
 						if(l is SpotLight sl) {
 							float cutoff = sl.Cutoff;
-							ImGui.SliderAngle($"{node.Name}: Cutoff angle", ref cutoff, 0, 180);
+							ImGui.SliderAngle($"{node.Name}: Cutoff angle", ref cutoff, 0, 90);
 							sl.Cutoff = cutoff;
+							
+							float ocutoff = sl.Fade;
+							ImGui.SliderAngle($"{node.Name}: Fade angle", ref ocutoff, 0, 10);
+							sl.Fade = ocutoff;
 						}
 					})
 					.Execute();
-			};
+			};gi
 
 			window.GetMice()[0].MouseMove += (_, pos) => {
 				if(CurrentCamera is Camera3D c3d) _freeCamera.CameraMove(c3d, pos);

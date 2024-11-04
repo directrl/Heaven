@@ -21,11 +21,12 @@ namespace Coelum.Phoenix.ECS.Component {
 				if(Owner == null) return Vector3.Zero;
 		
 				if(Owner.TryGetComponent<Transform, Transform3D>(out var t3d)) {
-					// TODO i have no idea if this is correct
-					return new(
-						Math.Clamp(t3d.GlobalRotation.X / MathF.PI, -1.0f, 1.0f),
-						Math.Clamp(t3d.GlobalRotation.Y / MathF.PI, -1.0f, 1.0f),
-						Math.Clamp(t3d.GlobalRotation.Z / MathF.PI, -1.0f, 1.0f)
+					return Vector3.Normalize(
+						new(
+							MathF.Cos(t3d.GlobalPitch) * MathF.Sin(-t3d.GlobalYaw),
+							MathF.Sin(t3d.GlobalPitch),
+							MathF.Cos(t3d.GlobalPitch) * MathF.Cos(-t3d.GlobalYaw)
+						)
 					);
 				} else {
 					return Vector3.Zero;

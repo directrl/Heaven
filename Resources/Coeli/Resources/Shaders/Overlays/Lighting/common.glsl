@@ -1,5 +1,9 @@
 vec3 calc_light_ambient() {
-	return u_scene_env.ambient_light;
+	if(u_overlay_scene_environment) {
+		return u_scene_env.ambient_color.xyz;
+	}
+	
+	return vec3(1.0, 1.0, 1.0);
 }
 
 vec3 calc_light_diffuse(Light light, Material mat,
@@ -46,7 +50,6 @@ vec3 calc_light_point(Light light, Material mat, vec3 frag_pos, vec3 normal, vec
 	float distance  = length(light.position - frag_pos);
 	float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));
 
-	ambient *= attenuation;
 	diffuse *= attenuation;
 	specular *= attenuation;
 
@@ -55,10 +58,30 @@ vec3 calc_light_point(Light light, Material mat, vec3 frag_pos, vec3 normal, vec
 
 vec3 calc_light_spot(Light light, Material mat, vec3 frag_pos, vec3 normal, vec3 view_dir, vec2 tex_coords) {
 	vec3 light_dir = normalize(light.position - frag_pos);
+	
 	float theta = dot(light_dir, normalize(-light.direction));
 	
 	if(theta > light.cutoff) {
-		return calc_light_point(light, mat, frag_pos, normal, view_dir, tex_coords);
+		vec3 norm = normalize(normal);
+		vec3 reflect_dir = reflect(-light_dir, norm);
+
+		vec3 ambient = calc_light_ambient();
+		vec3 diffuse = calc_light_diffuse(light, mat, norm, light_dir, tex_coords);
+		vec3 specular = calc_light_specular(light, mat, view_dir, reflect_dir, tex_coords);
+
+		float distance  = length(light.position - frag_pos);
+		float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));
+
+		diffuse *= attenuation;
+		specular *= attenuation;
+
+		float epsilon = (light.cutoff + light.outer_cutoff) - light.cutoff;
+		float intensity = clamp((theta - (light.cutoff + light.outer_cutoff)) / epsilon, 0.0, 1.0);
+		
+		diffuse *= intensity;
+		specular *= intensity;
+
+		return ambient + diffuse + specular;
 	} else {
 		return calc_light_ambient();
 	}

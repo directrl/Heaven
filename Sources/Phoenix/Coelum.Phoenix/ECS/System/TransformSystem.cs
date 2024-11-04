@@ -24,7 +24,7 @@ namespace Coelum.Phoenix.ECS.System {
 					    case Transform3D t3d:
 						    t.LocalMatrix =
 							    Matrix4x4.CreateScale(t3d.Scale)
-							    * Matrix4x4.CreateFromYawPitchRoll(t3d.Rotation.Y, t3d.Rotation.X, t3d.Rotation.Z)
+							    * Matrix4x4.CreateFromYawPitchRoll(-t3d.Rotation.Y, -t3d.Rotation.X, -t3d.Rotation.Z)
 							    * Matrix4x4.CreateTranslation(t3d.Position);
 						    break;
 				    }

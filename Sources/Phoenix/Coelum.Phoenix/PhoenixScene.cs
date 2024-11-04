@@ -23,7 +23,7 @@ namespace Coelum.Phoenix {
 		public Color ClearColor { get; protected set; } = Color.Black;
 
 		public ShaderProgram PrimaryShader { get; protected set; }
-		public List<IShaderOverlay> ShaderOverlays { get; } = new();
+		public List<ShaderOverlay> ShaderOverlays { get; } = new();
 
 		public new SilkWindow? Window
 			=> base.Window == null ? null : (SilkWindow) base.Window;

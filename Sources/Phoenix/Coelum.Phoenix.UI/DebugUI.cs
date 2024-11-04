@@ -52,6 +52,8 @@ namespace Coelum.Phoenix.UI {
 
 				if(ImGui.BeginTabItem("Shaders")) {
 					foreach((var overlay, bool enabled) in _scene.PrimaryShader.Overlays) {
+						if(!overlay.HasCall) continue;
+						
 						if(ImGui.Button($"{overlay.Name} ({overlay.Type})")) {
 							if(enabled) {
 								_scene.PrimaryShader.DisableOverlays(overlay);

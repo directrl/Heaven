@@ -16,7 +16,7 @@ namespace Coelum.Phoenix.OpenGL {
 		public const string UNIFORM_SUFFIX = "";
 
 		private readonly Shader[] _program;
-		private readonly Dictionary<IShaderOverlay, bool> _overlays = new();
+		private readonly Dictionary<ShaderOverlay, bool> _overlays = new();
 		private readonly Dictionary<string, int> _uniformLocations = new();
 		
 		private readonly ResourceManager? _preprocessorResources;
@@ -25,7 +25,7 @@ namespace Coelum.Phoenix.OpenGL {
 		private bool _bound;
 		
 		public uint Id { get; private set; }
-		public ReadOnlyDictionary<IShaderOverlay, bool> Overlays => new(_overlays);
+		public ReadOnlyDictionary<ShaderOverlay, bool> Overlays => new(_overlays);
 		
 		public ShaderProgram(ResourceManager? preprocessorResources, params Shader[] program) {
 			_preprocessorResources = preprocessorResources;
@@ -38,11 +38,22 @@ namespace Coelum.Phoenix.OpenGL {
 
 			_program = program;
 		}
-		
-		public void AddOverlays(params IShaderOverlay[] overlays)
-			=> AddOverlays((IEnumerable<IShaderOverlay>) overlays);
 
-		public void AddOverlays(IEnumerable<IShaderOverlay> overlays) {
+		public bool HasOverlays(params ShaderOverlay[] overlays)
+			=> HasOverlays((IEnumerable<ShaderOverlay>) overlays);
+
+		public bool HasOverlays(IEnumerable<ShaderOverlay> overlays) {
+			foreach(var overlay in overlays) {
+				if(!_overlays.ContainsKey(overlay)) return false;
+			}
+
+			return true;
+		}
+		
+		public void AddOverlays(params ShaderOverlay[] overlays)
+			=> AddOverlays((IEnumerable<ShaderOverlay>) overlays);
+
+		public void AddOverlays(IEnumerable<ShaderOverlay> overlays) {
 			Tests.Assert(!_ready, "Can't add overlays to a shader that has already been built");
 
 			foreach(var overlay in overlays) {
@@ -50,10 +61,10 @@ namespace Coelum.Phoenix.OpenGL {
 			}
 		}
 
-		public void EnableOverlays(params IShaderOverlay[] overlays)
-			=> EnableOverlays((IEnumerable<IShaderOverlay>) overlays);
+		public void EnableOverlays(params ShaderOverlay[] overlays)
+			=> EnableOverlays((IEnumerable<ShaderOverlay>) overlays);
 		
-		public void EnableOverlays(IEnumerable<IShaderOverlay> overlays) {
+		public void EnableOverlays(IEnumerable<ShaderOverlay> overlays) {
 			Tests.Assert(_bound, "Can't enable overlays for a shader that is not bound");
 
 			foreach(var overlay in overlays) {
@@ -66,10 +77,10 @@ namespace Coelum.Phoenix.OpenGL {
 			}
 		}
 		
-		public void DisableOverlays(params IShaderOverlay[] overlays)
-			=> DisableOverlays((IEnumerable<IShaderOverlay>) overlays);
+		public void DisableOverlays(params ShaderOverlay[] overlays)
+			=> DisableOverlays((IEnumerable<ShaderOverlay>) overlays);
 		
-		public void DisableOverlays(IEnumerable<IShaderOverlay> overlays) {
+		public void DisableOverlays(IEnumerable<ShaderOverlay> overlays) {
 			Tests.Assert(_bound, "Can't enable overlays for a shader that is not bound");
 
 			foreach(var overlay in overlays) {
@@ -92,6 +103,10 @@ namespace Coelum.Phoenix.OpenGL {
 				               .Where(overlay => overlay.Type == shader.Type)
 				               .ToArray();
 				shader.Overlays = overlays;
+				
+				foreach(var overlay in overlays) {
+					overlay.Include(this);
+				}
 
 				if(_preprocessorResources != null) {
 					shader.Preprocess(_preprocessorResources);
@@ -155,7 +170,7 @@ namespace Coelum.Phoenix.OpenGL {
 			}
 		}
 		
-		private void BindOverlay(IShaderOverlay overlay) {
+		private void BindOverlay(ShaderOverlay overlay) {
 			Tests.Assert(_bound);
 			Tests.Assert(_overlays.ContainsKey(overlay));
 			

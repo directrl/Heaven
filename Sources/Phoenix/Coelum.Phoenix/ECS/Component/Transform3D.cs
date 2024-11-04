@@ -8,6 +8,21 @@ namespace Coelum.Phoenix.ECS.Component {
 		public Vector3 Rotation;
 		public Vector3 Scale;
 
+		public float Yaw {
+			get => Rotation.Y;
+			set => Rotation.Y = value;
+		}
+
+		public float Pitch {
+			get => Rotation.X;
+			set => Rotation.X = value;
+		}
+
+		public float Roll {
+			get => Rotation.Z;
+			set => Rotation.Z = value;
+		}
+
 		public Vector3 GlobalPosition {
 			get {
 				if(Owner is { Parent: not null } && Owner.Parent
@@ -40,6 +55,10 @@ namespace Coelum.Phoenix.ECS.Component {
 				return Scale;
 			}
 		}
+
+		public float GlobalYaw => GlobalRotation.Y;
+		public float GlobalPitch => GlobalRotation.X;
+		public float GlobalRoll => GlobalRotation.Z;
 
 		public Transform3D(Vector3? position = null,
 		                   Vector3? rotation = null,

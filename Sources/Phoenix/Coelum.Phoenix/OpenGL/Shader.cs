@@ -10,7 +10,7 @@ namespace Coelum.Phoenix.OpenGL {
 		public ShaderType Type { get; }
 		public string Code { get; internal set; }
 		
-		public IShaderOverlay[] Overlays { get; internal set; }
+		public ShaderOverlay[] Overlays { get; internal set; }
 
 		public Shader(ShaderType type, string code) {
 			Type = type;
