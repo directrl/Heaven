@@ -17,5 +17,5 @@ if(!u_current_light) {
 		light_result += calc_light_point(u_point_lights[i], u_material, vert_in.frag_pos, normal, view_dir, tex_coords);
 	}
 	
-	final_color = light_result;
+	final_color *= light_result;
 }

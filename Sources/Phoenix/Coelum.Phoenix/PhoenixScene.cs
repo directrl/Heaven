@@ -4,6 +4,7 @@ using Coelum.Debug;
 using Coelum.Phoenix.Camera;
 using Coelum.Phoenix.ECS.Nodes;
 using Coelum.Phoenix.ECS.System;
+using Coelum.Phoenix.Lighting;
 using Coelum.Phoenix.OpenGL;
 using Coelum.Resources;
 using Silk.NET.OpenGL;
@@ -72,8 +73,10 @@ namespace Coelum.Phoenix {
 			AddSystem("RenderPre", new RenderSystem(PrimaryShader));
 			AddSystem("UpdatePost", new TransformSystem());
 			
-			// TODO right now this will be trying to push scene_env even with lighting not enabled
-			AddSystem("RenderPre", new LightSystem(PrimaryShader));
+			if(PrimaryShader.HasOverlays(PhongShading.OVERLAYS)
+			   || PrimaryShader.HasOverlays(GouraudShading.OVERLAYS)) {
+				AddSystem("RenderPre", new LightSystem(PrimaryShader));
+			}
 
 			var pWindow = (SilkWindow) window;
 
