@@ -6,6 +6,7 @@ using Silk.NET.Core;
 using Silk.NET.Core.Contexts;
 using Silk.NET.GLFW;
 using Silk.NET.Input;
+using Silk.NET.Maths;
 using Silk.NET.OpenGL;
 using Silk.NET.Windowing;
 
@@ -83,6 +84,9 @@ namespace Coelum.Phoenix {
 			SilkImpl.FramebufferResize += size => {
 				SilkImpl.MakeCurrent();
 				Gl.Viewport(size);
+				
+				Framebuffer?.Dispose();
+				Framebuffer = new(SilkImpl);
 
 				if(Scene is PhoenixScene ps) {
 					if(ps.Framebuffer is { AutoResize: true }) {

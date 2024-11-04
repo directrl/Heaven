@@ -12,7 +12,6 @@ using Shader = Coelum.Phoenix.OpenGL.Shader;
 
 namespace Coelum.Phoenix {
 	
-	// TODO how could you use this for pixelated rendering?
 	public class Framebuffer : IDisposable {
 
 	#region Rendering stuff
@@ -118,6 +117,7 @@ namespace Coelum.Phoenix {
 
 		public void Bind() {
 			Gl.BindFramebuffer(Target, Handle);
+			Gl.Viewport(new Vector2D<int>((int) Width, (int) Height));
 		}
 
 		public void Render() {

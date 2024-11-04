@@ -5,11 +5,10 @@ namespace PhoenixPlayground.Scenes {
 	public class FramebufferTest : LightingTest {
 
 		public override void OnLoad(SilkWindow window) {
-			Framebuffer = new(window.FramebufferWidth / 2, window.FramebufferHeight / 2) {
+			Framebuffer = new(window.FramebufferWidth / 5, window.FramebufferHeight / 5) {
 				AutoResize = true,
-				AutoResizeFactor = 0.5f
+				AutoResizeFactor = 1 / 5f
 			};
-
 			
 			base.OnLoad(window);
 		}

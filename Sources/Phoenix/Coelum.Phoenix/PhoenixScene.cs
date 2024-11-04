@@ -7,6 +7,7 @@ using Coelum.Phoenix.ECS.System;
 using Coelum.Phoenix.Lighting;
 using Coelum.Phoenix.OpenGL;
 using Coelum.Resources;
+using Silk.NET.Maths;
 using Silk.NET.OpenGL;
 
 namespace Coelum.Phoenix {
@@ -112,7 +113,7 @@ namespace Coelum.Phoenix {
 
 		public override void OnRender(float delta) {
 			Framebuffer?.Bind();
-
+			
 			void Clear() {
 				Gl.Clear((uint) (ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit));
 				Gl.ClearColor(ClearColor);
@@ -140,6 +141,8 @@ namespace Coelum.Phoenix {
 				Gl.Disable(EnableCap.DepthTest);
 				
 				Framebuffer.Render();
+				
+				// TODO render (imgui) UI separately here
 			}
 		}
 	}
