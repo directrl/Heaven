@@ -22,10 +22,10 @@ namespace Coelum.Phoenix.ECS.Component {
 
 			if(Camera is Camera3D) {
 				shader.SetUniform("camera_pos",
-				                  Camera.GetComponent<Transform, Transform3D>().Position);
+				                  Camera.GetComponent<Transform, Transform3D>().GlobalPosition);
 			} else {
 				shader.SetUniform("camera_pos",
-				                  new Vector3(Camera.GetComponent<Transform, Transform2D>().Position, 0));
+				                  new Vector3(Camera.GetComponent<Transform, Transform2D>().GlobalPosition, 0));
 			}
 		}
 	}

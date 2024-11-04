@@ -60,10 +60,10 @@ namespace PhoenixPlayground.Scenes {
 			
 			this.SetupKeyBindings(_keyBindings);
 			
-			ShaderOverlays.AddRange(Material.OVERLAYS);
-			ShaderOverlays.AddRange(SceneEnvironment.OVERLAYS);
-			ShaderOverlays.AddRange(PhongShading.OVERLAYS);
-			ShaderOverlays.AddRange(GouraudShading.OVERLAYS);
+			PrimaryShader.AddOverlays(Material.OVERLAYS);
+			PrimaryShader.AddOverlays(SceneEnvironment.OVERLAYS);
+			PrimaryShader.AddOverlays(PhongShading.OVERLAYS);
+			PrimaryShader.AddOverlays(GouraudShading.OVERLAYS);
 
 			_testCubeMove = new("cube move", (root, delta) => {
 				root.Query<Transform, Light>()

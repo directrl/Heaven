@@ -21,8 +21,8 @@ namespace Coelum.Phoenix.OpenGL {
 		
 		private readonly ResourceManager? _preprocessorResources;
 		
-		private bool _ready;
-		private bool _bound;
+		internal bool _ready;
+		internal bool _bound;
 		
 		public uint Id { get; private set; }
 		public ReadOnlyDictionary<ShaderOverlay, bool> Overlays => new(_overlays);

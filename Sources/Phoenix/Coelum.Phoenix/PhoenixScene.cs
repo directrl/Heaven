@@ -24,7 +24,6 @@ namespace Coelum.Phoenix {
 		public Color ClearColor { get; protected set; } = Color.Black;
 
 		public ShaderProgram PrimaryShader { get; protected set; }
-		public List<ShaderOverlay> ShaderOverlays { get; } = new();
 
 		public new SilkWindow? Window
 			=> base.Window == null ? null : (SilkWindow) base.Window;
@@ -45,10 +44,7 @@ namespace Coelum.Phoenix {
 			}
 		}
 
-		protected PhoenixScene(string id) : base(id) { }
-
-		public virtual void OnLoad(SilkWindow window) { }
-		public override void OnLoad(WindowBase window) {
+		protected PhoenixScene(string id) : base(id) {
 			PrimaryShader = new(
 				Module.RESOURCES,
 				new(ShaderType.FragmentShader,
@@ -56,6 +52,16 @@ namespace Coelum.Phoenix {
 				new(ShaderType.VertexShader,
 				    Module.RESOURCES[ResourceType.SHADER, "scene.vert"])
 			);
+		}
+
+		public virtual void OnLoad(SilkWindow window) { }
+		public override void OnLoad(WindowBase window) {
+			if(!PrimaryShader._ready) {
+				PrimaryShader.Validate();
+				PrimaryShader.Build();
+			}
+			
+			PrimaryShader.Bind();
 			
 			ClearSystems();
 			ClearNodes();
@@ -64,10 +70,6 @@ namespace Coelum.Phoenix {
 			Tests.Assert(window is SilkWindow, "Phoenix renderer scenes work only with" +
 			             "Phoenix renderer windows!");
 			OnLoad((SilkWindow) window);
-			
-			Tests.Assert(PrimaryShader != null, "The primary shader cannot be null");
-			PrimaryShader.Validate();
-			PrimaryShader.AddOverlays(ShaderOverlays);
 			
 			AddSystem("RenderPre", new CameraSystem(PrimaryShader));
 			AddSystem("RenderPre", new RenderSystem(PrimaryShader));

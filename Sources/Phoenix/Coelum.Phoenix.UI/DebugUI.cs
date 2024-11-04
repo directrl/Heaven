@@ -32,6 +32,7 @@ namespace Coelum.Phoenix.UI {
 
 						if(window != null) {
 							window.Scene = null;
+							_scene.PrimaryShader.Rebuild();
 							window.Scene = _scene;
 						}
 					}
@@ -54,6 +55,7 @@ namespace Coelum.Phoenix.UI {
 					foreach((var overlay, bool enabled) in _scene.PrimaryShader.Overlays) {
 						if(!overlay.HasCall) continue;
 						
+						// TODO why does this stop working after reloading the scene?
 						if(ImGui.Button($"{overlay.Name} ({overlay.Type})")) {
 							if(enabled) {
 								_scene.PrimaryShader.DisableOverlays(overlay);
