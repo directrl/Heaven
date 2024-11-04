@@ -14,7 +14,7 @@ namespace Coelum.Phoenix.ECS.Component {
 		public Color Diffuse { get; set; } = Color.White;
 		public Color Specular { get; set; } = Color.White;
 
-		public float SpecularStrength { get; set; } = 1;
+		public float SpecularStrength { get; set; } = 1; // TODO is this really needed?
 
 		public Vector3 Direction {
 			get {
@@ -23,9 +23,9 @@ namespace Coelum.Phoenix.ECS.Component {
 				if(Owner.TryGetComponent<Transform, Transform3D>(out var t3d)) {
 					// TODO i have no idea if this is correct
 					return new(
+						Math.Clamp(t3d.GlobalRotation.X / MathF.PI, -1.0f, 1.0f),
 						Math.Clamp(t3d.GlobalRotation.Y / MathF.PI, -1.0f, 1.0f),
-						Math.Clamp(t3d.GlobalRotation.Z / MathF.PI, -1.0f, 1.0f),
-						Math.Clamp(t3d.GlobalRotation.X / MathF.PI, -1.0f, 1.0f)
+						Math.Clamp(t3d.GlobalRotation.Z / MathF.PI, -1.0f, 1.0f)
 					);
 				} else {
 					return Vector3.Zero;

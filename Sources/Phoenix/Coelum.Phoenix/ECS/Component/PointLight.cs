@@ -30,7 +30,7 @@ namespace Coelum.Phoenix.ECS.Component {
 		public Color Diffuse { get; set; } = Color.White;
 		public Color Specular { get; set; } = Color.White;
 
-		public float SpecularStrength { get; set; } = 1;
+		public float SpecularStrength { get; set; } = 1; // TODO is this really needed?
 
 		public Vector3 Position {
 			get {
@@ -46,7 +46,7 @@ namespace Coelum.Phoenix.ECS.Component {
 
 		public int Distance { get; set; } = 32;
 		
-		public void Load(ShaderProgram shader) {
+		public virtual void Load(ShaderProgram shader) {
 			shader.SetUniform("light.type", Light.LIGHT_POINT);
 			
 			shader.SetUniform("light.ambient", Ambient.ToVector3());
@@ -61,7 +61,7 @@ namespace Coelum.Phoenix.ECS.Component {
 				var distances = ATTENUATION.Keys;
 
 				int closestLower = distances.LastOrDefault(d => d <= Distance);
-				int closestUpper = distances.LastOrDefault(d => d >= Distance);
+				int closestUpper = distances.FirstOrDefault(d => d >= Distance);
 
 				if(closestLower == 0) {
 					light = ATTENUATION.Values.First();

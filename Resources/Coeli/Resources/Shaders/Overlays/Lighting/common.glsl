@@ -53,6 +53,13 @@ vec3 calc_light_point(Light light, Material mat, vec3 frag_pos, vec3 normal, vec
 	return ambient + diffuse + specular;
 }
 
-vec3 calc_light_spot(Light light) {
-	return light.ambient;
+vec3 calc_light_spot(Light light, Material mat, vec3 frag_pos, vec3 normal, vec3 view_dir, vec2 tex_coords) {
+	vec3 light_dir = normalize(light.position - frag_pos);
+	float theta = dot(light_dir, normalize(-light.direction));
+	
+	if(theta > light.cutoff) {
+		return calc_light_point(light, mat, frag_pos, normal, view_dir, tex_coords);
+	} else {
+		return calc_light_ambient();
+	}
 }

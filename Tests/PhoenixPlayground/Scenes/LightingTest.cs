@@ -66,6 +66,7 @@ namespace PhoenixPlayground.Scenes {
 				root.Query<Transform, Light>()
 				    .Each((node, t, l) => {
 					    if(t is not Transform3D t3d) return;
+					    if(!node.HasComponent<TestLightMove>()) return;
 
 					    if(l is DirectionalLight) {
 						    t3d.Rotation = new(
@@ -102,7 +103,7 @@ namespace PhoenixPlayground.Scenes {
 			base.OnLoad(window);
 			
 			Add(new SceneEnvironment() {
-				AmbientLight = Color.FromArgb(16, 16, 16)
+				AmbientLight = Color.DarkSlateGray
 			});
 
 			if(_camera == null) {
@@ -117,6 +118,12 @@ namespace PhoenixPlayground.Scenes {
 			{
 				// var centerCube = new ModelNode(ModelLoader.Load(Playground.AppResources[ResourceType.MODEL, "crt.glb"]));
 				// centerCube.AddComponent(new TestCubeRotate());
+				
+				var playgroundModel = ModelLoader.Load(Playground.AppResources[ResourceType.MODEL, "playground.glb"]);
+				var playground = new ModelNode(playgroundModel);
+				playground.GetComponent<Transform, Transform3D>()
+				          .Position = new(0, -0, -0);
+				Add(playground);
 
 				var crt = ModelLoader.Load(Playground.AppResources[ResourceType.MODEL, "crt.glb"]);
 
@@ -137,17 +144,30 @@ namespace PhoenixPlayground.Scenes {
 					Add(model);
 				}
 
-				_lightCube = new ColorCube(Color.AntiqueWhite);
+				_lightCube = new ColorCube(Color.AntiqueWhite) {
+					Name = "light cube center"
+				};
 				_lightCube.AddComponent(new TestLightMove());
 				_lightCube.AddComponent<Light>(new PointLight() {
 					Distance = 64,
 				});
 				_lightCube.GetComponent<Transform, Transform3D>()
 				          .Scale = new(0.5f);
-				// lightCube.GetComponent<Transform, Transform3D>()
-				//          .Position = new(0.0f, 0.0f, -4f);
-				
-				Add(_lightCube);
+
+				var lightCube2 = new ColorCube(Color.Bisque) {
+					Name = "spot light cube"
+				};
+				lightCube2.AddComponent<Light>(new SpotLight() {
+					Distance = 64
+				});
+				lightCube2.GetComponent<Transform, Transform3D>()
+				          .Position = new(0.0f, 5.0f, -0f);
+				lightCube2.GetComponent<Transform, Transform3D>()
+				          .Rotation = new(0.0f, 1.0f, 0.0f);
+
+				_lightCube = lightCube2;
+				//Add(_lightCube);
+				Add(lightCube2);
 			}
 			
 			AddSystem("UpdatePre", _testCubeMove); // TODO phases should be enums or smth
@@ -155,11 +175,23 @@ namespace PhoenixPlayground.Scenes {
 
 			var debug = new DebugUI(this);
 			debug.AdditionalInfo += (_, _) => {
-				if(_lightCube.TryGetComponent<Light, PointLight>(out var pl)) {
-					int dist = pl.Distance;
-					ImGui.SliderInt("Light distance", ref dist, 0, 1000);
-					pl.Distance = dist;
-				}
+				ImGui.Text($"Rot: {_lightCube.GetComponent<Transform, Transform3D>().GlobalRotation}");
+				
+				Query<Light>()
+					.Each((node, l) => {
+						if(l is not PointLight pl) return;
+						
+						int dist = pl.Distance;
+						ImGui.SliderInt($"{node.Name}: Light distance", ref dist, 0, 1000);
+						pl.Distance = dist;
+
+						if(l is SpotLight sl) {
+							float cutoff = sl.Cutoff;
+							ImGui.SliderAngle($"{node.Name}: Cutoff angle", ref cutoff, 0, 180);
+							sl.Cutoff = cutoff;
+						}
+					})
+					.Execute();
 			};
 
 			window.GetMice()[0].MouseMove += (_, pos) => {
