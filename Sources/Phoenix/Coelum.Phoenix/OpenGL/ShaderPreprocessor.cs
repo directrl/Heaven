@@ -12,6 +12,7 @@ namespace Coelum.Phoenix.OpenGL {
 
 		#region First pass
 			string newCode = "";
+			
 			foreach(string line in shader.Code.Replace("\r\n", "\n").Split('\n')) {
 				newCode += line.Replace("//$", "//-") + "\n";
 				if(string.IsNullOrWhiteSpace(line)) continue;
@@ -19,18 +20,29 @@ namespace Coelum.Phoenix.OpenGL {
 				newCode += Include(shader, line.Trim(), resources);
 				newCode += Overlay(shader, line.Trim(), resources);
 			}
+			
 			shader.Code = newCode;
 		#endregion
 			
 		#region Second pass
-			if(shader.Code.Contains("//$include")) {
+			int pass = 1;
+			
+			while(shader.Code.Contains("//$include")) {
+				if(pass > 20) {
+					throw new Exception("More than 20 shader preprocessor include passes detected. "
+					                    + "Check for possible recursive includes");
+				}
+				
 				newCode = "";
+				
 				foreach(string line in shader.Code.Replace("\r\n", "\n").Split('\n')) {
 					newCode += line.Replace("//$", "//-") + "\n";
 					if(string.IsNullOrWhiteSpace(line)) continue;
 					newCode += Include(shader, line.Trim(), resources);
 				}
+				
 				shader.Code = newCode;
+				pass++;
 			}
 		#endregion
 			
@@ -86,22 +98,24 @@ namespace Coelum.Phoenix.OpenGL {
 			switch(args[0]) {
 				case tokenHeader:
 					foreach(var overlay in shader.Overlays) {
-						result += $"uniform bool u_overlay_{overlay.Name};\n";
-						result += Include(
-							shader,
-							$"//$include {overlay.Path}.header.{overlay.GetExtension()}",
-							resources
-						);
-						result += "\n";
-
-						totalHeaders++;
+						if(overlay.HasHeader) {
+							result += $"uniform bool u_overlay_{overlay.Name};\n";
+							result += Include(
+								shader,
+								$"//$include {overlay.Path}.header.{overlay.GetExtension()}",
+								resources
+							);
+							result += "\n";
+							
+							totalHeaders++;
+						}
 					}
 					break;
 				case tokenCall:
 					var pass = new ShaderPass(args[1]);
 
 					foreach(var overlay in shader.Overlays) {
-						if(overlay.Pass.Name == pass.Name) {
+						if(overlay.HasCall && overlay.Pass.Name == pass.Name) {
 							result += $"if(u_overlay_{overlay.Name}) {{\n";
 							result += Include(
 								shader,
@@ -109,9 +123,9 @@ namespace Coelum.Phoenix.OpenGL {
 								resources
 							);
 							result += "}\n";
+							
+							totalCalls++;
 						}
-
-						totalCalls++;
 					}
 					break;
 			}

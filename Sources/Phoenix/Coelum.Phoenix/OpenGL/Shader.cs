@@ -10,7 +10,7 @@ namespace Coelum.Phoenix.OpenGL {
 		public ShaderType Type { get; }
 		public string Code { get; internal set; }
 		
-		public IShaderOverlay[] Overlays { get; internal set; }
+		public ShaderOverlay[] Overlays { get; internal set; }
 
 		public Shader(ShaderType type, string code) {
 			Type = type;
@@ -39,6 +39,19 @@ namespace Coelum.Phoenix.OpenGL {
 			Gl.CompileShader(id);
 
 			if(Gl.GetShader(id, GLEnum.CompileStatus) == 0) {
+				Console.WriteLine("===== FAULTING SHADER CODE BEGIN =====");
+
+				{
+					string[] c = Code.Split("\n");
+
+					for(int i = 0; i < c.Length; i++) {
+						Console.WriteLine($"{i + 1}: {c[i]}");
+					}
+				}
+				
+				Console.WriteLine("===== FAULTING SHADER CODE END =====");
+				Console.WriteLine();
+				
 				throw new CompilationException(id);
 			}
 
@@ -61,10 +74,14 @@ namespace Coelum.Phoenix.OpenGL {
 	public class ShaderPass {
 
 		public static readonly ShaderPass COLOR_PRE = new("COLOR_PRE");
+		public static readonly ShaderPass COLOR_PRE_STAGE2 = new("COLOR_PRE_STAGE2"); // TODO priority system
 		public static readonly ShaderPass COLOR_POST = new("COLOR_POST");
 		
 		public static readonly ShaderPass POSITION_PRE = new("POSITION_PRE");
 		public static readonly ShaderPass POSITION_POST = new("POSITION_POST");
+		
+		public static readonly ShaderPass RETURN = new("RETURN");
+		public static readonly ShaderPass RETURN_STAGE2 = new("RETURN_STAGE2");
 		
 		internal string Name { get; }
 

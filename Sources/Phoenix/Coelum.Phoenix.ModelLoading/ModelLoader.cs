@@ -161,39 +161,19 @@ namespace Coelum.Phoenix.ModelLoading {
 		private unsafe static void ProcessMaterial(ref Model model, ref Material material,
 		                                           AiScene* aiScene, AiMaterial* aiMaterial) {
 			if(aiMaterial == null) return;
-			
-			var ambient = new Vector4();
-			if(Ai.GetMaterialColor(aiMaterial, Assimp.MatkeyColorAmbient,
-			                       0, 0, ref ambient) == Return.Success) {
-					
-				material.AmbientColor = ambient with {
-					W = 1
-				};
-			} else {
-				Log.Warning($"[MODEL LOADER: {model.Name}] Could not get the ambient color for material");
-			}
-				
-			var diffuse = new Vector4();
-			if(Ai.GetMaterialColor(aiMaterial, Assimp.MatkeyColorDiffuse,
-			                       0, 0, ref diffuse) == Return.Success) {
-					
-				material.DiffuseColor = diffuse with {
-					W = 1
-				};
-			} else {
-				Log.Warning($"[MODEL LOADER: {model.Name}] Could not get the diffuse color for material");
-			}
-				
-			var specular = new Vector4();
-			if(Ai.GetMaterialColor(aiMaterial, Assimp.MatkeyColorSpecular,
-			                       0, 0, ref specular) == Return.Success) {
-					
-				material.SpecularColor = specular with {
-					W = 1
-				};
-			} else {
-				Log.Warning($"[MODEL LOADER: {model.Name}] Could not get the specular color for material");
-			}
+
+			Ai.GetMaterialColor(aiMaterial, Assimp.MatkeyColorAmbient,
+			                    0, 0, ref material.AmbientColor);
+			Ai.GetMaterialColor(aiMaterial, Assimp.MatkeyColorDiffuse,
+			                    0, 0, ref material.DiffuseColor);
+			Ai.GetMaterialColor(aiMaterial, Assimp.MatkeyColorSpecular,
+			                    0, 0, ref material.SpecularColor);
+
+			uint max = 1; // TODO what are you supposed to do with this?
+			Ai.GetMaterialFloatArray(aiMaterial, Assimp.MaterialShininess,
+			                         0, 0, ref material.Shininess, ref max);
+			Ai.GetMaterialFloatArray(aiMaterial, Assimp.MaterialReflectivity,
+			                         0, 0, ref material.Reflectivity, ref max);
 			
 			ProcessMaterialTextures(ref model, ref material, aiScene, aiMaterial, AiTextureType.Diffuse);
 			ProcessMaterialTextures(ref model, ref material, aiScene, aiMaterial, AiTextureType.Specular);
@@ -210,6 +190,9 @@ namespace Coelum.Phoenix.ModelLoading {
 
 			if(texCount == 0) {
 				Log.Warning($"[MODEL LOADER: {model.Name}] Material has no textures");
+				
+				material.Textures.Add((Material.TextureType.Diffuse, Texture2D.DefaultTexture));
+				return;
 			}
 			
 			for(uint i = 0; i < texCount; i++) {

@@ -14,9 +14,16 @@ void main() {
 	vec4 position = vec4(1.0, 1.0, 1.0, 1.0);
 	
 	//$overlay_call POSITION_PRE
-	position *= u_projection * u_view * u_model * vec4(vertex_pos.x, vertex_pos.y, vertex_pos.z, 1.0);
+	position *= u_projection * u_view * u_model * vec4(vertex_pos, 1.0);
 	//$overlay_call POSITION_POST
 	
 	gl_Position = position;
+	
 	vert_out.tex_coords = vertex_tex;
+	vert_out.normal = mat3(transpose(inverse(u_model))) * vertex_norm; // TODO do this on the CPU
+	vert_out.frag_pos = vec3(u_model * vec4(vertex_pos, 1.0));
+	vert_out.color = vec4(1.0, 1.0, 1.0, 1.0);
+	
+	//$overlay_call RETURN
+	//$overlay_call RETURN_STAGE2
 }

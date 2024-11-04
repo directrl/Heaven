@@ -54,6 +54,9 @@
 
 					nativeBuildInputs = with pkgs; [
 						dotnet
+
+						# debugging
+						renderdoc
 					];
 
 					buildInputs = with pkgs; [

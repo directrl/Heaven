@@ -41,7 +41,7 @@ namespace PhoenixPlayground.Scenes {
 			
 			this.SetupKeyBindings(_keyBindings);
 			
-			ShaderOverlays.AddRange(Material.OVERLAYS);
+			PrimaryShader.AddOverlays(Material.OVERLAYS);
 		}
 
 		public override void OnLoad(SilkWindow window) {

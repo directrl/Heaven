@@ -115,6 +115,66 @@
     <EmbeddedResource Update="..\..\..\Resources\Coeli\Resources\Shaders\Overlays\Material\call.frag">
       <Link>Resources\Shaders\Overlays\Material\call.frag</Link>
     </EmbeddedResource>
+    <EmbeddedResource Update="..\..\..\Resources\Coeli\Resources\Shaders\Overlays\Lighting\call.frag">
+      <Link>Resources\Shaders\Overlays\Lighting\call.frag</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Update="..\..\..\Resources\Coeli\Resources\Shaders\Overlays\Lighting\header.frag">
+      <Link>Resources\Shaders\Overlays\Lighting\header.frag</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Update="..\..\..\Resources\Coeli\Resources\Shaders\Structures\scene_env.glsl">
+      <Link>Resources\Shaders\Structures\scene_env.glsl</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Update="..\..\..\Resources\Coeli\Resources\Shaders\Overlays\Lighting\header.vert">
+      <Link>Resources\Shaders\Overlays\Lighting\header.vert</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Update="..\..\..\Resources\Coeli\Resources\Shaders\Overlays\Lighting\call.vert">
+      <Link>Resources\Shaders\Overlays\Lighting\call.vert</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Update="..\..\..\Resources\Coeli\Resources\Shaders\Overlays\Lighting\Phong\call.frag">
+      <Link>Resources\Shaders\Overlays\Lighting\Phong\call.frag</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Update="..\..\..\Resources\Coeli\Resources\Shaders\Overlays\Lighting\Phong\header.frag">
+      <Link>Resources\Shaders\Overlays\Lighting\Phong\header.frag</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Update="..\..\..\Resources\Coeli\Resources\Shaders\Overlays\Lighting\Gouraud\call.vert">
+      <Link>Resources\Shaders\Overlays\Lighting\Gouraud\call.vert</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Update="..\..\..\Resources\Coeli\Resources\Shaders\Overlays\Lighting\Gouraud\header.vert">
+      <Link>Resources\Shaders\Overlays\Lighting\Gouraud\header.vert</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Update="..\..\..\Resources\Coeli\Resources\Shaders\Overlays\Lighting\Gouraud\call.frag">
+      <Link>Resources\Shaders\Overlays\Lighting\Gouraud\call.frag</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Update="..\..\..\Resources\Coeli\Resources\Shaders\Overlays\Lighting\Gouraud\header.frag">
+      <Link>Resources\Shaders\Overlays\Lighting\Gouraud\header.frag</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Update="..\..\..\Resources\Coeli\Resources\Shaders\Overlays\SceneEnvironment\header.frag">
+      <Link>Resources\Shaders\Overlays\SceneEnvironment\header.frag</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Update="..\..\..\Resources\Coeli\Resources\Shaders\Overlays\SceneEnvironment\header.vert">
+      <Link>Resources\Shaders\Overlays\SceneEnvironment\header.vert</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Update="..\..\..\Resources\Coeli\Resources\Shaders\Overlays\Material\header.vert">
+      <Link>Resources\Shaders\Overlays\Material\header.vert</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Update="..\..\..\Resources\Coeli\Resources\Shaders\Structures\light.glsl">
+      <Link>Resources\Shaders\Structures\light.glsl</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Update="..\..\..\Resources\Coeli\Resources\Shaders\Overlays\Lighting\Phong\header.vert">
+      <Link>Resources\Shaders\Overlays\Lighting\Phong\header.vert</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Update="..\..\..\Resources\Coeli\Resources\Shaders\Overlays\Lighting\common.glsl">
+      <Link>Resources\Shaders\Overlays\Lighting\common.glsl</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Update="..\..\..\Resources\Coeli\Resources\Shaders\Overlays\SceneEnvironment\call.frag">
+      <Link>Resources\Shaders\Overlays\SceneEnvironment\call.frag</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Update="..\..\..\Resources\Coeli\Resources\Shaders\Overlays\SceneEnvironment\call.vert">
+      <Link>Resources\Shaders\Overlays\SceneEnvironment\call.vert</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Update="..\..\..\Resources\Coeli\Resources\Shaders\Overlays\Lighting\common_header.glsl">
+      <Link>Resources\Shaders\Overlays\Lighting\common_header.glsl</Link>
+    </EmbeddedResource>
   </ItemGroup>
 
   <ItemGroup>

@@ -2,7 +2,9 @@ using System.Drawing;
 using Coelum.Common.Graphics;
 using Coelum.Debug;
 using Coelum.Phoenix.Camera;
+using Coelum.Phoenix.ECS.Nodes;
 using Coelum.Phoenix.ECS.System;
+using Coelum.Phoenix.Lighting;
 using Coelum.Phoenix.OpenGL;
 using Coelum.Resources;
 using Silk.NET.OpenGL;
@@ -22,7 +24,6 @@ namespace Coelum.Phoenix {
 		public Color ClearColor { get; protected set; } = Color.Black;
 
 		public ShaderProgram PrimaryShader { get; protected set; }
-		public List<IShaderOverlay> ShaderOverlays { get; } = new();
 
 		public new SilkWindow? Window
 			=> base.Window == null ? null : (SilkWindow) base.Window;
@@ -43,10 +44,7 @@ namespace Coelum.Phoenix {
 			}
 		}
 
-		protected PhoenixScene(string id) : base(id) { }
-
-		public virtual void OnLoad(SilkWindow window) { }
-		public override void OnLoad(WindowBase window) {
+		protected PhoenixScene(string id) : base(id) {
 			PrimaryShader = new(
 				Module.RESOURCES,
 				new(ShaderType.FragmentShader,
@@ -54,21 +52,33 @@ namespace Coelum.Phoenix {
 				new(ShaderType.VertexShader,
 				    Module.RESOURCES[ResourceType.SHADER, "scene.vert"])
 			);
+		}
+
+		public virtual void OnLoad(SilkWindow window) { }
+		public override void OnLoad(WindowBase window) {
+			if(!PrimaryShader._ready) {
+				PrimaryShader.Validate();
+				PrimaryShader.Build();
+			}
+			
+			PrimaryShader.Bind();
 			
 			ClearSystems();
+			ClearNodes();
 			base.OnLoad(window);
 			
 			Tests.Assert(window is SilkWindow, "Phoenix renderer scenes work only with" +
 			             "Phoenix renderer windows!");
 			OnLoad((SilkWindow) window);
 			
-			Tests.Assert(PrimaryShader != null, "The primary shader cannot be null");
-			PrimaryShader.Validate();
-			PrimaryShader.AddOverlays(ShaderOverlays);
-			
 			AddSystem("RenderPre", new CameraSystem(PrimaryShader));
 			AddSystem("RenderPre", new RenderSystem(PrimaryShader));
 			AddSystem("UpdatePost", new TransformSystem());
+			
+			if(PrimaryShader.HasOverlays(PhongShading.OVERLAYS)
+			   || PrimaryShader.HasOverlays(GouraudShading.OVERLAYS)) {
+				AddSystem("RenderPre", new LightSystem(PrimaryShader));
+			}
 
 			var pWindow = (SilkWindow) window;
 
@@ -105,8 +115,11 @@ namespace Coelum.Phoenix {
 			
 			PrimaryShader.Bind();
 			PrimaryShaderSetup?.Invoke(PrimaryShader);
-			
-			PrimaryShader.EnableOverlays(ShaderOverlays);
+
+			var environment = QuerySingleton<SceneEnvironment>();
+			if(environment != null) {
+				environment.Load(PrimaryShader);
+			}
 
 			this.Process("RenderPre", delta);
 			base.OnRender(delta);

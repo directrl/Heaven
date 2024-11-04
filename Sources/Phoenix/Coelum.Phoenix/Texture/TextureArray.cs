@@ -103,23 +103,25 @@ namespace Coelum.Phoenix.Texture {
 			});
 		}
 
-		public static readonly IShaderOverlay[] OVERLAYS = {
+		public static readonly ShaderOverlay[] OVERLAYS = {
 			FragmentShaderOverlay.OVERLAY
 		};
 		
-		public class FragmentShaderOverlay : IShaderOverlay, ILazySingleton<FragmentShaderOverlay> {
+		public class FragmentShaderOverlay : ShaderOverlay, ILazySingleton<FragmentShaderOverlay> {
 
 			//public static readonly FragmentShaderOverlay GLOBAL = new();
 			public static FragmentShaderOverlay OVERLAY
 				=> ILazySingleton<FragmentShaderOverlay>._instance.Value;
 
-			public string Name => "textureArray";
-			public string Path => "Overlays.TextureArray";
-			public ShaderType Type => ShaderType.FragmentShader;
-			public ShaderPass Pass => ShaderPass.COLOR_PRE;
-			public ResourceManager ResourceManager => Module.RESOURCES;
+			public override string Name => "textureArray";
+			public override string Path => "Overlays.TextureArray";
+			
+			public override ShaderType Type => ShaderType.FragmentShader;
+			public override ShaderPass Pass => ShaderPass.COLOR_PRE;
+			
+			public override ResourceManager ResourceManager => Module.RESOURCES;
 
-			public void Load(ShaderProgram shader) {
+			public override void Load(ShaderProgram shader) {
 				shader.SetUniform("texArray_sampler", 2);
 			}
 		}

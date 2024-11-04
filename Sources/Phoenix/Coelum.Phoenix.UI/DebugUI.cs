@@ -22,19 +22,84 @@ namespace Coelum.Phoenix.UI {
 			Controller.Update(delta);
 
 			if(ImGui.Begin("Standard Debug UI", ImGuiWindowFlags.AlwaysAutoResize)) {
-				float updMs = (_scene.Window?.UpdateDelta ?? 0) * 1000;
-				float fxUpdMs = (_scene.Window?.FixedUpdateDelta ?? 0) * 1000;
-				float rndMs = (_scene.Window?.RenderDelta ?? 0) * 1000;
+				ImGui.BeginTabBar("std");
+
+				if(ImGui.BeginTabItem("Scene")) {
+					ImGui.Text($"Children count: {_scene.ChildCount}");
+
+					if(ImGui.Button("Reload scene")) {
+						var window = _scene.Window;
+
+						if(window != null) {
+							window.Scene = null;
+							_scene.PrimaryShader.Rebuild();
+							window.Scene = _scene;
+						}
+					}
+					
+					ImGui.EndTabItem();
+				}
+
+				if(ImGui.BeginTabItem("Deltas")) {
+					float rndMs = (_scene.Window?.RenderDelta ?? 0) * 1000;
+					float updMs = (_scene.Window?.UpdateDelta ?? 0) * 1000;
+					float fxUpdMs = (_scene.Window?.FixedUpdateDelta ?? 0) * 1000;
 				
-				ImGui.Text($"Update delta: {updMs:F2}ms ({(1000 / updMs):F2} FPS)");
-				ImGui.Text($"FixedUpdate delta: {fxUpdMs:F2}ms ({(1000 / fxUpdMs):F2} FPS)");
-				ImGui.Text($"Render delta: {rndMs:F2}ms ({(1000 / rndMs):F2})");
+					ImGui.Text($"Render delta: {rndMs:F2}ms ({(1000 / rndMs):F2} FPS)");
+					ImGui.Text($"Update delta: {updMs:F2}ms ({(1000 / updMs):F2} FPS)");
+					ImGui.Text($"FixedUpdate delta: {fxUpdMs:F2}ms ({(1000 / fxUpdMs):F2} FPS)");
+					ImGui.EndTabItem();
+				}
+
+				if(ImGui.BeginTabItem("Shaders")) {
+					foreach((var overlay, bool enabled) in _scene.PrimaryShader.Overlays) {
+						if(!overlay.HasCall) continue;
+						
+						// TODO why does this stop working after reloading the scene?
+						if(ImGui.Button($"{overlay.Name} ({overlay.Type})")) {
+							if(enabled) {
+								_scene.PrimaryShader.DisableOverlays(overlay);
+							} else {
+								_scene.PrimaryShader.EnableOverlays(overlay);
+							}
+						}
+						
+						ImGui.SameLine();
+						ImGui.Text(enabled ? "Enabled" : "Disabled");
+					}
+					
+					ImGui.EndTabItem();
+				}
+
+				if(ImGui.BeginTabItem("Additional")) {
+					AdditionalInfo?.Invoke(delta, args);
+					ImGui.EndTabItem();
+				}
 				
-				AdditionalInfo?.Invoke(delta, args);
+				ImGui.EndTabBar();
 			}
 
 			if(ImGui.Begin("ECS Debug", ImGuiWindowFlags.AlwaysAutoResize)) {
-				ImGui.BeginTabBar("ecs_phases");
+				ImGui.BeginTabBar("ecs");
+
+				if(ImGui.BeginTabItem("General")) {
+					ImGui.Text($"Children count: {_scene.ChildCount}");
+
+					if(ImGui.BeginChild("children", new(400, 300), true,
+					                    ImGuiWindowFlags.AlwaysVerticalScrollbar
+					                    | ImGuiWindowFlags.HorizontalScrollbar)) {
+						
+						_scene.QueryChildren()
+						      .Each(node => {
+							      ImGui.Text($"{node.Id}: {node.Path} ({node})");
+						      })
+						      .Execute();
+					
+						ImGui.EndChild();
+					}
+					
+					ImGui.EndTabItem();
+				}
 				
 				_scene.QuerySystems()
 				      .Each((phase, systems) => {

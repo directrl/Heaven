@@ -6,6 +6,7 @@ using Coelum.Phoenix.OpenGL;
 using Coelum.Phoenix.Texture;
 using Coelum.Resources;
 using Silk.NET.OpenGL;
+using Shader = Coelum.Phoenix.OpenGL.Shader;
 using ShadingModel = Silk.NET.OpenGL.ShadingModel;
 
 namespace Coelum.Phoenix {
@@ -24,6 +25,9 @@ namespace Coelum.Phoenix {
 		public Vector4 DiffuseColor = new(1, 1, 1, 1);
 		public Vector4 SpecularColor = new(1, 1, 1, 1);
 
+		public float Shininess = 0.3f;
+		public float Reflectivity = 0.5f;
+
 		public List<(TextureType, Texture2D)> Textures { get; init; } = new() {
 			(TextureType.Diffuse, Texture2D.DefaultTexture)
 		};
@@ -34,12 +38,15 @@ namespace Coelum.Phoenix {
 			shader.SetUniform("material.diffuse_color", DiffuseColor);
 			shader.SetUniform("material.specular_color", SpecularColor);
 
+			shader.SetUniform("material.shininess", Shininess);
+			shader.SetUniform("material.reflectivity", Reflectivity);
+			
 			int textureUnit = 0;
 			
 			foreach(var (type, texture) in Textures) {
 				if(type == TextureType.Unknown) continue;
 			
-				shader.SetUniform(_UNIFORM_NAMES[type], textureUnit);
+				shader.SetUniform(_UNIFORM_NAMES[type], 0);
 				texture.Bind(textureUnit);
 
 				textureUnit++;
@@ -55,22 +62,39 @@ namespace Coelum.Phoenix {
 			Unknown
 		}
 
-		public static readonly IShaderOverlay[] OVERLAYS = {
-			FragmentShaderOverlay.OVERLAY
+		public static readonly ShaderOverlay[] OVERLAYS = {
+			FragmentShaderOverlay.OVERLAY,
+			VertexShaderOverlay.OVERLAY
 		};
 
-		public class FragmentShaderOverlay : IShaderOverlay, ILazySingleton<FragmentShaderOverlay> {
+		public class VertexShaderOverlay : ShaderOverlay, ILazySingleton<VertexShaderOverlay> {
+			
+			public static VertexShaderOverlay OVERLAY
+				=> ILazySingleton<VertexShaderOverlay>._instance.Value;
+
+			public override string Name => "material";
+			public override string Path => "Overlays.Material";
+			
+			public override bool HasCall => false;
+			
+			public override ShaderType Type => ShaderType.VertexShader;
+			public override ShaderPass Pass => ShaderPass.POSITION_PRE;
+			
+			public override ResourceManager ResourceManager => Module.RESOURCES;
+		}
+		
+		public class FragmentShaderOverlay : ShaderOverlay, ILazySingleton<FragmentShaderOverlay> {
 			
 			public static FragmentShaderOverlay OVERLAY
 				=> ILazySingleton<FragmentShaderOverlay>._instance.Value;
 
-			public string Name => "material";
-			public string Path => "Overlays.Material";
-			public ShaderType Type => ShaderType.FragmentShader;
-			public ShaderPass Pass => ShaderPass.COLOR_PRE;
-			public ResourceManager ResourceManager => Module.RESOURCES;
-
-			public void Load(ShaderProgram shader) { }
+			public override string Name => "material";
+			public override string Path => "Overlays.Material";
+			
+			public override ShaderType Type => ShaderType.FragmentShader;
+			public override ShaderPass Pass => ShaderPass.COLOR_PRE;
+			
+			public override ResourceManager ResourceManager => Module.RESOURCES;
 		}
 	}
 }

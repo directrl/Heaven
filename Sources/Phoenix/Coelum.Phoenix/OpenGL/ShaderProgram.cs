@@ -1,3 +1,4 @@
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Numerics;
 using Coelum.Debug;
@@ -15,16 +16,17 @@ namespace Coelum.Phoenix.OpenGL {
 		public const string UNIFORM_SUFFIX = "";
 
 		private readonly Shader[] _program;
-		private readonly List<IShaderOverlay> _overlays = new();
+		private readonly Dictionary<ShaderOverlay, bool> _overlays = new();
 		private readonly Dictionary<string, int> _uniformLocations = new();
 		
 		private readonly ResourceManager? _preprocessorResources;
 		
-		private bool _ready;
-		private bool _bound;
+		internal bool _ready;
+		internal bool _bound;
 		
-		public uint Id { get; }
-
+		public uint Id { get; private set; }
+		public ReadOnlyDictionary<ShaderOverlay, bool> Overlays => new(_overlays);
+		
 		public ShaderProgram(ResourceManager? preprocessorResources, params Shader[] program) {
 			_preprocessorResources = preprocessorResources;
 			
@@ -36,41 +38,58 @@ namespace Coelum.Phoenix.OpenGL {
 
 			_program = program;
 		}
-		
-		public void AddOverlays(params IShaderOverlay[] overlays)
-			=> EnableOverlays((IEnumerable<IShaderOverlay>) overlays);
 
-		public void AddOverlays(IEnumerable<IShaderOverlay> overlays) {
+		public bool HasOverlays(params ShaderOverlay[] overlays)
+			=> HasOverlays((IEnumerable<ShaderOverlay>) overlays);
+
+		public bool HasOverlays(IEnumerable<ShaderOverlay> overlays) {
+			foreach(var overlay in overlays) {
+				if(!_overlays.ContainsKey(overlay)) return false;
+			}
+
+			return true;
+		}
+		
+		public void AddOverlays(params ShaderOverlay[] overlays)
+			=> AddOverlays((IEnumerable<ShaderOverlay>) overlays);
+
+		public void AddOverlays(IEnumerable<ShaderOverlay> overlays) {
 			Tests.Assert(!_ready, "Can't add overlays to a shader that has already been built");
 
 			foreach(var overlay in overlays) {
-				_overlays.Add(overlay);
+				_overlays.Add(overlay, true);
 			}
 		}
 
-		public void EnableOverlays(params IShaderOverlay[] overlays)
-			=> EnableOverlays((IEnumerable<IShaderOverlay>) overlays);
+		public void EnableOverlays(params ShaderOverlay[] overlays)
+			=> EnableOverlays((IEnumerable<ShaderOverlay>) overlays);
 		
-		public void EnableOverlays(IEnumerable<IShaderOverlay> overlays) {
+		public void EnableOverlays(IEnumerable<ShaderOverlay> overlays) {
 			Tests.Assert(_bound, "Can't enable overlays for a shader that is not bound");
 
 			foreach(var overlay in overlays) {
-				Tests.Assert(SetUniform($"overlay_{overlay.Name}", true),
-				             $"Overlay [{overlay.Name}] not included in shader");
-			
-				overlay.Load(this);
+				if(!_overlays.ContainsKey(overlay)) {
+					throw new ArgumentException($"Overlay [{overlay.Name}] not included in shader",
+					                            nameof(overlay));
+				}
+
+				_overlays[overlay] = true;
 			}
 		}
 		
-		public void DisableOverlays(params IShaderOverlay[] overlays)
-			=> DisableOverlays((IEnumerable<IShaderOverlay>) overlays);
+		public void DisableOverlays(params ShaderOverlay[] overlays)
+			=> DisableOverlays((IEnumerable<ShaderOverlay>) overlays);
 		
-		public void DisableOverlays(IEnumerable<IShaderOverlay> overlays) {
+		public void DisableOverlays(IEnumerable<ShaderOverlay> overlays) {
 			Tests.Assert(_bound, "Can't enable overlays for a shader that is not bound");
 
 			foreach(var overlay in overlays) {
-				Tests.Assert(SetUniform($"overlay_{overlay.Name}", false),
-				             $"Overlay [{overlay.Name}] not included in shader");
+				if(!_overlays.ContainsKey(overlay)) {
+					throw new ArgumentException($"Overlay [{overlay.Name}] not included in shader",
+					                            nameof(overlay));
+				}
+
+				_overlays[overlay] = false;
 			}
 		}
 
@@ -80,10 +99,14 @@ namespace Coelum.Phoenix.OpenGL {
 			var sw = Stopwatch.StartNew();
 
 			foreach(var shader in _program) {
-				var overlays = _overlays
-				               .Where(overlay => overlay != null && overlay.Type == shader.Type)
+				var overlays = _overlays.Keys
+				               .Where(overlay => overlay.Type == shader.Type)
 				               .ToArray();
 				shader.Overlays = overlays;
+				
+				foreach(var overlay in overlays) {
+					overlay.Include(this);
+				}
 
 				if(_preprocessorResources != null) {
 					shader.Preprocess(_preprocessorResources);
@@ -118,6 +141,17 @@ namespace Coelum.Phoenix.OpenGL {
 			Log.Information($"[SHADER PROGRAM] Building took {sw.ElapsedMilliseconds}ms");
 		}
 
+		public void Rebuild() {
+			Dispose();
+			Id = Gl.CreateProgram();
+
+			if(Id == 0) {
+				throw new PlatformException("Could not create a GL shader program");
+			}
+			
+			Build();
+		}
+
 		public void Validate() {
 			Gl.ValidateProgram(Id);
 
@@ -130,6 +164,23 @@ namespace Coelum.Phoenix.OpenGL {
 			if(!_ready) Build();
 			Gl.UseProgram(Id);
 			_bound = true;
+
+			foreach(var overlay in _overlays.Keys) {
+				BindOverlay(overlay);
+			}
+		}
+		
+		private void BindOverlay(ShaderOverlay overlay) {
+			Tests.Assert(_bound);
+			Tests.Assert(_overlays.ContainsKey(overlay));
+			
+			overlay.Load(this);
+			if(overlay.HasCall) {
+				if(!SetUniform($"overlay_{overlay.Name}", _overlays[overlay])) {
+					throw new ArgumentException($"Could not bind shader overlay [{overlay.Name}]",
+					                            nameof(overlay));
+				}
+			}
 		}
 		
 		public int GetUniformLocation(string name) {
@@ -203,6 +254,9 @@ namespace Coelum.Phoenix.OpenGL {
 			
 			if(!_ready) return;
 			Gl.DeleteProgram(Id);
+			
+			_ready = false;
+			_bound = false;
 		}
 
 		public class LinkingException : Exception {

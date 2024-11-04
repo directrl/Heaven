@@ -13,8 +13,8 @@ namespace PhoenixPlayground {
 		}
 
 		public override void Setup(string[] args) {
-			var scene = new NodeGraphStressTest();
 			var window = SilkWindow.Create(debug: true);
+			var scene = new LightingTest();
 			window.Scene = scene;
 			
 			Windows.Add(window);
