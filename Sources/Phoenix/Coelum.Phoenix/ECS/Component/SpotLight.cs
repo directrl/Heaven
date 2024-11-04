@@ -34,13 +34,12 @@ namespace Coelum.Phoenix.ECS.Component {
 			}
 		}
 
-		public override void Load(ShaderProgram shader) {
-			base.Load(shader);
+		public override void Load(ShaderProgram shader, string target) {
+			base.Load(shader, target);
 
-			shader.SetUniform("light.type", Light.LIGHT_SPOT);
-			shader.SetUniform("light.cutoff", Cutoff);
-			shader.SetUniform("light.outer_cutoff", Fade);
-			shader.SetUniform("light.direction", Direction);
+			shader.SetUniform(target + ".cutoff", Cutoff);
+			shader.SetUniform(target + ".outer_cutoff", Fade);
+			shader.SetUniform(target + ".direction", Direction);
 		}
 	}
 }

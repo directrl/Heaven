@@ -20,7 +20,7 @@ namespace Coelum.Phoenix.ECS.System {
 				    if(_shader.Overlays.ContainsKey(PhongShading.OVERLAYS[0])
 				       || _shader.Overlays.ContainsKey(GouraudShading.OVERLAYS[0])) {
 					    
-					    _shader.SetUniform("light.current", node.HasComponent<Light>());
+					    _shader.SetUniform("current_light", node.HasComponent<Light>());
 				    }
 				    
 				    _shader.SetUniform("model", transform.GlobalMatrix);

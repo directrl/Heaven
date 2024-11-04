@@ -40,7 +40,7 @@ namespace PhoenixPlayground.Scenes {
 		private EcsSystem _testCubeRotate;
 
 		private Camera3D? _camera;
-		private Node _lightCube;
+		private Node _controlledLight;
 
 		public LightingTest() : base("light-test") {
 			_keyBindings = new(Id);
@@ -69,14 +69,12 @@ namespace PhoenixPlayground.Scenes {
 					    if(t is not Transform3D t3d) return;
 					    if(!node.HasComponent<TestLightMove>()) return;
 
-					    if(l is DirectionalLight) {
-						    t3d.Rotation = new(
-							    -MathF.PI,
-							    MathF.Sin((float) Window.SilkImpl.Time) * (MathF.PI / 2),
-							    0
+					    if(node.Name == "orbit") {
+						    t3d.Position = new(
+							    MathF.Cos((float) Window.SilkImpl.Time) * 23,
+							    MathF.Sin((float) Window.SilkImpl.Time) * 10,
+							    MathF.Cos((float) Window.SilkImpl.Time) * 23
 							);
-						    
-						    Console.WriteLine(((DirectionalLight)l).Direction);
 					    } else {
 						    t3d.Position = new(
 							    MathF.Sin((float) Window.SilkImpl.Time) * 6,
@@ -104,7 +102,7 @@ namespace PhoenixPlayground.Scenes {
 			base.OnLoad(window);
 			
 			Add(new SceneEnvironment() {
-				AmbientColor = Color.FromArgb(32, 32, 32)
+				AmbientColor = Color.FromArgb(6, 6, 6)
 			});
 
 			if(_camera == null) {
@@ -117,13 +115,10 @@ namespace PhoenixPlayground.Scenes {
 			Add(_camera);
 
 			{
-				// var centerCube = new ModelNode(ModelLoader.Load(Playground.AppResources[ResourceType.MODEL, "crt.glb"]));
-				// centerCube.AddComponent(new TestCubeRotate());
-				
 				var playgroundModel = ModelLoader.Load(Playground.AppResources[ResourceType.MODEL, "playground.glb"]);
 				var playground = new ModelNode(playgroundModel);
 				playground.GetComponent<Transform, Transform3D>()
-				          .Position = new(0, -0, -0);
+				          .Position = new(0, -5, -0);
 				Add(playground);
 
 				var crt = ModelLoader.Load(Playground.AppResources[ResourceType.MODEL, "crt.glb"]);
@@ -145,20 +140,44 @@ namespace PhoenixPlayground.Scenes {
 					Add(model);
 				}
 
-				var lightCube2 = new ModelNode(ModelLoader.Load(Playground.AppResources[ResourceType.MODEL, "light.glb"])) {
-					Name = "spot light cube"
-				};
-				lightCube2.AddComponent<Light>(new SpotLight() {
-					Distance = 64
+				var light1 = new ColorCube(Color.HotPink);
+				light1.AddComponent<Light>(new PointLight() {
+					Diffuse = Color.HotPink,
+					Specular = Color.HotPink
 				});
-				lightCube2.GetComponent<Transform, Transform3D>()
-				          .Position = new(0.0f, 5.0f, -0f);
-				// lightCube2.GetComponent<Transform, Transform3D>()
-				//           .Rotation = new(0.0f, 1.0f, 0.0f);
+				light1.AddComponent(new TestLightMove());
+				Add(light1);
 
-				_lightCube = lightCube2;
-				//Add(_lightCube);
-				Add(lightCube2);
+				var light2 = new ModelNode(ModelLoader.Load(Playground.AppResources[ResourceType.MODEL, "light.glb"]));
+				light2.AddComponent<Light>(new SpotLight() {
+					Distance = 100
+				});
+				light2.GetComponent<Transform, Transform3D>()
+				      .Position = new(0.0f, 5.0f, -0f);
+				light2.GetComponent<Transform, Transform3D>()
+				      .Rotation.X = -45.0f.ToRadians();
+
+				Add(light2);
+				_controlledLight = light2;
+
+				var light3 = new ColorCube(Color.Yellow) {
+					Name = "orbit"
+				};
+				light3.AddComponent<Light>(new PointLight() {
+					Diffuse = Color.Yellow,
+					Specular = Color.Yellow
+				});
+				light3.AddComponent(new TestLightMove());
+				Add(light3);
+				
+				var light4 = new Node();
+				light4.AddComponent<Light>(new DirectionalLight());
+				light4.AddComponent<Transform>(new Transform3D());
+				light4.GetComponent<Transform, Transform3D>()
+				      .Pitch = -30;
+				light4.GetComponent<Transform, Transform3D>()
+				      .Yaw = 15;
+				Add(light4);
 			}
 			
 			AddSystem("UpdatePre", _testCubeMove); // TODO phases should be enums or smth
@@ -173,10 +192,10 @@ namespace PhoenixPlayground.Scenes {
 					ImGui.Separator();
 				}
 				
-				ImGui.Text($"Rot: {_lightCube.GetComponent<Transform, Transform3D>().GlobalRotation}");
-				ImGui.Text($"Yaw: {_lightCube.GetComponent<Transform, Transform3D>().GlobalYaw.ToDegrees()}");
-				ImGui.Text($"Pitch: {_lightCube.GetComponent<Transform, Transform3D>().GlobalPitch.ToDegrees()}");
-				ImGui.Text($"Roll: {_lightCube.GetComponent<Transform, Transform3D>().GlobalRoll.ToDegrees()}");
+				// ImGui.Text($"Rot: {_lightCube.GetComponent<Transform, Transform3D>().GlobalRotation}");
+				// ImGui.Text($"Yaw: {_lightCube.GetComponent<Transform, Transform3D>().GlobalYaw.ToDegrees()}");
+				// ImGui.Text($"Pitch: {_lightCube.GetComponent<Transform, Transform3D>().GlobalPitch.ToDegrees()}");
+				// ImGui.Text($"Roll: {_lightCube.GetComponent<Transform, Transform3D>().GlobalRoll.ToDegrees()}");
 				
 				Query<Light>()
 					.Each((node, l) => {
@@ -197,7 +216,7 @@ namespace PhoenixPlayground.Scenes {
 						}
 					})
 					.Execute();
-			};gi
+			};
 
 			window.GetMice()[0].MouseMove += (_, pos) => {
 				if(CurrentCamera is Camera3D c3d) _freeCamera.CameraMove(c3d, pos);
@@ -223,12 +242,12 @@ namespace PhoenixPlayground.Scenes {
 			}
 
 			float change = delta * 0.5f;
-			if(_lightXpos.Down) _lightCube.GetComponent<Transform, Transform3D>().Rotation.X += change;
-			if(_lightXneg.Down) _lightCube.GetComponent<Transform, Transform3D>().Rotation.X -= change;
-			if(_lightYpos.Down) _lightCube.GetComponent<Transform, Transform3D>().Rotation.Y += change;
-			if(_lightYneg.Down) _lightCube.GetComponent<Transform, Transform3D>().Rotation.Y -= change;
-			if(_lightZpos.Down) _lightCube.GetComponent<Transform, Transform3D>().Rotation.Z += change;
-			if(_lightZneg.Down) _lightCube.GetComponent<Transform, Transform3D>().Rotation.Z -= change;
+			if(_lightXpos.Down) _controlledLight.GetComponent<Transform, Transform3D>().Rotation.X += change;
+			if(_lightXneg.Down) _controlledLight.GetComponent<Transform, Transform3D>().Rotation.X -= change;
+			if(_lightYpos.Down) _controlledLight.GetComponent<Transform, Transform3D>().Rotation.Y += change;
+			if(_lightYneg.Down) _controlledLight.GetComponent<Transform, Transform3D>().Rotation.Y -= change;
+			if(_lightZpos.Down) _controlledLight.GetComponent<Transform, Transform3D>().Rotation.Z += change;
+			if(_lightZneg.Down) _controlledLight.GetComponent<Transform, Transform3D>().Rotation.Z -= change;
 			
 			_keyBindings.Update(new SilkKeyboard(Window.Input.Keyboards[0]));
 		}

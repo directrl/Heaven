@@ -15,6 +15,7 @@ void main() {
 	vec4 final_color = vec4(1.0, 1.0, 1.0, 1.0);
 	
 	//$overlay_call COLOR_PRE
+	//$overlay_call COLOR_PRE_STAGE2
 	
 	if(final_color.a < 0.01) {
 		discard;

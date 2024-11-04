@@ -10,11 +10,8 @@ namespace Coelum.Phoenix.ECS.Component {
 
 		public Node? Owner { get; set; }
 
-		public Color Ambient { get; set; } = Color.DarkSlateGray;
-		public Color Diffuse { get; set; } = Color.White;
+		public Color Diffuse { get; set; } = Color.FromArgb(64, 64, 64);
 		public Color Specular { get; set; } = Color.White;
-
-		public float SpecularStrength { get; set; } = 1; // TODO is this really needed?
 
 		public Vector3 Direction {
 			get {
@@ -34,15 +31,11 @@ namespace Coelum.Phoenix.ECS.Component {
 			}
 		}
 		
-		public void Load(ShaderProgram shader) {
-			shader.SetUniform("light.type", Light.LIGHT_DIRECTIONAL);
-			
-			shader.SetUniform("light.ambient", Ambient.ToVector3());
-			shader.SetUniform("light.diffuse", Diffuse.ToVector3());
-			shader.SetUniform("light.specular", Specular.ToVector3());
-			shader.SetUniform("light.specular_strength", SpecularStrength);
-			
-			shader.SetUniform("light.direction", Direction);
+		public void Load(ShaderProgram shader, string target) {
+			shader.SetUniform(target + ".diffuse", Diffuse.ToVector4());
+			shader.SetUniform(target + ".specular", Specular.ToVector4());
+
+			shader.SetUniform(target + ".direction", Direction);
 		}
 	}
 }

@@ -74,12 +74,14 @@ namespace Coelum.Phoenix.OpenGL {
 	public class ShaderPass {
 
 		public static readonly ShaderPass COLOR_PRE = new("COLOR_PRE");
+		public static readonly ShaderPass COLOR_PRE_STAGE2 = new("COLOR_PRE_STAGE2"); // TODO priority system
 		public static readonly ShaderPass COLOR_POST = new("COLOR_POST");
 		
 		public static readonly ShaderPass POSITION_PRE = new("POSITION_PRE");
 		public static readonly ShaderPass POSITION_POST = new("POSITION_POST");
 		
 		public static readonly ShaderPass RETURN = new("RETURN");
+		public static readonly ShaderPass RETURN_STAGE2 = new("RETURN_STAGE2");
 		
 		internal string Name { get; }
 

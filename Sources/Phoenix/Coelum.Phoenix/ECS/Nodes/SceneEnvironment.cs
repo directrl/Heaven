@@ -48,7 +48,7 @@ namespace Coelum.Phoenix.ECS.Nodes {
 			public override string Path => "Overlays.SceneEnvironment";
 			
 			public override ShaderType Type => ShaderType.FragmentShader;
-			public override ShaderPass Pass => ShaderPass.COLOR_PRE;
+			public override ShaderPass Pass => ShaderPass.COLOR_PRE_STAGE2;
 			
 			public override ResourceManager ResourceManager => Module.RESOURCES;
 		}

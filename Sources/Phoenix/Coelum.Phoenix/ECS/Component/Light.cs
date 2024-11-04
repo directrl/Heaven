@@ -7,16 +7,9 @@ namespace Coelum.Phoenix.ECS.Component {
 	
 	public interface Light : INodeComponent {
 		
-		public const int LIGHT_DIRECTIONAL = 0;
-		public const int LIGHT_POINT = 1;
-		public const int LIGHT_SPOT = 2;
-		
-		public Color Ambient { get; set; }
 		public Color Diffuse { get; set; }
 		public Color Specular { get; set; }
 
-		public float SpecularStrength { get; set; }
-
-		public void Load(ShaderProgram shader);
+		public void Load(ShaderProgram shader, string target);
 	}
 }
