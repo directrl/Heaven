@@ -1,12 +1,10 @@
 using Silk.NET.OpenGL;
 
-using static Coelum.Phoenix.OpenGL.GLManager;
-
 namespace Coelum.Phoenix.Texture {
 	
 	public class Texture<TSize> : IDisposable {
 
-		protected TextureTarget Target { get; }
+		public TextureTarget Target { get; }
 
 		public uint Id { get; init; }
 		public TSize Size { get; init; }
@@ -16,8 +14,6 @@ namespace Coelum.Phoenix.Texture {
 
 			Id = Gl.GenTexture();
 			Size = size;
-
-			Bind();
 		}
 
 		public void Bind(int unit = 0) {

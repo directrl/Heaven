@@ -22,7 +22,7 @@ namespace Coelum.Phoenix {
 	#endregion
 
 		public Color ClearColor { get; protected set; } = Color.Black;
-
+		public Framebuffer? Framebuffer { get; set; }
 		public ShaderProgram PrimaryShader { get; protected set; }
 
 		public new SilkWindow? Window
@@ -43,7 +43,7 @@ namespace Coelum.Phoenix {
 				return currentCamera;
 			}
 		}
-
+		
 		protected PhoenixScene(string id) : base(id) {
 			PrimaryShader = new(
 				Module.RESOURCES,
@@ -111,7 +111,15 @@ namespace Coelum.Phoenix {
 		}
 
 		public override void OnRender(float delta) {
-			Gl.ClearColor(ClearColor);
+			Framebuffer?.Bind();
+
+			void Clear() {
+				Gl.Clear((uint) (ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit));
+				Gl.ClearColor(ClearColor);
+			}
+
+			Clear();
+			GLManager.SetDefaults();
 			
 			PrimaryShader.Bind();
 			PrimaryShaderSetup?.Invoke(PrimaryShader);
@@ -124,6 +132,15 @@ namespace Coelum.Phoenix {
 			this.Process("RenderPre", delta);
 			base.OnRender(delta);
 			this.Process("RenderPost", delta);
+
+			if(Framebuffer != null && Window != null) {
+				Window.Framebuffer.Bind();
+				
+				Clear();
+				Gl.Disable(EnableCap.DepthTest);
+				
+				Framebuffer.Render();
+			}
 		}
 	}
 }

@@ -18,6 +18,10 @@ namespace Coelum.Phoenix {
 		public IWindow SilkImpl { get; }
 		public IInputContext? Input { get; private set; }
 
+		public Framebuffer Framebuffer { get; private set; }
+		public uint FramebufferWidth => (uint) SilkImpl.FramebufferSize.X;
+		public uint FramebufferHeight => (uint) SilkImpl.FramebufferSize.Y;
+
 		static SilkWindow() {
 			if(ExperimentalFlags.ForceSDL) {
 				Window.PrioritizeSdl();
@@ -42,7 +46,7 @@ namespace Coelum.Phoenix {
 			
 			SilkImpl.Load += () => {
 				if(_sharedContext == null) {
-					new GlobalOpenGL(SilkImpl.CreateOpenGL());
+					_ = new GlobalOpenGL(SilkImpl.CreateOpenGL());
 					_sharedContext = SilkImpl.GLContext;
 				}
 				
@@ -53,6 +57,7 @@ namespace Coelum.Phoenix {
 					GLManager.EnableDebugOutput();
 				}
 
+				Framebuffer = new(SilkImpl);
 				Input = SilkImpl.CreateInput();
 
 				SilkImpl.IsVisible = true;
@@ -72,15 +77,23 @@ namespace Coelum.Phoenix {
 				if(!SilkImpl.IsVisible) return;
 				SilkImpl.MakeCurrent();
 
-				GLManager.SetDefaults();
-				
-				Gl.Clear((uint) (ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit));
 				Scene?.OnRender((float) delta);
 			};
 			
 			SilkImpl.FramebufferResize += size => {
 				SilkImpl.MakeCurrent();
 				Gl.Viewport(size);
+
+				if(Scene is PhoenixScene ps) {
+					if(ps.Framebuffer is { AutoResize: true }) {
+						ps.Framebuffer.Dispose();
+						ps.Framebuffer = new(
+							(uint) (size.X * ps.Framebuffer.AutoResizeFactor),
+							(uint) (size.Y * ps.Framebuffer.AutoResizeFactor),
+							ps.Framebuffer.Target
+						);
+					}
+				}
 			};
 			
 			SilkImpl.Initialize();

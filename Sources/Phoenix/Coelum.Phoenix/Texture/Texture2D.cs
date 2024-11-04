@@ -39,6 +39,7 @@ namespace Coelum.Phoenix.Texture {
 
 			using(var image = Image.Load<Rgba32>(data)) {
 				texture = new(new(image.Width, image.Height));
+				texture.Bind();
 				
 				GLManager.SetDefaultsForTextureCreation(texture.Target);
 				

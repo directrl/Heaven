@@ -175,6 +175,12 @@
     <EmbeddedResource Update="..\..\..\Resources\Coeli\Resources\Shaders\Overlays\Lighting\common_header.glsl">
       <Link>Resources\Shaders\Overlays\Lighting\common_header.glsl</Link>
     </EmbeddedResource>
+    <EmbeddedResource Update="..\..\..\Resources\Coeli\Resources\Shaders\framebuffer.vert">
+      <Link>Resources\Shaders\framebuffer.vert</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Update="..\..\..\Resources\Coeli\Resources\Shaders\framebuffer.frag">
+      <Link>Resources\Shaders\framebuffer.frag</Link>
+    </EmbeddedResource>
   </ItemGroup>
 
   <ItemGroup>
