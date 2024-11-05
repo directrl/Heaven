@@ -35,7 +35,7 @@ namespace Coelum.Phoenix.Camera {
 		}
 
 		protected CameraBase() {
-			AddComponent(new CameraRenderable(this));
+			AddComponent(new ECS.Component.Camera(this));
 		}
 		
 		internal abstract void RecalculateProjectionMatrix();

@@ -1,6 +1,6 @@
 if(!u_current_light) {
-	vec3 normal = vert_out.normal;
-	vec3 view_dir = normalize(u_camera_pos - vert_out.frag_pos);
+	vec3 normal = normalize(vert_out.normal);
+	vec3 view_dir = normalize(u_camera_pos.xyz - vert_out.frag_pos);
 	vec2 tex_coords = vert_out.tex_coords;
 
 	vec4 light_result;

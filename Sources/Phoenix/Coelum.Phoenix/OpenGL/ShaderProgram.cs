@@ -18,6 +18,7 @@ namespace Coelum.Phoenix.OpenGL {
 		private readonly Shader[] _program;
 		private readonly Dictionary<ShaderOverlay, bool> _overlays = new();
 		private readonly Dictionary<string, int> _uniformLocations = new();
+		private readonly Dictionary<Type, UniformBufferObject> _ubos = new();
 		
 		private readonly ResourceManager? _preprocessorResources;
 		
@@ -25,7 +26,9 @@ namespace Coelum.Phoenix.OpenGL {
 		internal bool _bound;
 		
 		public uint Id { get; private set; }
+		
 		public ReadOnlyDictionary<ShaderOverlay, bool> Overlays => new(_overlays);
+		public ReadOnlyDictionary<Type, UniformBufferObject> UBOs => new(_ubos);
 		
 		public ShaderProgram(ResourceManager? preprocessorResources, params Shader[] program) {
 			_preprocessorResources = preprocessorResources;
@@ -39,6 +42,7 @@ namespace Coelum.Phoenix.OpenGL {
 			_program = program;
 		}
 
+	#region Overlays
 		public bool HasOverlays(params ShaderOverlay[] overlays)
 			=> HasOverlays((IEnumerable<ShaderOverlay>) overlays);
 
@@ -92,6 +96,17 @@ namespace Coelum.Phoenix.OpenGL {
 				_overlays[overlay] = false;
 			}
 		}
+	#endregion
+
+	#region UBOs
+		public void AddUBO(UniformBufferObject ubo) {
+			_ubos[ubo.GetType()] = ubo;
+		}
+
+		public TUBO GetUBO<TUBO>() where TUBO : UniformBufferObject {
+			return (TUBO) _ubos[typeof(TUBO)];
+		}
+	#endregion
 
 		public void Build() {
 			List<uint> shaderIds = new();
@@ -167,6 +182,10 @@ namespace Coelum.Phoenix.OpenGL {
 
 			foreach(var overlay in _overlays.Keys) {
 				BindOverlay(overlay);
+			}
+
+			foreach(var ubo in _ubos.Values) {
+				ubo.Bind();
 			}
 		}
 		

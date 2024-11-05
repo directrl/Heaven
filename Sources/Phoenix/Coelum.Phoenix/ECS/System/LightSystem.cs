@@ -2,15 +2,21 @@ using Coelum.ECS;
 using Coelum.LanguageExtensions;
 using Coelum.Phoenix.ECS.Component;
 using Coelum.Phoenix.OpenGL;
+using Coelum.Phoenix.OpenGL.UBO;
 
 namespace Coelum.Phoenix.ECS.System {
 	
 	public class LightSystem : EcsSystem {
 		
 		private readonly ShaderProgram _shader;
+		private readonly Lights _ubo;
 
 		public LightSystem(ShaderProgram shader) : base("Light Uniform Loader") {
 			_shader = shader;
+			_ubo = new();
+			
+			shader.CreateBufferBinding(_ubo);
+			
 			Action = ActionImpl;
 		}
 
@@ -23,21 +29,23 @@ namespace Coelum.Phoenix.ECS.System {
 			    .Each((node, t, light) => {
 				    switch(light) {
 					    case DirectionalLight:
-						    light.Load(_shader, "directional_lights[" + directionalIndex++ + "]");
+						    light.Load(_ubo, directionalIndex++);
 						    break;
-					    case SpotLight sl:
-						    light.Load(_shader, "spot_lights[" + spotIndex++ + "]");
+					    case SpotLight:
+						    light.Load(_ubo, spotIndex++);
 						    break;
-					    case PointLight pl:
-						    light.Load(_shader, "point_lights[" + pointIndex++ + "]");
+					    case PointLight:
+						    light.Load(_ubo, pointIndex++);
 						    break;
 				    }
 			    })
 			    .Execute();
 
-			_shader.SetUniform("directional_light_count", directionalIndex);
-			_shader.SetUniform("point_light_count", pointIndex);
-			_shader.SetUniform("spot_light_count", spotIndex);
+			_ubo.DirectionalLightCount = directionalIndex;
+			_ubo.PointLightCount = pointIndex;
+			_ubo.SpotLightCount = spotIndex;
+			
+			_ubo.Upload();
 		}
 	}
 }

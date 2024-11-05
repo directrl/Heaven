@@ -2,6 +2,7 @@ using System.Drawing;
 using Coelum.ECS;
 using Coelum.LanguageExtensions;
 using Coelum.Phoenix.OpenGL;
+using Coelum.Phoenix.OpenGL.UBO;
 
 namespace Coelum.Phoenix.ECS.Component {
 	
@@ -10,6 +11,6 @@ namespace Coelum.Phoenix.ECS.Component {
 		public Color Diffuse { get; set; }
 		public Color Specular { get; set; }
 
-		public void Load(ShaderProgram shader, string target);
+		public void Load(Lights ubo, int index);
 	}
 }

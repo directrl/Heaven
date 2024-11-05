@@ -3,6 +3,7 @@ using System.Numerics;
 using Coelum.ECS;
 using Coelum.LanguageExtensions;
 using Coelum.Phoenix.OpenGL;
+using Coelum.Phoenix.OpenGL.UBO;
 
 namespace Coelum.Phoenix.ECS.Component {
 	
@@ -31,11 +32,12 @@ namespace Coelum.Phoenix.ECS.Component {
 			}
 		}
 		
-		public void Load(ShaderProgram shader, string target) {
-			shader.SetUniform(target + ".diffuse", Diffuse.ToVector4());
-			shader.SetUniform(target + ".specular", Specular.ToVector4());
-
-			shader.SetUniform(target + ".direction", Direction);
+		public void Load(Lights ubo, int index) {
+			ubo.DirectionalLights[index] = new() {
+				Diffuse = Diffuse.ToVector4(),
+				Specular = Specular.ToVector4(),
+				Direction = Direction
+			};
 		}
 	}
 }

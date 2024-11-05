@@ -117,7 +117,8 @@ namespace PhoenixPlayground.Scenes {
 			Add(_camera);
 
 			{
-				var playgroundModel = ModelLoader.Load(Playground.AppResources[ResourceType.MODEL, "playground.glb"]);
+				var playgroundModel =
+					ModelLoader.Load(Playground.AppResources[ResourceType.MODEL, "playground.glb"]);
 				var playground = new ModelNode(playgroundModel);
 				playground.GetComponent<Transform, Transform3D>()
 				          .Position = new(0, -5, -0);
@@ -133,12 +134,12 @@ namespace PhoenixPlayground.Scenes {
 					else if(i == 1) pos = new(0, 0, -max);
 					else if(i == 2) pos = new(max, 0, 0);
 					else pos = new(-max, 0, 0);
-					
+
 					var model = new ModelNode(crt);
 					model.AddComponent(new TestCubeRotate());
 					model.GetComponent<Transform, Transform3D>()
 					     .Position = pos;
-					
+
 					Add(model);
 				}
 
@@ -150,7 +151,9 @@ namespace PhoenixPlayground.Scenes {
 				light1.AddComponent(new TestLightMove());
 				Add(light1);
 
-				var light2 = new ModelNode(ModelLoader.Load(Playground.AppResources[ResourceType.MODEL, "light.glb"]));
+				var light2 =
+					new ModelNode(
+						ModelLoader.Load(Playground.AppResources[ResourceType.MODEL, "light.glb"]));
 				light2.AddComponent<Light>(new SpotLight() {
 					Distance = 100
 				});
@@ -171,12 +174,14 @@ namespace PhoenixPlayground.Scenes {
 				});
 				light3.AddComponent(new TestLightMove());
 				Add(light3);
-				
+
 				var light4 = new Node();
-				light4.AddComponent<Light>(new DirectionalLight());
+				light4.AddComponent<Light>(new DirectionalLight() {
+					Diffuse = Color.FromArgb(1, 1, 1)
+				});
 				light4.AddComponent<Transform>(new Transform3D());
 				light4.GetComponent<Transform, Transform3D>()
-				      .Pitch = -30;
+				      .Pitch = 70;
 				light4.GetComponent<Transform, Transform3D>()
 				      .Yaw = 15;
 				Add(light4);

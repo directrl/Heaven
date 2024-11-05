@@ -1,6 +1,7 @@
 using System.Numerics;
 using Coelum.LanguageExtensions;
 using Coelum.Phoenix.OpenGL;
+using Coelum.Phoenix.OpenGL.UBO;
 
 namespace Coelum.Phoenix.ECS.Component {
 	
@@ -34,12 +35,20 @@ namespace Coelum.Phoenix.ECS.Component {
 			}
 		}
 
-		public override void Load(ShaderProgram shader, string target) {
-			base.Load(shader, target);
-
-			shader.SetUniform(target + ".cutoff", Cutoff);
-			shader.SetUniform(target + ".outer_cutoff", Fade);
-			shader.SetUniform(target + ".direction", Direction);
+		public override void Load(Lights ubo, int index) {
+			var light = CalculateLightValues();
+			
+			ubo.SpotLights[index] = new() {
+				Diffuse = Diffuse.ToVector4(),
+				Specular = Specular.ToVector4(),
+				Position = Position,
+				Constant = light.constant,
+				Linear = light.linear,
+				Quadratic = light.quadratic,
+				Cutoff = Cutoff,
+				OuterCutoff = Fade,
+				Direction = Direction
+			};
 		}
 	}
 }

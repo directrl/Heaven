@@ -66,25 +66,5 @@ namespace Coelum.Phoenix.Texture {
 
 			public static readonly Cache GLOBAL = new();
 		}
-		
-		// public static readonly IShaderOverlay[] OVERLAYS = {
-		// 	FragmentShaderOverlay.OVERLAY
-		// };
-		//
-		// public class FragmentShaderOverlay : IShaderOverlay, ILazySingleton<FragmentShaderOverlay> {
-		//
-		// 	public static FragmentShaderOverlay OVERLAY
-		// 		=> ILazySingleton<FragmentShaderOverlay>._instance.Value;
-		//
-		// 	public string Name => "texture2D";
-		// 	public string Path => "Overlays.Texture2D";
-		// 	public ShaderType Type => ShaderType.FragmentShader;
-		// 	public ShaderPass Pass => ShaderPass.COLOR_PRE;
-		// 	public ResourceManager ResourceManager => Module.RESOURCES;
-		//
-		// 	public void Load(ShaderProgram shader) {
-		// 		//shader.SetUniform("tex2d_sampler", 1);
-		// 	}
-		// }
 	}
 }

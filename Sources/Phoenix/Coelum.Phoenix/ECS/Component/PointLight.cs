@@ -3,6 +3,7 @@ using System.Numerics;
 using Coelum.ECS;
 using Coelum.LanguageExtensions;
 using Coelum.Phoenix.OpenGL;
+using Coelum.Phoenix.OpenGL.UBO;
 
 namespace Coelum.Phoenix.ECS.Component {
 	
@@ -43,12 +44,20 @@ namespace Coelum.Phoenix.ECS.Component {
 
 		public int Distance { get; set; } = 64;
 		
-		public virtual void Load(ShaderProgram shader, string target) {
-			shader.SetUniform(target + ".diffuse", Diffuse.ToVector4());
-			shader.SetUniform(target + ".specular", Specular.ToVector4());
+		public virtual void Load(Lights ubo, int index) {
+			var light = CalculateLightValues();
 			
-			shader.SetUniform(target + ".position", Position);
+			ubo.PointLights[index] = new() {
+				Diffuse = Diffuse.ToVector4(),
+				Specular = Specular.ToVector4(),
+				Position = Position,
+				Constant = light.constant,
+				Linear = light.linear,
+				Quadratic = light.quadratic
+			};
+		}
 
+		protected (float constant, float linear, float quadratic) CalculateLightValues() {
 			// TODO could also precalculate this on startup
 			if(!ATTENUATION.TryGetValue(Distance, out var light)) {
 				var distances = ATTENUATION.Keys;
@@ -58,17 +67,17 @@ namespace Coelum.Phoenix.ECS.Component {
 
 				if(closestLower == 0) {
 					light = ATTENUATION.Values.First();
-					goto apply;
+					return light;
 				}
 
 				if(closestUpper == 0) {
 					light = ATTENUATION.Values.Last();
-					goto apply;
+					return light;
 				}
 
 				if(closestLower == closestUpper) {
 					light = ATTENUATION[closestLower];
-					goto apply;
+					return light;
 				}
 				
 				// interpolate
@@ -81,10 +90,7 @@ namespace Coelum.Phoenix.ECS.Component {
 				light.quadratic = lower.quadratic + ratio * (upper.quadratic - lower.quadratic);
 			}
 			
-		apply:
-			shader.SetUniform(target + ".constant", light.constant);
-			shader.SetUniform(target + ".linear", light.linear);
-			shader.SetUniform(target + ".quadratic", light.quadratic);
+			return light;
 		}
 	}
 }

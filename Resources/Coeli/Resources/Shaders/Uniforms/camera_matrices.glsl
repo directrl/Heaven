@@ -1,3 +1,5 @@
-uniform mat4 u_projection;
-uniform mat4 u_view;
-uniform vec3 u_camera_pos;
+layout(std140) uniform CameraMatrices {
+	mat4 u_projection;
+	mat4 u_view;
+	vec3 u_camera_pos;
+};
