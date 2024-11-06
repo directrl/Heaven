@@ -43,6 +43,8 @@
 						gdk-pixbuf
 						wayland
 						glfw
+						vulkan-headers
+						vulkan-loader
 						stdenv.cc.cc.lib
 					];
 					LD_LIBRARY_PATH = pkgs.lib.makeLibraryPath libs;

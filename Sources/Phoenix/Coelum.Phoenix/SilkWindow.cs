@@ -59,7 +59,7 @@ namespace Coelum.Phoenix {
 				}
 
 				Framebuffer = new(SilkImpl);
-				Input = SilkImpl.CreateInput();
+				//Input = SilkImpl.CreateInput(); TODO crashes?
 
 				SilkImpl.IsVisible = true;
 			};
