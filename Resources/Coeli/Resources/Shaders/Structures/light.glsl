@@ -1,7 +1,3 @@
-// TODO make these configurable
-#define MAX_DIRECTIONAL_LIGHTS 4
-#define MAX_LIGHTS 100
-
 struct DirectionalLight {
 	
 	vec4 diffuse;

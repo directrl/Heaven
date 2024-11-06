@@ -26,9 +26,15 @@ namespace Coelum.Phoenix.Lighting {
 			
 			public override ResourceManager ResourceManager => Module.RESOURCES;
 
+			public int MaxDirectionalLights { get; set; } = 4;
+			public int MaxLights { get; set; } = 100;
+
 			public override void Include(ShaderProgram shader) {
 				Tests.Assert(shader.HasOverlays(SceneEnvironment.OVERLAYS),
 					"Lighting shaders require SceneEnvironment overlays to be present");
+				
+				shader.Define("MAX_DIRECTIONAL_LIGHTS", MaxDirectionalLights);
+				shader.Define("MAX_LIGHTS", MaxLights);
 			}
 		}
 	}

@@ -1,4 +1,5 @@
 #version 330
+//$preprocessor-defines
 
 out vec4 out_frag_color;
 

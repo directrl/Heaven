@@ -1,3 +1,4 @@
+using System.Text;
 using Coelum.Configuration;
 using Coelum.Debug;
 using Coelum.Resources;
@@ -10,6 +11,8 @@ namespace Coelum.Phoenix.OpenGL {
 		public static void Preprocess(this Shader shader, ResourceManager resources) {
 			Log.Debug("[SHADER PREPROCESSOR] Starting preprocessing");
 
+			shader.Code = Definitions(shader);
+			
 		#region First pass
 			string newCode = "";
 			
@@ -63,6 +66,22 @@ namespace Coelum.Phoenix.OpenGL {
 			}
 		}
 
+		private static string Definitions(Shader shader) {
+			StringBuilder sb = new();
+					
+			foreach((string key, string value) in shader._definitions) {
+				sb.Append("#define ");
+				sb.Append(key);
+				sb.Append(" ");
+				sb.Append(value);
+				sb.Append('\n');
+				
+				Log.Debug($"[SHADER PREPROCESSOR/DEFINES] {key}={value}");
+			}
+
+			return shader.Code.Replace("//$preprocessor-defines", sb.ToString());
+		}
+
 		private static string Include(Shader shader, string line, ResourceManager resources) {
 			const string token = "//$include ";
 
@@ -97,7 +116,7 @@ namespace Coelum.Phoenix.OpenGL {
 
 			switch(args[0]) {
 				case tokenHeader:
-					foreach(var overlay in shader.Overlays) {
+					foreach(var overlay in shader._overlays) {
 						if(overlay.HasHeader) {
 							result += $"uniform bool u_overlay_{overlay.Name};\n";
 							result += Include(
@@ -114,7 +133,7 @@ namespace Coelum.Phoenix.OpenGL {
 				case tokenCall:
 					var pass = new ShaderPass(args[1]);
 
-					foreach(var overlay in shader.Overlays) {
+					foreach(var overlay in shader._overlays) {
 						if(overlay.HasCall && overlay.Pass.Name == pass.Name) {
 							result += $"if(u_overlay_{overlay.Name}) {{\n";
 							result += Include(

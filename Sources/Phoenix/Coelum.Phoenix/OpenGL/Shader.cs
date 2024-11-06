@@ -7,10 +7,11 @@ namespace Coelum.Phoenix.OpenGL {
 	// TODO cache
 	public class Shader {
 		
+		internal ShaderOverlay[] _overlays = { };
+		internal Dictionary<string, string> _definitions = new();
+		
 		public ShaderType Type { get; }
 		public string Code { get; internal set; }
-		
-		public ShaderOverlay[] Overlays { get; internal set; }
 
 		public Shader(ShaderType type, string code) {
 			Type = type;

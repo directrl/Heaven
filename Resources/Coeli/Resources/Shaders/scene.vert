@@ -1,4 +1,6 @@
 #version 330
+//$preprocessor-defines
+
 //$include Structures.vertex.glsl
 
 //$include Uniforms.camera_matrices.glsl

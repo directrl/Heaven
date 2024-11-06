@@ -1,4 +1,6 @@
+using Coelum.Debug;
 using Coelum.LanguageExtensions;
+using Coelum.Phoenix.ECS.Nodes;
 using Coelum.Phoenix.OpenGL;
 using Coelum.Resources;
 using Silk.NET.OpenGL;
@@ -23,6 +25,17 @@ namespace Coelum.Phoenix.Lighting {
 			public override ShaderPass Pass => ShaderPass.RETURN;
 			
 			public override ResourceManager ResourceManager => Module.RESOURCES;
+			
+			public int MaxDirectionalLights { get; set; } = 4;
+			public int MaxLights { get; set; } = 100;
+			
+			public override void Include(ShaderProgram shader) {
+				Tests.Assert(shader.HasOverlays(SceneEnvironment.OVERLAYS),
+				             "Lighting shaders require SceneEnvironment overlays to be present");
+				
+				shader.Define("MAX_DIRECTIONAL_LIGHTS", MaxDirectionalLights);
+				shader.Define("MAX_LIGHTS", MaxLights);
+			}
 		}
 	}
 }

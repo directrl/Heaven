@@ -108,6 +108,16 @@ namespace Coelum.Phoenix.OpenGL {
 		}
 	#endregion
 
+	#region Other preprocessor
+		public void Define<T>(string name, T value) {
+			Tests.Assert(value != null);
+			
+			foreach(var shader in _program) {
+				shader._definitions[name] = value.ToString();
+			}
+		}
+	#endregion
+
 		public void Build() {
 			List<uint> shaderIds = new();
 
@@ -117,7 +127,7 @@ namespace Coelum.Phoenix.OpenGL {
 				var overlays = _overlays.Keys
 				               .Where(overlay => overlay.Type == shader.Type)
 				               .ToArray();
-				shader.Overlays = overlays;
+				shader._overlays = overlays;
 				
 				foreach(var overlay in overlays) {
 					overlay.Include(this);
