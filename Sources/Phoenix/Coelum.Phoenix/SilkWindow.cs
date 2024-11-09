@@ -48,17 +48,17 @@ namespace Coelum.Phoenix {
 				if(_sharedContext == null) {
 					_ = new GlobalOpenGL(SilkImpl.CreateOpenGL());
 					_sharedContext = SilkImpl.GLContext;
+					
+					if(Debugging.Enabled) {
+						GLManager.EnableDebugOutput();
+					}
 				}
 				
 				SilkImpl.MakeCurrent();
 				Gl.Viewport(SilkImpl.FramebufferSize);
-				
-				if(Debugging.Enabled) {
-					GLManager.EnableDebugOutput();
-				}
 
 				Framebuffer = new(SilkImpl);
-				//Input = SilkImpl.CreateInput(); TODO crashes?
+				Input = SilkImpl.CreateInput();
 
 				SilkImpl.IsVisible = true;
 			};

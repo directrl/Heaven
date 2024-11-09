@@ -1,26 +1,45 @@
 using System.Reflection;
 using Coelum.Core;
+using Coelum.Debug;
+using Coelum.Phoenix.Editor.UI;
+using Silk.NET.GLFW;
+using Silk.NET.SDL;
 
 namespace Coelum.Phoenix.Editor {
 	
-	public class EditorApplication : Heaven {
+	public static class EditorApplication {
 
-		public static SilkWindow MainWindow { get; private set; }
-		public static PhoenixScene MainScene { get; private set; }
+	#region UI
+		private static List<SilkWindow> _windows = new();
 		
+		internal static MainUI MainUI { get; private set; }
+		internal static PrefabUI PrefabUI { get; private set; }
+	#endregion
+		
+		public static PhoenixScene TargetScene { get; private set; }
 		public static Assembly TargetAssembly { get; private set; }
-
-		public EditorApplication(Assembly assembly) : base("editor-playground") {
-			TargetAssembly = assembly;
-		}
 		
-		public override void Setup(string[] args) {
-			MainWindow = SilkWindow.Create(debug: true);
+		public static void Start(PhoenixScene targetScene, Assembly targetAssembly) {
+			TargetScene = targetScene;
+			TargetAssembly = targetAssembly;
 
-			MainScene = new EditorScene();
-			MainWindow.Scene = MainScene;
+			Heaven.Windows.RemoveAll(window => _windows.Contains(window));
+			_windows.Clear();
+
+			MainUI = new();
+			PrefabUI = new();
+
+			//CreateWindow(MainUI);
+			CreateWindow(PrefabUI);
+		}
+
+		private static SilkWindow CreateWindow(PhoenixScene scene) {
+			var window = SilkWindow.Create(debug: Debugging.Enabled);
+			window.Scene = scene;
 			
-			Windows.Add(MainWindow);
+			_windows.Add(window);
+			Heaven.Windows.Add(window);
+			return window;
 		}
 	}
 }

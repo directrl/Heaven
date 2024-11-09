@@ -9,22 +9,32 @@ namespace Coelum.Phoenix.UI {
 	
 	public static class ImGuiManager {
 
+		private static List<IntPtr> _initializedWindows = new();
+		private static Dictionary<IntPtr, ImGuiContextPtr> _contexts = new();
+
 		public unsafe static ImGuiContextPtr Setup(SilkWindow window, string iniPath = "imgui.ini") {
-			var ctx = ImGui.CreateContext();
+			if(_contexts.TryGetValue(window.SilkImpl.Handle, out var ctx)) {
+				return ctx;
+			}
+			
+			ctx = ImGui.CreateContext();
 			ImGui.SetCurrentContext(ctx);
 
 			var io = ImGui.GetIO();
 			io.ConfigFlags |= ImGuiConfigFlags.NavEnableKeyboard;
 			io.ConfigFlags |= ImGuiConfigFlags.NavEnableGamepad;
 			io.ConfigFlags |= ImGuiConfigFlags.DockingEnable;
+			io.ConfigFlags |= ImGuiConfigFlags.ViewportsEnable;
 
-			var iniPathBytes = Encoding.UTF8.GetBytes(iniPath);
+			byte[] iniPathBytes = Encoding.UTF8.GetBytes(iniPath);
 			fixed(byte* ptr = iniPathBytes) {
 				io.IniFilename = ptr;
 			}
+
+			IntPtr windowHandle = window.SilkImpl.Handle;
 			
 			ImGLFW.SetCurrentContext(ctx);
-			if(!ImGLFW.InitForOpenGL(new((GLFWwindow*) window.SilkImpl.Handle), true)) {
+			if(!ImGLFW.InitForOpenGL(new((GLFWwindow*) windowHandle), true)) {
 				throw new PlatformException("Failed to initialize an ImGui context");
 			}
 			
@@ -33,6 +43,7 @@ namespace Coelum.Phoenix.UI {
 				throw new PlatformException("Failed to initialize an ImGui context");
 			}
 
+			_contexts[windowHandle] = ctx;
 			return ctx;
 		}
 
@@ -44,7 +55,6 @@ namespace Coelum.Phoenix.UI {
 
 		public static void End() {
 			ImGui.Render();
-			ImGui.EndFrame();
 			ImOpenGL.RenderDrawData(ImGui.GetDrawData());
 		}
 	}

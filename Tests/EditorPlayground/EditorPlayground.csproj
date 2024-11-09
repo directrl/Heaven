@@ -11,4 +11,7 @@
       <ProjectReference Include="..\..\Sources\Phoenix\Coelum.Phoenix.Editor\Coelum.Phoenix.Editor.csproj" />
     </ItemGroup>
 
+  <ItemGroup>
+    <EmbeddedResource Include="..\..\Resources\Playground\**\*"/>
+  </ItemGroup>
 </Project>

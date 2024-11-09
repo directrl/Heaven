@@ -5,6 +5,7 @@ using Hexa.NET.ImGui;
 namespace Coelum.Phoenix.UI {
 	
 	public class ImGuiOverlay : OverlayUI {
+		
 		protected ImGuiContextPtr Context { get; }
 		
 		public ImGuiOverlay(PhoenixScene scene) {
