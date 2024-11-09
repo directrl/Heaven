@@ -1,6 +1,7 @@
 using Coelum.Configuration;
 using Coelum.Debug;
 using Coelum.Common.Graphics;
+using Coelum.Phoenix.GLFW;
 using Coelum.Phoenix.OpenGL;
 using Silk.NET.Core;
 using Silk.NET.Core.Contexts;
@@ -31,12 +32,10 @@ namespace Coelum.Phoenix {
 			}
 			
 			if(OperatingSystem.IsLinux() && !ExperimentalFlags.ForceWayland) {
-				var glfw = Glfw.GetApi();
-				
 				//			  GLFW_PLATFORM			 GLFW_PLATFORM_X11
-				glfw.InitHint((InitHint) 0x00050003, 0x00060004);
+				GlFw.InitHint((InitHint) 0x00050003, 0x00060004);
 
-				if(!glfw.Init()) {
+				if(!GlFw.Init()) {
 					throw new PlatformException("Could not initialize GLFW");
 				}
 			}

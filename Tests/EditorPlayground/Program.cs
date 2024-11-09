@@ -1,3 +1,4 @@
-﻿using Coelum.Phoenix.Editor;
+﻿using System.Reflection;
+using Coelum.Phoenix.Editor;
 
-new EditorApplication().Start(args);
+new EditorApplication(Assembly.GetExecutingAssembly()).Start(args);
