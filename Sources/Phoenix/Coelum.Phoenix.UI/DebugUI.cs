@@ -1,5 +1,6 @@
+using System.Numerics;
 using Coelum.ECS;
-using ImGuiNET;
+using Hexa.NET.ImGui;
 
 namespace Coelum.Phoenix.UI {
 	
@@ -8,7 +9,7 @@ namespace Coelum.Phoenix.UI {
 		public delegate void AdditionalInfoEventHandler(float delta, params dynamic[] args);
 		
 		public event AdditionalInfoEventHandler? AdditionalInfo;
-
+		
 		private const int ECS_SYSTEM_TIME_RESOLUTION = 512;
 
 		private readonly PhoenixScene _scene;
@@ -16,11 +17,10 @@ namespace Coelum.Phoenix.UI {
 
 		public DebugUI(PhoenixScene scene) : base(scene) {
 			_scene = scene;
+			Render += RenderImpl;
 		}
 
-		public override void OnRender(float delta, params dynamic[] args) {
-			Controller.Update(delta);
-
+		private void RenderImpl(float delta, params dynamic[] args) {
 			if(ImGui.Begin("Standard Debug UI", ImGuiWindowFlags.AlwaysAutoResize)) {
 				ImGui.BeginTabBar("std");
 
@@ -77,6 +77,7 @@ namespace Coelum.Phoenix.UI {
 				}
 				
 				ImGui.EndTabBar();
+				ImGui.End();
 			}
 
 			if(ImGui.Begin("ECS Debug", ImGuiWindowFlags.AlwaysAutoResize)) {
@@ -85,7 +86,7 @@ namespace Coelum.Phoenix.UI {
 				if(ImGui.BeginTabItem("General")) {
 					ImGui.Text($"Children count: {_scene.ChildCount}");
 
-					if(ImGui.BeginChild("children", new(400, 300), true,
+					if(ImGui.BeginChild("children", new Vector2(400, 300),
 					                    ImGuiWindowFlags.AlwaysVerticalScrollbar
 					                    | ImGuiWindowFlags.HorizontalScrollbar)) {
 						
@@ -132,7 +133,7 @@ namespace Coelum.Phoenix.UI {
 
 						      ImGui.PlotHistogram($"{timeUs:F2}us",
 						                          ref _ecsSystems[system].Times[0], ECS_SYSTEM_TIME_RESOLUTION, 0, 
-						                          "", 0, debugData.MaxTime, new(500, 50));
+						                          "", 0, debugData.MaxTime, new Vector2(500, 50));
 						      
 						      if(!system.Enabled) {
 							      for(int i = 0; i <= 2; i++) {
@@ -151,9 +152,8 @@ namespace Coelum.Phoenix.UI {
 				      .Execute();
 				
 				ImGui.EndTabBar();
+				ImGui.End();
 			}
-		
-			Controller.Render();
 		}
 	}
 }

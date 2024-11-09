@@ -1,17 +1,11 @@
 using Coelum.Configuration;
 using Coelum.Phoenix.OpenGL;
-using ImGuiNET;
-using Silk.NET.OpenGL.Extensions.ImGui;
-using Silk.NET.Windowing;
-using static Coelum.Phoenix.OpenGL.GlobalOpenGL;
+using Hexa.NET.ImGui;
 
 namespace Coelum.Phoenix.UI {
 	
 	public class ImGuiOverlay : OverlayUI {
-
-		private readonly string _iniPath;
-		
-		protected ImGuiController Controller { get; }
+		protected ImGuiContextPtr Context { get; }
 		
 		public ImGuiOverlay(PhoenixScene scene) {
 			if(scene.Window?.Input == null) {
@@ -19,30 +13,26 @@ namespace Coelum.Phoenix.UI {
 					+ "Are you creating an overlay in the constructor instead of in Load()?");
 			}
 			
-			_iniPath = scene.Options.ConfigFile.FullName.Replace(GameOptions.FORMAT, ".imgui.ini");
-			
-			Controller = new(Gl, scene.Window.SilkImpl, scene.Window.Input, onConfigureIO: () => {
-				ImGuiManager.SetDefaults(ImGui.GetIO(), _iniPath);
-			});
+			var iniPath = scene.Options.ConfigFile.FullName.Replace(GameOptions.FORMAT, ".imgui.ini");
+			Context = ImGuiManager.Setup(scene.Window, iniPath);
 
 			scene.Render += delta => {
-				scene.Window.SilkImpl.MakeCurrent();
-				Controller.MakeCurrent();
-				ImGui.SetCurrentContext(Controller.Context);
 				OnRender(delta);
 			};
 			
 			scene.Unload += () => {
-				var ctx = Controller.Context;
-				ImGui.SetCurrentContext(ctx);
-				ImGui.SaveIniSettingsToDisk(_iniPath);
+				ImGui.SetCurrentContext(Context);
+				ImGui.SaveIniSettingsToDisk(iniPath);
 			};
 		}
 
 		public override void OnRender(float delta, params dynamic[] args) {
-			Controller.Update(delta);
+			ImGui.SetCurrentContext(Context);
+			ImGuiManager.Begin();
+			
 			base.OnRender(delta, args);
-			Controller.Render();
+			
+			ImGuiManager.End();
 		}
 	}
 }
