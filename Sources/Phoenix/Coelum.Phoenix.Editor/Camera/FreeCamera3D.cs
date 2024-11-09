@@ -64,6 +64,8 @@ namespace Coelum.Phoenix.Editor.Camera {
 						: CursorMode.Disabled;
 			}
 
+			if(_cursorEnabled) return;
+
 			if(_cameraUp.Down) {
 				// TODO make it possible to only query by child class e.g. GetComponent<Transform3D>
 				Camera.GetComponent<Transform, Transform3D>().Position += new Vector3(0, CameraSpeed * delta, 0);
@@ -88,6 +90,9 @@ namespace Coelum.Phoenix.Editor.Camera {
 			if(_cameraRight.Down) {
 				Camera.MoveRight(CameraSpeed * delta);
 			}
+			
+			Console.WriteLine(Camera.GetComponent<Transform, Transform3D>().Position);
+			Console.WriteLine(Camera.GetComponent<Transform, Transform3D>().Rotation);
 		}
 		
 		private void OnMouseMove(Vector2 mousePosition) {

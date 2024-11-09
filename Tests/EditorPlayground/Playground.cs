@@ -2,7 +2,7 @@ using Coelum.Core;
 using Coelum.Debug;
 using Coelum.Phoenix;
 using Coelum.Phoenix.Editor;
-using EditorPlayground.Scenes;
+using Coelum.Phoenix.Editor.Scenes;
 
 namespace EditorPlayground {
 	
@@ -15,8 +15,6 @@ namespace EditorPlayground {
 			window.Scene = new EmptyScene();
 			
 			Windows.Add(window);
-			
-			EditorApplication.Start((PhoenixScene) window.Scene, GetType().Assembly);
 		}
 	}
 }

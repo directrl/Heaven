@@ -25,11 +25,13 @@ namespace Coelum.Phoenix {
 		public Color ClearColor { get; protected set; } = Color.Black;
 		public Framebuffer? Framebuffer { get; set; }
 		public ShaderProgram PrimaryShader { get; protected set; }
+		
+		protected ShaderOverlay[][]? ShaderOverlays { get; set; }
 
 		public new SilkWindow? Window
 			=> base.Window == null ? null : (SilkWindow) base.Window;
 
-		protected CameraBase? CurrentCamera {
+		public CameraBase? CurrentCamera {
 			get {
 				CameraBase? currentCamera = null;
 				
@@ -45,7 +47,13 @@ namespace Coelum.Phoenix {
 			}
 		}
 		
-		protected PhoenixScene(string id) : base(id) {
+		protected PhoenixScene(string id) : base(id) { }
+
+		public virtual void OnLoad(SilkWindow window) {
+			base.Window = window;
+		}
+		
+		public override void OnLoad(WindowBase window) {
 			PrimaryShader = new(
 				Module.RESOURCES,
 				new(ShaderType.FragmentShader,
@@ -53,10 +61,17 @@ namespace Coelum.Phoenix {
 				new(ShaderType.VertexShader,
 				    Module.RESOURCES[ResourceType.SHADER, "scene.vert"])
 			);
-		}
 
-		public virtual void OnLoad(SilkWindow window) { }
-		public override void OnLoad(WindowBase window) {
+			if(ShaderOverlays != null) {
+				foreach(var o in ShaderOverlays) {
+					PrimaryShader.AddOverlays(o);
+				}
+			}
+			
+			ClearSystems();
+			ClearNodes();
+			base.OnLoad(window);
+			
 			if(!PrimaryShader._ready) {
 				PrimaryShader.Validate();
 				PrimaryShader.Build();
@@ -64,16 +79,12 @@ namespace Coelum.Phoenix {
 			
 			PrimaryShader.Bind();
 			
-			ClearSystems();
-			ClearNodes();
-			base.OnLoad(window);
-			
 			Tests.Assert(window is SilkWindow, "Phoenix renderer scenes work only with" +
 			             "Phoenix renderer windows!");
 			OnLoad((SilkWindow) window);
 			
 			AddSystem("RenderPre", new CameraSystem(PrimaryShader));
-			AddSystem("RenderPre", new RenderSystem(PrimaryShader));
+			AddSystem("RenderPost", new RenderSystem(PrimaryShader));
 			AddSystem("UpdatePost", new TransformSystem());
 			
 			if(PrimaryShader.HasOverlays(PhongShading.OVERLAYS)

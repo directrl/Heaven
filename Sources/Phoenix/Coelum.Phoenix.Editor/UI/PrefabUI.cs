@@ -6,47 +6,41 @@ using Coelum.Phoenix.Input;
 using Coelum.Phoenix.UI;
 using Hexa.NET.ImGui;
 using Silk.NET.GLFW;
+using Silk.NET.Windowing;
 using Silk.NET.Windowing.Glfw;
 using static Coelum.Phoenix.GLFW.GlobalGLFW;
 
 namespace Coelum.Phoenix.Editor.UI {
 	
-	public class PrefabUI : ImGuiScene {
+	public class PrefabUI : ImGuiOverlay {
 		
 		public PrefabManager Prefabs { get; }
 
-		public PrefabUI() : base("editor-ui_prefabs") {
+		public PrefabUI(PhoenixScene scene) : base(scene) {
 			Prefabs = new(EditorApplication.TargetScene, EditorApplication.TargetAssembly);
-		}
+			Prefabs.AddAssembly(typeof(PrefabUI).Assembly);
 
-		public override void OnLoad(SilkWindow window) {
-			base.OnLoad(window);
-
-			window.SilkImpl.Title = "Editor: Prefabs";
-		}
-
-		public override void RenderUI(float delta) {
-			base.RenderUI(delta);
-			
-			if(ImGui.Begin("Prefabs")) {
-				int i = 0;
+			Render += (delta, args) => {
+				if(ImGui.Begin("Prefabs")) {
+					int i = 0;
 				
-				foreach((var name, var prefab) in Prefabs.Prefabs) {
-					if(ImGui.Button(name)) {
-						EditorApplication.TargetScene.Add(prefab.Create(this));
-						i++;
-					}
+					foreach((var name, var prefab) in Prefabs.Prefabs) {
+						if(ImGui.Button(name)) {
+							EditorApplication.TargetScene.Add(prefab.Create(scene));
+							i++;
+						}
 			
-					if(i > 9) {
-						i = 0;
-						continue;
-					}
+						if(i > 9) {
+							i = 0;
+							continue;
+						}
 						
-					ImGui.SameLine();
-				}
+						ImGui.SameLine();
+					}
 					
-				ImGui.End();
-			}
+					ImGui.End();
+				}
+			};
 		}
 	}
 }

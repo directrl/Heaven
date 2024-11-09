@@ -93,15 +93,5 @@ namespace Coelum.ECS {
 		public List<Node>? Get<TComponent>() where TComponent : INodeComponent {
 			return _componentNodeMap.GetValueOrDefault(typeof(TComponent));
 		}
-
-		public Query<string, List<EcsSystem>> QuerySystems() {
-			return new(
-				each => {
-					foreach((var phase, var systems) in _systems) {
-						each?.Invoke(phase, systems);
-					}
-				}
-			);
-		}
 	}
 }

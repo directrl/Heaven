@@ -14,8 +14,8 @@ namespace Coelum.Phoenix.Editor.Prefabs {
 				throw new ArgumentException("root must be a PhoenixScene", nameof(root));
 			}
 			
-			return new PerspectiveCamera3D() {
-				Camera = new PerspectiveCamera(scene.Window)
+			return new PerspectiveCamera(scene.Window) {
+				Current = true
 			};
 		}
 	}

@@ -6,7 +6,7 @@ namespace Coelum.Phoenix.UI {
 	
 	public class ImGuiOverlay : OverlayUI {
 		
-		protected ImGuiContextPtr Context { get; }
+		public ImGuiContextPtr Context { get; }
 		
 		public ImGuiOverlay(PhoenixScene scene) {
 			if(scene.Window?.Input == null) {
@@ -27,13 +27,15 @@ namespace Coelum.Phoenix.UI {
 			};
 		}
 
+		// TODO merge all this dumb fucking UI shit into the main package
+		// TODO and call all the new frame garbage shit in the scene render method
+		// TODO by default because this fucking sucks and fucking breaks with more
+		// TODO than one overlay so we have to move it somewhere outside of the actual
+		// TODO overlay class but fucking where?????
 		public override void OnRender(float delta, params dynamic[] args) {
-			ImGui.SetCurrentContext(Context);
-			ImGuiManager.Begin();
-			
+			//ImGuiManager.Begin(Context);
 			base.OnRender(delta, args);
-			
-			ImGuiManager.End();
+			//ImGuiManager.End(Context);
 		}
 	}
 }
