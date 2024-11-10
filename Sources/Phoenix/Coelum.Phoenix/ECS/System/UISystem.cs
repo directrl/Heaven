@@ -22,6 +22,7 @@ namespace Coelum.Phoenix.ECS.System {
 			imController.Update(delta);
 			
 			foreach(var overlay in scene.UIOverlays) {
+				if(!overlay.Visible) continue;
 				overlay.Render(delta);
 			}
 			

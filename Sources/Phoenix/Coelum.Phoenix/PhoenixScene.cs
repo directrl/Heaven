@@ -77,11 +77,10 @@ namespace Coelum.Phoenix {
 			             "Phoenix renderer windows!");
 			OnLoad((SilkWindow) window);
 			
-			//AddSystem("RenderPre", new CameraSystem(PrimaryShader));
+			AddSystem("RenderPre", new TransformSystem());
 			AddSystem("RenderPost", new ObjectRenderSystem(PrimaryShader));
 			AddSystem("RenderPost", new UISystem());
 			AddSystem("Render", new ViewportRenderSystem(PrimaryShader, DoRender));
-			AddSystem("UpdatePost", new TransformSystem());
 			
 			if(PrimaryShader.HasOverlays(PhongShading.OVERLAYS)
 			   || PrimaryShader.HasOverlays(GouraudShading.OVERLAYS)) {

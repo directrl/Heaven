@@ -1,4 +1,5 @@
 using System.Numerics;
+using Coelum.Debug;
 using Coelum.ECS;
 using Hexa.NET.ImGui;
 
@@ -23,10 +24,13 @@ namespace Coelum.Phoenix.UI {
 		public DebugOverlay(PhoenixScene scene, PhoenixScene? targetScene = null) : base(scene) {
 			targetScene ??= scene;
 			TargetScene = targetScene;
+
+			if(!Debugging.Enabled) Visible = false;
 		}
 
 		public override void Render(float delta) {
-			if(ImGui.Begin("Standard Debug UI", ImGuiWindowFlags.AlwaysAutoResize)) {
+			ImGui.Begin("Standard Debug UI", ImGuiWindowFlags.AlwaysAutoResize);
+			{
 				ImGui.BeginTabBar("std");
 
 				if(ImGui.BeginTabItem("Scene")) {
@@ -82,27 +86,27 @@ namespace Coelum.Phoenix.UI {
 				}
 				
 				ImGui.EndTabBar();
-				ImGui.End();
 			}
+			ImGui.End();
 
-			if(ImGui.Begin("ECS Debug", ImGuiWindowFlags.AlwaysAutoResize)) {
+			ImGui.Begin("ECS Debug", ImGuiWindowFlags.AlwaysAutoResize);
+			{
 				ImGui.BeginTabBar("ecs");
 
 				if(ImGui.BeginTabItem("General")) {
 					ImGui.Text($"Children count: {TargetScene.ChildCount}");
 
-					if(ImGui.BeginChild("children", new Vector2(400, 300),
-					                               ImGuiWindowFlags.AlwaysVerticalScrollbar
-					                               | ImGuiWindowFlags.HorizontalScrollbar)) {
-						
+					ImGui.BeginChild("children", new Vector2(400, 300),
+					                 ImGuiWindowFlags.AlwaysVerticalScrollbar
+					                 | ImGuiWindowFlags.HorizontalScrollbar);
+					{
 						TargetScene.QueryChildren()
 						      .Each(node => {
 							      ImGui.Text($"{node.Id}: {node.Path} ({node})");
 						      })
 						      .Execute();
-					
-						ImGui.EndChild();
 					}
+					ImGui.EndChild();
 					
 					ImGui.EndTabItem();
 				}
@@ -157,8 +161,8 @@ namespace Coelum.Phoenix.UI {
 				      .Execute();
 				
 				ImGui.EndTabBar();
-				ImGui.End();
 			}
+			ImGui.End();
 		}
 	}
 }

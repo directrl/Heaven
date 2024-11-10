@@ -21,6 +21,7 @@ namespace Coelum.Phoenix.Editor {
 		}
 		
 		public static SilkWindow MainWindow { get; private set; }
+		public static EditorScene MainScene { get; private set; }
 
 		public EditorApplication(Assembly assembly, PhoenixScene scene) : base(Id) {
 			TargetAssembly = assembly;
@@ -31,7 +32,7 @@ namespace Coelum.Phoenix.Editor {
 
 		public override void Setup(string[] args) {
 			MainWindow = SilkWindow.Create(debug: Debugging.Enabled);
-			MainWindow.Scene = new EditorScene();
+			MainWindow.Scene = MainScene = new();
 			
 			Windows.Add(MainWindow);
 		}

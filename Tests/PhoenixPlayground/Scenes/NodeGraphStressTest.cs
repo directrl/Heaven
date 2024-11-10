@@ -58,8 +58,10 @@ namespace PhoenixPlayground.Scenes {
 		#endregion
 			
 			this.SetupKeyBindings(_keyBindings);
-			
-			PrimaryShader.AddOverlays(Material.OVERLAYS);
+
+			ShaderOverlays = new[] {
+				Material.OVERLAYS
+			};
 
 			_moveStressTest = new("move test", (root, delta) => {
 				root.Query<Transform>()

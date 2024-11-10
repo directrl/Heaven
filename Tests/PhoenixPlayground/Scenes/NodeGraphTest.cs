@@ -39,7 +39,9 @@ namespace PhoenixPlayground.Scenes {
 			
 			this.SetupKeyBindings(_keyBindings);
 			
-			PrimaryShader.AddOverlays(Material.OVERLAYS);
+			ShaderOverlays = new[] {
+				Material.OVERLAYS
+			};
 		}
 
 		public override void OnLoad(SilkWindow window) {

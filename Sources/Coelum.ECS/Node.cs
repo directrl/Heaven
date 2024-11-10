@@ -8,21 +8,7 @@ namespace Coelum.ECS {
 		private static readonly Random _RANDOM = new();
 		
 		public ulong Id { get; internal set; }
-		
 		public bool Hidden { get; set; }
-		
-		// private string _name = new string(Enumerable.Repeat("abcdefghijklmnopqrstuvwxyz", 8)
-		//                                             .Select(s => s[_RANDOM.Next(s.Length)])
-		//                                             .ToArray());
-		//
-		// public string Name {
-		// 	get => _name;
-		// 	set {
-		// 		Root.Remove(this);
-		// 		_name = value;
-		// 		Root.Add(this);
-		// 	}
-		// }
 		
 		public string Name { get; init; } = new string(Enumerable.Repeat("abcdefghijklmnopqrstuvwxyz", 8)
 																 .Select(s => s[_RANDOM.Next(s.Length)])

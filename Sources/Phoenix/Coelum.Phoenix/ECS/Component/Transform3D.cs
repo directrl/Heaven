@@ -14,13 +14,13 @@ namespace Coelum.Phoenix.ECS.Component {
 		}
 
 		public float Pitch {
-			get => Rotation.X;
-			set => Rotation.X = value;
+			get => Rotation.Z;
+			set => Rotation.Z = value;
 		}
 
 		public float Roll {
-			get => Rotation.Z;
-			set => Rotation.Z = value;
+			get => Rotation.X;
+			set => Rotation.X = value;
 		}
 
 		public Vector3 GlobalPosition {

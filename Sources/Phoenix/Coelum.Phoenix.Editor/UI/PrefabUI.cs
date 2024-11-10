@@ -22,7 +22,8 @@ namespace Coelum.Phoenix.Editor.UI {
 		}
 
 		public override void Render(float delta) {
-			if(ImGui.Begin("Prefabs")) {
+			ImGui.Begin("Prefabs");
+			{
 				int i = 0;
 				
 				foreach((var name, var prefab) in Prefabs.Prefabs) {
@@ -38,9 +39,8 @@ namespace Coelum.Phoenix.Editor.UI {
 						
 					ImGui.SameLine();
 				}
-					
-				ImGui.End();
 			}
+			ImGui.End();
 		}
 	}
 }

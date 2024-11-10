@@ -26,6 +26,7 @@ namespace Coelum.Phoenix.Editor.Camera {
 		
 		private Vector2 _lastCursorPosition;
 		private bool _cursorEnabled = true;
+		private bool _cursorRecovery = false;
 
 		private PhoenixScene _scene;
 		
@@ -62,6 +63,8 @@ namespace Coelum.Phoenix.Editor.Camera {
 					_cursorEnabled 
 						? CursorMode.Normal 
 						: CursorMode.Disabled;
+
+				if(!_cursorEnabled) _cursorRecovery = true;
 			}
 
 			if(_cursorEnabled) return;
@@ -94,6 +97,10 @@ namespace Coelum.Phoenix.Editor.Camera {
 		
 		private void OnMouseMove(Vector2 mousePosition) {
 			if(_cursorEnabled) return;
+			if(_cursorRecovery) {
+				_lastCursorPosition = mousePosition;
+				_cursorRecovery = false;
+			}
 			
 			if(_lastCursorPosition == default) {
 				_lastCursorPosition = mousePosition;
