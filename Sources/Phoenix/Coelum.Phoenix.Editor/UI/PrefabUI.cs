@@ -12,35 +12,35 @@ using static Coelum.Phoenix.GLFW.GlobalGLFW;
 
 namespace Coelum.Phoenix.Editor.UI {
 	
-	public class PrefabUI : ImGuiOverlay {
+	public class PrefabUI : ImGuiUI {
 		
 		public PrefabManager Prefabs { get; }
 
 		public PrefabUI(PhoenixScene scene) : base(scene) {
 			Prefabs = new(EditorApplication.TargetScene, EditorApplication.TargetAssembly);
 			Prefabs.AddAssembly(typeof(PrefabUI).Assembly);
+		}
 
-			Render += (delta, args) => {
-				if(ImGui.Begin("Prefabs")) {
-					int i = 0;
+		public override void Render(float delta) {
+			if(ImGui.Begin("Prefabs")) {
+				int i = 0;
 				
-					foreach((var name, var prefab) in Prefabs.Prefabs) {
-						if(ImGui.Button(name)) {
-							EditorApplication.TargetScene.Add(prefab.Create(scene));
-							i++;
-						}
-			
-						if(i > 9) {
-							i = 0;
-							continue;
-						}
-						
-						ImGui.SameLine();
+				foreach((var name, var prefab) in Prefabs.Prefabs) {
+					if(ImGui.Button(name)) {
+						EditorApplication.TargetScene.Add(prefab.Create(EditorApplication.TargetScene));
+						i++;
 					}
-					
-					ImGui.End();
+			
+					if(i > 9) {
+						i = 0;
+						continue;
+					}
+						
+					ImGui.SameLine();
 				}
-			};
+					
+				ImGui.End();
+			}
 		}
 	}
 }

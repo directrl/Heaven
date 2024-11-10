@@ -19,8 +19,6 @@ namespace PhoenixPlayground.Scenes {
 		
 		private static readonly Random RANDOM = new();
 		
-		private DebugUI _overlay;
-		
 		private Mesh? _mesh;
 
 		private KeyBindings _keyBindings;
@@ -94,8 +92,8 @@ namespace PhoenixPlayground.Scenes {
 				//c3.Add(c1);
 			}
 
-			_overlay = new DebugUI(this);
-			_overlay.AdditionalInfo += (delta, args) => {
+			var debugOverlay = new DebugOverlay(this);
+			debugOverlay.AdditionalInfo += (delta) => {
 				ImGui.Separator();
 
 				var camera = (Camera3D) CurrentCamera;
@@ -124,6 +122,8 @@ namespace PhoenixPlayground.Scenes {
 					ImGui.End();
 				}
 			};
+			
+			UIOverlays.Add(debugOverlay);
 
 			window.GetMice()[0].MouseMove += (_, pos) => {
 				var camera = CurrentCamera;

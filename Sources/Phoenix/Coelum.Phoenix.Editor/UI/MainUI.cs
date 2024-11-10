@@ -3,14 +3,14 @@ using Hexa.NET.ImGui;
 
 namespace Coelum.Phoenix.Editor.UI {
 	
-	public class MainUI : ImGuiOverlay {
+	public class MainUI : ImGuiUI {
 
-		public MainUI(PhoenixScene scene) : base(scene) {
-			Render += (delta, args) => {
-				if(ImGui.BeginMainMenuBar()) {
-					ImGui.EndMainMenuBar();
-				}
-			};
+		public MainUI(PhoenixScene scene) : base(scene) { }
+
+		public override void Render(float delta) {
+			if(ImGui.BeginMainMenuBar()) {
+				ImGui.EndMainMenuBar();
+			}
 		}
 	}
 }

@@ -15,7 +15,6 @@
     <ProjectReference Include="..\..\Sources\Phoenix\Coelum.Phoenix.Input\Coelum.Phoenix.Input.csproj" />
     <ProjectReference Include="..\..\Sources\Phoenix\Coelum.Phoenix\Coelum.Phoenix.csproj" />
     <ProjectReference Include="..\..\Sources\Phoenix\Coelum.Phoenix.ModelLoading\Coelum.Phoenix.ModelLoading.csproj" />
-    <ProjectReference Include="..\..\Sources\Phoenix\Coelum.Phoenix.UI\Coelum.Phoenix.UI.csproj" />
   </ItemGroup>
   
   <ItemGroup>

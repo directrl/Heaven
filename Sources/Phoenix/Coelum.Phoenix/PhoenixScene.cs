@@ -7,6 +7,7 @@ using Coelum.Phoenix.ECS.System;
 using Coelum.Phoenix.Lighting;
 using Coelum.Phoenix.OpenGL;
 using Coelum.Phoenix.OpenGL.UBO;
+using Coelum.Phoenix.UI;
 using Coelum.Resources;
 using Silk.NET.Maths;
 using Silk.NET.OpenGL;
@@ -16,11 +17,10 @@ namespace Coelum.Phoenix {
 	public abstract class PhoenixScene : SceneBase {
 
 		public Color ClearColor { get; protected set; } = Color.Black;
-		public Framebuffer? Framebuffer { get; set; }
 		public ShaderProgram PrimaryShader { get; protected set; }
-		public Viewport? Viewport { get; set; }
 		
-		protected ShaderOverlay[][]? ShaderOverlays { get; set; }
+		public ShaderOverlay[][]? ShaderOverlays { get; protected set; }
+		public List<OverlayUI> UIOverlays { get; protected set; } = new();
 
 		public new SilkWindow? Window
 			=> base.Window == null ? null : (SilkWindow) base.Window;
@@ -79,6 +79,7 @@ namespace Coelum.Phoenix {
 			
 			//AddSystem("RenderPre", new CameraSystem(PrimaryShader));
 			AddSystem("RenderPost", new ObjectRenderSystem(PrimaryShader));
+			AddSystem("RenderPost", new UISystem());
 			AddSystem("Render", new ViewportRenderSystem(PrimaryShader, DoRender));
 			AddSystem("UpdatePost", new TransformSystem());
 			

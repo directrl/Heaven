@@ -12,9 +12,17 @@ namespace Coelum.ECS {
 			);
 		}
 
-		public T? QuerySystem<T>(string phase) where T : EcsSystem {
-			foreach(var system in _systems[phase]) {
-				if(system is T t) return t;
+		public T? QuerySystem<T>(string? phase = null) where T : EcsSystem {
+			if(phase != null) {
+				foreach(var system in _systems[phase]) {
+					if(system is T t) return t;
+				}
+			} else {
+				foreach(var (_, systems) in _systems) {
+					foreach(var system in systems) {
+						if(system is T t) return t;
+					}
+				}
 			}
 
 			return null;

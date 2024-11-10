@@ -15,21 +15,6 @@ namespace Coelum.Phoenix.Editor {
 	
 	public class OutputScene : PhoenixScene {
 
-		public class FunnyCameraSystem : EcsSystem {
-
-			public FunnyCameraSystem(ShaderProgram sh1, ShaderProgram sh2) : base("funny cmaera system") {
-				Action = (root, delta) => {
-					var cm1 = sh1.GetUBO<CameraMatrices>();
-					var cm2 = sh2.GetUBO<CameraMatrices>();
-
-					cm2.Projection = cm1.Projection;
-					cm2.View = cm1.View;
-					cm2.CameraPos = cm1.CameraPos;
-					cm2.Upload();
-				};
-			}
-		}
-
 		private PhoenixScene _scene;
 		private bool _editorCamera;
 

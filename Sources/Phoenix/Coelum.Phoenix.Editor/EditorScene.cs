@@ -2,6 +2,7 @@ using Coelum.Common.Graphics;
 using Coelum.Common.Input;
 using Coelum.Phoenix.Camera;
 using Coelum.Phoenix.ECS.Component;
+using Coelum.Phoenix.ECS.System;
 using Coelum.Phoenix.Editor.Camera;
 using Coelum.Phoenix.Editor.UI;
 using Coelum.Phoenix.Input;
@@ -46,11 +47,18 @@ namespace Coelum.Phoenix.Editor {
 		#region UI
 			MainUI = new(this);
 			PrefabUI = new(this);
-			OutputViewUI = new(this, EditorView);
+			EditorViewUI = new(this, EditorView);
 			OutputViewUI = new(this, OutputView, false);
 
-			var debugUi = new DebugUI(this) { Scene = EditorApplication.TargetScene };
-			debugUi.AdditionalInfo += (_, _) => {
+			UIOverlays.AddRange(new OverlayUI[] {
+				MainUI,
+				PrefabUI,
+				EditorViewUI,
+				OutputViewUI
+			});
+
+			var debugOverlay = new DebugOverlay(this, EditorApplication.TargetScene);
+			debugOverlay.AdditionalInfo += (_) => {
 				if(EditorView.CurrentCamera is Camera3D c3d) {
 					var t3d = c3d.GetComponent<Transform, Transform3D>();
 					
@@ -58,6 +66,8 @@ namespace Coelum.Phoenix.Editor {
 					ImGui.Text($"Camera rotation: {t3d.Rotation}");
 				}
 			};
+			
+			UIOverlays.Add(debugOverlay);
 		#endregion
 
 			// var camera = new PerspectiveCamera() {
@@ -75,7 +85,11 @@ namespace Coelum.Phoenix.Editor {
 				                 }
 			                 })
 			                 .Execute();
-			
+
+			// disable any UI on the target scene
+			var uiSystem = EditorApplication.TargetScene.QuerySystem<UISystem>();
+			if(uiSystem != null) uiSystem.Enabled = false;
+
 			EditorView.OnLoad((WindowBase) window);
 			OutputView.OnLoad((WindowBase) window);
 			
@@ -99,23 +113,23 @@ namespace Coelum.Phoenix.Editor {
 		}
 
 		public override void OnRender(float delta) {
-			ImGuiManager.Begin(MainUI.Context);
+			//ImGuiManager.Begin(MainUI.Context);
 			
-			ImGui.PushID("editor");
+			//ImGui.PushID("editor");
 			base.OnRender(delta);
-			ImGui.PopID();
+			//ImGui.PopID();
 			
-			ImGui.PushID("editor-view");
+			//ImGui.PushID("editor-view");
 			EditorView.OnRender(delta);
-			ImGui.PopID();
+			//ImGui.PopID();
 			
-			ImGui.PushID("output-view");
+			//ImGui.PushID("output-view");
 			OutputView.OnRender(delta);
-			ImGui.PopID();
+			//ImGui.PopID();
 			
 			Window.Framebuffer.Bind();
 			
-			ImGuiManager.End(MainUI.Context);
+			//ImGuiManager.End(MainUI.Context);
 		}
 	}
 }

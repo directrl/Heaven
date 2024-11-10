@@ -4,40 +4,40 @@ using Hexa.NET.ImGui;
 
 namespace Coelum.Phoenix.UI {
 	
-	public class DebugUI : ImGuiOverlay {
-		
-		private const int ECS_SYSTEM_TIME_RESOLUTION = 512;
+	public class DebugOverlay : ImGuiUI {
 
 	#region Delegates
-		public delegate void AdditionalInfoEventHandler(float delta, params dynamic[] args);
+		public delegate void AdditionalInfoEventHandler(float delta);
 	#endregion
 
 	#region Events
 		public event AdditionalInfoEventHandler? AdditionalInfo;
 	#endregion
+		
+		private const int ECS_SYSTEM_TIME_RESOLUTION = 512;
 
 		private readonly Dictionary<EcsSystem, (float MaxTime, float[] Times)> _ecsSystems = new();
 		
-		public PhoenixScene Scene { get; set; }
+		public PhoenixScene TargetScene { get; init; }
 
-		public DebugUI(PhoenixScene scene) : base(scene) {
-			Scene = scene;
-			Render += RenderImpl;
+		public DebugOverlay(PhoenixScene scene, PhoenixScene? targetScene = null) : base(scene) {
+			targetScene ??= scene;
+			TargetScene = targetScene;
 		}
 
-		private void RenderImpl(float delta, params dynamic[] args) {
+		public override void Render(float delta) {
 			if(ImGui.Begin("Standard Debug UI", ImGuiWindowFlags.AlwaysAutoResize)) {
 				ImGui.BeginTabBar("std");
 
 				if(ImGui.BeginTabItem("Scene")) {
-					ImGui.Text($"Children count: {Scene.ChildCount}");
+					ImGui.Text($"Children count: {TargetScene.ChildCount}");
 
 					if(ImGui.Button("Reload scene")) {
-						var window = Scene.Window;
+						var window = TargetScene.Window;
 
 						if(window != null) {
 							window.Scene = null;
-							Scene.PrimaryShader.Rebuild();
+							TargetScene.PrimaryShader.Rebuild();
 							window.Scene = Scene;
 						}
 					}
@@ -46,9 +46,9 @@ namespace Coelum.Phoenix.UI {
 				}
 
 				if(ImGui.BeginTabItem("Deltas")) {
-					float rndMs = (Scene.Window?.RenderDelta ?? 0) * 1000;
-					float updMs = (Scene.Window?.UpdateDelta ?? 0) * 1000;
-					float fxUpdMs = (Scene.Window?.FixedUpdateDelta ?? 0) * 1000;
+					float rndMs = (TargetScene.Window?.RenderDelta ?? 0) * 1000;
+					float updMs = (TargetScene.Window?.UpdateDelta ?? 0) * 1000;
+					float fxUpdMs = (TargetScene.Window?.FixedUpdateDelta ?? 0) * 1000;
 				
 					ImGui.Text($"Render delta: {rndMs:F2}ms ({(1000 / rndMs):F2} FPS)");
 					ImGui.Text($"Update delta: {updMs:F2}ms ({(1000 / updMs):F2} FPS)");
@@ -57,15 +57,15 @@ namespace Coelum.Phoenix.UI {
 				}
 
 				if(ImGui.BeginTabItem("Shaders")) {
-					foreach((var overlay, bool enabled) in Scene.PrimaryShader.Overlays) {
+					foreach((var overlay, bool enabled) in TargetScene.PrimaryShader.Overlays) {
 						if(!overlay.HasCall) continue;
 						
 						// TODO why does this stop working after reloading the scene?
 						if(ImGui.Button($"{overlay.Name} ({overlay.Type})")) {
 							if(enabled) {
-								Scene.PrimaryShader.DisableOverlays(overlay);
+								TargetScene.PrimaryShader.DisableOverlays(overlay);
 							} else {
-								Scene.PrimaryShader.EnableOverlays(overlay);
+								TargetScene.PrimaryShader.EnableOverlays(overlay);
 							}
 						}
 						
@@ -77,7 +77,7 @@ namespace Coelum.Phoenix.UI {
 				}
 
 				if(ImGui.BeginTabItem("Additional")) {
-					AdditionalInfo?.Invoke(delta, args);
+					AdditionalInfo?.Invoke(delta);
 					ImGui.EndTabItem();
 				}
 				
@@ -89,13 +89,13 @@ namespace Coelum.Phoenix.UI {
 				ImGui.BeginTabBar("ecs");
 
 				if(ImGui.BeginTabItem("General")) {
-					ImGui.Text($"Children count: {Scene.ChildCount}");
+					ImGui.Text($"Children count: {TargetScene.ChildCount}");
 
 					if(ImGui.BeginChild("children", new Vector2(400, 300),
-					                    ImGuiWindowFlags.AlwaysVerticalScrollbar
-					                    | ImGuiWindowFlags.HorizontalScrollbar)) {
+					                               ImGuiWindowFlags.AlwaysVerticalScrollbar
+					                               | ImGuiWindowFlags.HorizontalScrollbar)) {
 						
-						Scene.QueryChildren()
+						TargetScene.QueryChildren()
 						      .Each(node => {
 							      ImGui.Text($"{node.Id}: {node.Path} ({node})");
 						      })
@@ -107,7 +107,7 @@ namespace Coelum.Phoenix.UI {
 					ImGui.EndTabItem();
 				}
 				
-				Scene.QuerySystems()
+				TargetScene.QuerySystems()
 				      .Each((phase, systems) => {
 					      if(!ImGui.BeginTabItem(phase)) return;
 					      
@@ -137,8 +137,8 @@ namespace Coelum.Phoenix.UI {
 						      ImGui.Checkbox($"{phase}/{system.Name}", ref system.Enabled);
 
 						      ImGui.PlotHistogram($"{timeUs:F2}us",
-						                          ref _ecsSystems[system].Times[0], ECS_SYSTEM_TIME_RESOLUTION, 0, 
-						                          "", 0, debugData.MaxTime, new Vector2(500, 50));
+						                                     ref _ecsSystems[system].Times[0], ECS_SYSTEM_TIME_RESOLUTION, 0, 
+						                                     "", 0, debugData.MaxTime, new Vector2(500, 50));
 						      
 						      if(!system.Enabled) {
 							      for(int i = 0; i <= 2; i++) {

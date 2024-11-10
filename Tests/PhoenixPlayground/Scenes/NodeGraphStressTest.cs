@@ -23,7 +23,6 @@ namespace PhoenixPlayground.Scenes {
 		private Camera3D _camera;
 		private Node _player;
 		
-		private DebugUI _overlay;
 		private Mesh? _mesh;
 
 		private KeyBindings _keyBindings;
@@ -130,8 +129,8 @@ namespace PhoenixPlayground.Scenes {
 			
 			AddSystem("UpdatePre", _moveStressTest);
 
-			_overlay = new DebugUI(this);
-			_overlay.AdditionalInfo += (delta, args) => {
+			var debugOverlay = new DebugOverlay(this);
+			debugOverlay.AdditionalInfo += (delta) => {
 				ImGui.Separator();
 				
 				/*if(ImGui.Begin("Info"))*/ {
@@ -158,6 +157,8 @@ namespace PhoenixPlayground.Scenes {
 					ImGui.End();
 				}
 			};
+			
+			UIOverlays.Add(debugOverlay);
 
 			window.GetMice()[0].MouseMove += (_, pos) => {
 				_freeCamera.CameraMove(_camera, pos);

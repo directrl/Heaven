@@ -20,8 +20,6 @@ using Silk.NET.Input;
 namespace PhoenixPlayground.Scenes {
 	
 	public class LightingTest : PhoenixScene {
-
-		private DebugUI _debug;
 		
 		private KeyBindings _keyBindings;
 		private FreeCamera _freeCamera;
@@ -197,8 +195,8 @@ namespace PhoenixPlayground.Scenes {
 
 			// TODO multiple uis break everything because there are multiple of it (obviously)
 			// but for whatever reasons PushID/PopID doesnt work
-			/*_debug = new DebugUI(this);
-			_debug.AdditionalInfo += (_, _) => {
+			var debugOverlay = new DebugOverlay(this);
+			debugOverlay.AdditionalInfo += _ => {
 				if(CurrentCamera is Camera3D c3d) {
 					ImGui.Text($"Camera pos: {c3d.GetComponent<Transform, Transform3D>().GlobalPosition}");
 					ImGui.Text($"Camera yaw: {c3d.Yaw}");
@@ -230,7 +228,9 @@ namespace PhoenixPlayground.Scenes {
 						}
 					})
 					.Execute();
-			};*/
+			};
+			
+			UIOverlays.Add(debugOverlay);
 
 			// window.GetMice()[0].MouseMove += (_, pos) => {
 			// 	if(CurrentCamera is Camera3D c3d) _freeCamera.CameraMove(c3d, pos);
