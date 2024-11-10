@@ -59,6 +59,8 @@
 
 						# debugging
 						renderdoc
+
+						blender
 					];
 
 					buildInputs = with pkgs; [

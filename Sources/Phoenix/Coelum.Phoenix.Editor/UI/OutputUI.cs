@@ -1,6 +1,7 @@
 using System.Numerics;
 using Coelum.Phoenix.UI;
 using Hexa.NET.ImGui;
+using Hexa.NET.ImGuizmo;
 
 namespace Coelum.Phoenix.Editor.UI {
 	
@@ -14,6 +15,14 @@ namespace Coelum.Phoenix.Editor.UI {
 		}
 
 		public override void Render(float delta) {
+			if(_output._editor) {
+				ImGuizmo.SetImGuiContext(ImGuiManager.CreateController(Scene).Context);
+				ImGuizmo.SetDrawlist(ImGui.GetWindowDrawList());
+				ImGuizmo.BeginFrame();
+				ImGuizmo.Enable(true);
+				// TODO how do you use imguizmo
+			}
+			
 			ImGui.Begin(_output.Id);
 			{
 				var size = ImGui.GetContentRegionAvail();
@@ -30,6 +39,10 @@ namespace Coelum.Phoenix.Editor.UI {
 				);
 			}
 			ImGui.End();
+
+			if(_output._editor) {
+				//ImGuizmo.Enable(false);
+			}
 		}
 	}
 }

@@ -10,6 +10,8 @@ namespace Coelum.Phoenix.Editor.UI {
 
 		private Assembly _assembly;
 		private ResourceType? _typeRestriction;
+
+		private bool _open = false;
 		
 		public IResource? Result { get; private set; }
 
@@ -18,25 +20,25 @@ namespace Coelum.Phoenix.Editor.UI {
 		}
 
 		public override void Render(float delta) {
-			ImGui.SetNextWindowPos(
-				new(Scene.Window.Framebuffer.Size.X / 2, Scene.Window.Framebuffer.Size.Y / 2),
-				ImGuiCond.Always,
-				new(0.5f, 0.5f)
-			);
+			if(_open) {
+				ImGui.OpenPopup("Resource Selector");
+				_open = false;
+			}
 			
 			ImGui.SetNextWindowSize(
-				new(Scene.Window.Framebuffer.Size.X / 2, Scene.Window.Framebuffer.Size.Y / 2),
-				ImGuiCond.Always
+				new(Scene.Window.Framebuffer.Size.X / 1.5f, Scene.Window.Framebuffer.Size.Y / 1.5f),
+				ImGuiCond.FirstUseEver
 			);
 			
-			// TODO popup (modal)
-			if(ImGui.Begin("Resource Selection",
-				   ImGuiWindowFlags.NoCollapse
-				   | ImGuiWindowFlags.NoMove
-				   | ImGuiWindowFlags.NoResize
-				   | ImGuiWindowFlags.HorizontalScrollbar
-				   | ImGuiWindowFlags.NoDocking)) {
-
+			ImGui.SetNextWindowPos(
+				new(Scene.Window.Framebuffer.Size.X / 1.5f, Scene.Window.Framebuffer.Size.Y / 1.5f),
+				ImGuiCond.FirstUseEver,
+				new(0.75f, 0.75f) // TODO why does neither (0.5f, 0.5f) nor (0.75f, 0.75f) center properly?
+			);
+			
+			if(ImGui.BeginPopupModal("Resource Selector")) {
+				var wSize = ImGui.GetWindowSize();
+				
 				var resources = new Dictionary<ResourceType, List<IResource>>() {
 					{ ResourceType.TEXTURE, new() },
 					{ ResourceType.MODEL, new() },
@@ -58,10 +60,18 @@ namespace Coelum.Phoenix.Editor.UI {
 				}
 
 				foreach(var (type, resourceList) in resources) {
+					ImGui.SameLine();
+					
 					ImGui.BeginChild(
 						$"{type.Path} selection list",
-						new Vector2(Scene.Window.Framebuffer.Size.X / 2 / resources.Count, 0),
-						ImGuiChildFlags.Borders | ImGuiChildFlags.ResizeX);
+						// TODO which style property is this?
+						//             \/   \/
+						new Vector2(
+							(wSize.X - 32 - 16 - ImGui.GetStyle().WindowPadding.X) / resources.Count,
+							wSize.Y - 32 - ImGui.GetStyle().WindowPadding.X - ImGui.GetFrameHeightWithSpacing()
+						),
+						ImGuiChildFlags.Borders
+					);
 					{
 						ImGui.SeparatorText($"{type.Path} ({type.Extension})");
 						foreach(var resource in resourceList) {
@@ -72,29 +82,31 @@ namespace Coelum.Phoenix.Editor.UI {
 							
 							if(ImGui.Selectable(resource.Name)) {
 								Result = resource;
-								Visible = false;
+								ImGui.CloseCurrentPopup();
 							}
 						}
 					}
 					ImGui.EndChild();
-					
-					ImGui.SameLine();
+				}
+
+				if(ImGui.Button("Cancel")) {
+					Result = null;
+					ImGui.CloseCurrentPopup();
 				}
 				
-				ImGui.End();
+				ImGui.EndPopup();
 			}
 		}
 
 		public void Prompt(ResourceType? restrictType = null) {
 			Result = null;
 			_typeRestriction = restrictType;
-			Visible = true;
+			_open = true;
 		}
 
 		public void Reset() {
 			Result = null;
 			_typeRestriction = null;
-			Visible = false;
 		}
 	}
 }

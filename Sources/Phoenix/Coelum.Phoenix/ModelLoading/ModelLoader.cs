@@ -1,15 +1,9 @@
 using System.Diagnostics;
-using System.Dynamic;
-using System.Numerics;
 using Coelum.Debug;
-using Coelum.Phoenix;
 using Coelum.Phoenix.Texture;
-using Coelum.LanguageExtensions;
 using Coelum.Resources;
 using Serilog;
 using Silk.NET.Assimp;
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.PixelFormats;
 using AiScene = Silk.NET.Assimp.Scene;
 using AiNode = Silk.NET.Assimp.Node;
 using AiMesh = Silk.NET.Assimp.Mesh;
@@ -203,7 +197,7 @@ namespace Coelum.Phoenix.ModelLoading {
 				Texture2D? texture = null;
 				
 				if(aiScene->MNumTextures > 0 && path.Data[0] == '*') {
-					int textureId = int.Parse(path.AsString.Replace("*", ""));
+					int textureId = int.Parse((string) path.AsString.Replace("*", ""));
 					var aiTexture = aiScene->MTextures[textureId];
 
 					if(aiTexture->MHeight == 0) {

@@ -24,6 +24,7 @@ namespace Coelum.Phoenix.Editor {
 		public NodeUI NodeUI { get; private set; }
 		
 		public ResourceSelector ResourceSelector { get; private set; }
+		public NodeSelector NodeSelector { get; private set; }
 		
 		public OutputScene EditorView { get; private set; }
 		public OutputScene OutputView { get; private set; }
@@ -56,10 +57,9 @@ namespace Coelum.Phoenix.Editor {
 			EditorViewUI = new(this, EditorView);
 			OutputViewUI = new(this, OutputView);
 			NodeUI = new(this);
-
-			ResourceSelector = new(this, EditorApplication.TargetAssembly) {
-				Visible = false
-			};
+			
+			ResourceSelector = new(this, EditorApplication.TargetAssembly);
+			NodeSelector = new(this);
 
 			UIOverlays.AddRange(new OverlayUI[] {
 				MainUI,
@@ -67,7 +67,8 @@ namespace Coelum.Phoenix.Editor {
 				EditorViewUI,
 				OutputViewUI,
 				NodeUI,
-				ResourceSelector
+				ResourceSelector,
+				NodeSelector
 			});
 
 			var debugOverlay = new DebugOverlay(this, EditorApplication.TargetScene);

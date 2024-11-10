@@ -9,15 +9,26 @@ namespace Coelum.ECS {
 		
 		public ulong Id { get; internal set; }
 		public bool Hidden { get; set; }
-		
-		public string Name { get; init; } = new string(Enumerable.Repeat("abcdefghijklmnopqrstuvwxyz", 8)
-																 .Select(s => s[_RANDOM.Next(s.Length)])
-																 .ToArray());
+
+		private string _name = new string(Enumerable.Repeat("abcdefghijklmnopqrstuvwxyz", 8)
+		                                            .Select(s => s[_RANDOM.Next(s.Length)])
+		                                            .ToArray());
+		public string Name {
+			get => _name;
+			set {
+				if(Root is not null) {
+					string newPath = _parent is null ? value : _parent.Path + "." + value;
+					Root.Remap(this, newPath);
+				}
+				
+				_name = value;
+			}
+		}
 
 		private string? _path;
 		public string Path {
 			get => _path ?? Name;
-			private set => _path = value;
+			internal set => _path = value;
 		}
 		
 		public NodeRoot? Root { get; set; }

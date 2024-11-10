@@ -62,6 +62,32 @@ namespace Coelum.ECS {
 			Log.Verbose($"[ECS] Added new node {node}");
 		}
 
+		internal void Remap(Node node, string newPath) {
+			var pathsToRemove = new List<string>();
+			var pathsToAdd = new Dictionary<string, Node>();
+			
+			QueryChildren(node)
+				.Each(child => {
+					pathsToRemove.Add(child.Path);
+					child.Path = child.Path.Replace(node.Path, newPath);
+					pathsToAdd[child.Path] = child;
+				})
+				.Execute();
+
+			foreach(string path in pathsToRemove) {
+				_pathNodeMap.Remove(path);
+			}
+
+			foreach((string path, var child) in pathsToAdd) {
+				_pathNodeMap[path] = child;
+			}
+			
+			_pathNodeMap.Remove(node.Path);
+			_pathNodeMap[newPath] = node;
+
+			node.Path = newPath;
+		}
+
 		public void Remove(Node node) {
 			_nodes.Remove(node.Id);
 			_pathNodeMap.Remove(node.Path);

@@ -15,25 +15,26 @@ namespace Coelum.ECS.Prefab {
 			if(assembly is not null) AddAssembly(assembly);
 		}
 
-		public void AddAssembly(Assembly assembly) {
-			var prefabTypes = PrefabScanner.ScanAssembly(assembly);
+		public void AddAssembly(Assembly assembly, bool strictType = true) {
+			var prefabTypes = PrefabScanner.ScanAssembly(assembly, strictType);
 
 			foreach(var prefabType in prefabTypes) {
 				var attribute = prefabType.GetCustomAttribute<PrefabAttribute>();
 
 				if(attribute is null) {
-					Log.Logger.Warning($"Prefab [{prefabType.Name}] does not have PrefabAttribute, skipping");
+					Log.Logger.Warning($"[PREFAB MANAGER] Prefab [{prefabType.Name}] does not have PrefabAttribute, skipping");
 					continue;
 				}
 
-				var inst = Activator.CreateInstance(prefabType, true);
+				var ctor = prefabType.GetConstructor(Type.EmptyTypes);
 				
-				if(inst is null) {
-					Log.Logger.Warning($"Could not create a default instance for prefab [{prefabType.Name}], skipping");
+				if(ctor is null) {
+					Log.Logger.Warning($"[PREFAB MANAGER] Prefab [{prefabType.Name}] does not have a default constructor, skipping");
 					continue;
 				}
-				
-				Prefabs.Add(attribute.Name, (IPrefab) inst);
+
+				var prefab = (IPrefab) ctor.Invoke(null);
+				Prefabs.Add(attribute.Name, prefab);
 			}
 		}
 

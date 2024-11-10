@@ -2,7 +2,9 @@ using System.Numerics;
 using Coelum.ECS;
 using Coelum.LanguageExtensions;
 using Coelum.Phoenix.ECS.Component;
+using Coelum.Phoenix.ModelLoading;
 using Coelum.Phoenix.OpenGL;
+using Coelum.Resources;
 
 namespace Coelum.Phoenix.Camera {
 	
@@ -57,6 +59,9 @@ namespace Coelum.Phoenix.Camera {
 
 		protected Camera3D() {
 			AddComponent<Transform>(new Transform3D());
+			// TODO replace with billboard image
+			// TODO do not render for current camera
+			AddComponent<Renderable>(new ModelRenderable(ModelLoader.Load(Module.RESOURCES[ResourceType.MODEL, "camera.glb"])));
 			
 			// Width = window.SilkImpl.FramebufferSize.X;
 			// Height = window.SilkImpl.FramebufferSize.Y;

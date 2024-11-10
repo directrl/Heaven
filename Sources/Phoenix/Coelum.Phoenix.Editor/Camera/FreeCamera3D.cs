@@ -4,6 +4,7 @@ using Coelum.Debug;
 using Coelum.Phoenix.Camera;
 using Coelum.Phoenix.ECS.Component;
 using Coelum.Phoenix.Input;
+using Hexa.NET.ImGui;
 using Silk.NET.Input;
 
 namespace Coelum.Phoenix.Editor.Camera {
@@ -55,10 +56,14 @@ namespace Coelum.Phoenix.Editor.Camera {
 		}
 		
 		private void OnUpdate(float delta) {
+			// TODO do this in KeyBindings after merging with main project?
+			// (although stuff like shortcuts would want to work even with ImGui)
+			if(ImGui.GetIO().WantCaptureKeyboard) return;
+			
 			if(_cursorToggle.Pressed) {
 				_cursorEnabled = !_cursorEnabled;
 				
-				// TODO maybe Window shouldn't be nullable?
+				// TODO maybe Window (and other stuff) shouldn't be nullable?
 				_scene.Window.GetMice()[0].Cursor.CursorMode =
 					_cursorEnabled 
 						? CursorMode.Normal 

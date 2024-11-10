@@ -1,4 +1,3 @@
-using Coelum.Phoenix;
 using Coelum.LanguageExtensions;
 using Coelum.Resources;
 

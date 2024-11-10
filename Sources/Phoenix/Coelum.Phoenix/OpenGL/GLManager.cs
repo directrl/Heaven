@@ -10,8 +10,8 @@ namespace Coelum.Phoenix.OpenGL {
 		public unsafe static void SetDefaults() {
 			Gl.Enable(EnableCap.DepthTest);
 			
-			//Gl.Enable(EnableCap.CullFace); TODO
-			//Gl.CullFace(TriangleFace.Back);
+			Gl.Enable(EnableCap.CullFace);
+			Gl.CullFace(TriangleFace.Back);
 			
 			Gl.Enable(EnableCap.Blend);
 			Gl.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);

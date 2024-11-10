@@ -95,6 +95,8 @@ namespace Coelum.ECS {
 			return new(
 				each => {
 					foreach(var (path, child) in _pathNodeMap) {
+						if(child == parent) continue;
+						
 						if(depth <= 0) {
 							if(path.StartsWith(parent.Path)) each?.Invoke(child);
 						} else {
@@ -108,6 +110,8 @@ namespace Coelum.ECS {
 					Parallel.ForEach(_pathNodeMap, kv => {
 						var path = kv.Key;
 						var child = kv.Value;
+						
+						if(child == parent) return;
 
 						if(depth <= 0) {
 							if(path.StartsWith(parent.Path)) each?.Invoke(child);
