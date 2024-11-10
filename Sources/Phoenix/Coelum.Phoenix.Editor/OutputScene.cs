@@ -1,5 +1,6 @@
 using Coelum.Common.Graphics;
 using Coelum.Common.Input;
+using Coelum.Core;
 using Coelum.ECS;
 using Coelum.Phoenix.Camera;
 using Coelum.Phoenix.ECS.Component;
@@ -31,6 +32,8 @@ namespace Coelum.Phoenix.Editor {
 
 		private PhoenixScene _scene;
 		private bool _editorCamera;
+
+		private FreeCamera3D? _freeCamera;
 		
 		public KeyBindings KeyBindings { get; }
 		public Framebuffer OutputFramebuffer { get; internal set; }
@@ -43,30 +46,38 @@ namespace Coelum.Phoenix.Editor {
 			KeyBindings = new(name);
 			this.SetupKeyBindings(KeyBindings);
 
-			OutputFramebuffer = new(512, 512);
+			OutputFramebuffer = new(new(512, 512));
 		}
 
 		public override void OnLoad(SilkWindow window) {
 			base.OnLoad(window);
-//WHYU DOESN OTNWQAOIRHREIWOUGHNWEOIRHNWROIGUHERIOULGTHNERIOUTB ONONTOTNHITGNOSJV;K'LBL,ZF
-DX]BX
-	
-	/S//SA
+
+			var camera = _scene.CurrentCamera;
+
 			if(_editorCamera) {
-				var camera = new PerspectiveCamera(window) {
-					FOV = 60
+				camera = new PerspectiveCamera() {
+					FOV = 60,
+					Name = "EditorCamera"
 				};
-				Add(camera);
+				//Add(camera);
 				camera.GetComponent<Transform, Transform3D>()
-				      .Position = new(4, 0, -4);
+				       .Position = new(4, 1, -4);
 				camera.Current = true;
 				
 				
 				
-				_ = new FreeCamera3D(camera, this, KeyBindings);
+				_freeCamera = new((Camera3D) camera, this, KeyBindings);
 			
 				//TODO WHY DOES THIS NOT WORK
-				_scene.AddSystem("RenderPre", new FunnyCameraSystem(PrimaryShader, _scene.PrimaryShader));
+				//_scene.AddSystem("RenderPre", new FunnyCameraSystem(PrimaryShader, _scene.PrimaryShader));
+			}
+
+			if(camera != null) {
+				_scene.Add(new Viewport(camera, OutputFramebuffer) {
+					Hidden = true
+				});
+			} else {
+				Heaven.AppLogger.Warning("Scene does not contain an active camera");
 			}
 		}
 
@@ -75,21 +86,21 @@ DX]BX
 			this.UpdateKeyBindings(KeyBindings);
 
 			// TODO WHY IS CURRENT CAMERA APPARENTLY NULL
-			if(CurrentCamera is Camera3D c3d) {
-				c3d.GetComponent<Transform, Transform3D>().Yaw += delta * 2;
-			}
+			// if(CurrentCamera is Camera3D c3d) {
+			// 	c3d.GetComponent<Transform, Transform3D>().Yaw += delta * 2;
+			// }
 		}
 
 		public override void OnRender(float delta) {
-			this.Process("RenderPre", delta);
+			//this.Process("RenderPre", delta);
 			
-			OutputFramebuffer.Bind();
+			//OutputFramebuffer.Bind();
 
-			var funny = _scene.QuerySystem<FunnyCameraSystem>("RenderPre");
-			if(funny != null) {
-				if(_editorCamera) funny.Enabled = true;
-				else funny.Enabled = false;
-			}
+			// var funny = _scene.QuerySystem<FunnyCameraSystem>("RenderPre");
+			// if(funny != null) {
+			// 	if(_editorCamera) funny.Enabled = true;
+			// 	else funny.Enabled = false;
+			// }
 			
 			_scene.OnRender(delta);
 		}

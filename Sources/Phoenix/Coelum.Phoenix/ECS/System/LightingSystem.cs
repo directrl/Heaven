@@ -6,16 +6,14 @@ using Coelum.Phoenix.OpenGL.UBO;
 
 namespace Coelum.Phoenix.ECS.System {
 	
-	public class LightSystem : EcsSystem {
+	public class LightingSystem : EcsSystem {
 		
 		private readonly ShaderProgram _shader;
 		private readonly Lights _ubo;
 
-		public LightSystem(ShaderProgram shader) : base("Light Uniform Loader") {
+		public LightingSystem(ShaderProgram shader) : base("Light Uniform Loader") {
 			_shader = shader;
-			_ubo = new();
-			
-			shader.CreateBufferBinding(_ubo);
+			_ubo = shader.CreateBufferBinding<Lights>();
 			
 			Action = ActionImpl;
 		}

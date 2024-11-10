@@ -10,23 +10,9 @@ namespace Coelum.Phoenix.Camera {
 		private Vector3 _direction = new();
 		private Vector3 _front = new(0.0f, 0.0f, 1.0f);
 		private Vector3 _up = Vector3.UnitY;
-		
-		public Camera2D(SilkWindow window)
-			: this(window.SilkImpl.FramebufferSize.X, window.SilkImpl.FramebufferSize.Y) {
-			
-			window.SilkImpl.FramebufferResize += size => {
-				Width = size.X;
-				Height = size.Y;
-				
-				RecalculateProjectionMatrix();
-			};
-		}
 
-		public Camera2D(float width, float height) {
+		public Camera2D() {
 			AddComponent<Transform>(new Transform2D());
-			
-			Width = width;
-			Height = height;
 			
 			RecalculateProjectionMatrix();
 			RecalculateViewMatrix();

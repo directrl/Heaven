@@ -32,7 +32,7 @@ namespace Coelum.Phoenix.Editor.UI {
 
 		public virtual void RenderUI(float delta) {
 			ImGui.SetNextWindowPos(new(0, 0));
-			ImGui.SetNextWindowSize(new(Window.FramebufferWidth, Window.FramebufferHeight));
+			ImGui.SetNextWindowSize(new(Window.Framebuffer.Size.X, Window.Framebuffer.Size.Y));
 		}
 	}
 }

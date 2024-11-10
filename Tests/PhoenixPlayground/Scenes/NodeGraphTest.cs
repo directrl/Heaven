@@ -47,14 +47,14 @@ namespace PhoenixPlayground.Scenes {
 		public override void OnLoad(SilkWindow window) {
 			base.OnLoad(window);
 
-			_camera1 = new PerspectiveCamera(window) {
+			_camera1 = new PerspectiveCamera() {
 				FOV = 60,
 				Current = true
 			};
 			_camera1.GetComponent<Transform, Transform3D>().Position = new(0, 0, -3);
 			Add(_camera1);
 
-			_camera2 = new OrthographicCamera(window) {
+			_camera2 = new OrthographicCamera() {
 				FOV = 3
 			};
 			_camera2.GetComponent<Transform, Transform3D>().Position = new(2, 2, 2);

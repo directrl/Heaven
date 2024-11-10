@@ -5,11 +5,11 @@ using Coelum.Phoenix.OpenGL;
 
 namespace Coelum.Phoenix.ECS.System {
 	
-	public class RenderSystem : EcsSystem {
+	public class ObjectRenderSystem : EcsSystem {
 
 		private ShaderProgram _shader;
 
-		public RenderSystem(ShaderProgram shader) : base("Object Render") {
+		public ObjectRenderSystem(ShaderProgram shader) : base("Object Render") {
 			_shader = shader;
 			Action = ActionImpl;
 		}

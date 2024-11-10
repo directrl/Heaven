@@ -25,7 +25,7 @@ namespace Coelum.Phoenix.Editor.Camera {
 	#endregion
 		
 		private Vector2 _lastCursorPosition;
-		private bool _cursorEnabled = false;
+		private bool _cursorEnabled = true;
 
 		private PhoenixScene _scene;
 		
@@ -33,7 +33,7 @@ namespace Coelum.Phoenix.Editor.Camera {
 
 		public FreeCamera3D(Camera3D camera, PhoenixScene scene, KeyBindings keyBindings) {
 			Tests.Assert(scene.Window != null);
-			
+
 			Camera = camera;
 			_scene = scene;
 
@@ -45,7 +45,7 @@ namespace Coelum.Phoenix.Editor.Camera {
 			_cameraBackward = keyBindings.Register(new("fc_camera_backward", Key.S));
 			_cameraLeft = keyBindings.Register(new("fc_camera_left", Key.A));
 			_cameraRight = keyBindings.Register(new("fc_camera_right", Key.D));
-
+			
 			scene.Window.GetMice()[0].MouseMove += (_, pos) => {
 				OnMouseMove(pos);
 			};
@@ -90,13 +90,10 @@ namespace Coelum.Phoenix.Editor.Camera {
 			if(_cameraRight.Down) {
 				Camera.MoveRight(CameraSpeed * delta);
 			}
-			
-			Console.WriteLine(Camera.GetComponent<Transform, Transform3D>().Position);
-			Console.WriteLine(Camera.GetComponent<Transform, Transform3D>().Rotation);
 		}
 		
 		private void OnMouseMove(Vector2 mousePosition) {
-			if(!_cursorEnabled) return;
+			if(_cursorEnabled) return;
 			
 			if(_lastCursorPosition == default) {
 				_lastCursorPosition = mousePosition;

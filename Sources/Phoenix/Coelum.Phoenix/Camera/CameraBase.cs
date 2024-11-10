@@ -6,8 +6,8 @@ namespace Coelum.Phoenix.Camera {
 	
 	public abstract class CameraBase : Node {
 		
-		protected float Width { get; set; }
-		protected float Height { get; set; }
+		public float Width { get; internal set; }
+		public float Height { get; internal set; }
 		
 		public Matrix4x4 ProjectionMatrix { get; protected set; }
 		public Matrix4x4 ViewMatrix { get; protected set; }

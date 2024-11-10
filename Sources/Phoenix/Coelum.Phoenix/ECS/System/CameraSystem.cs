@@ -5,14 +5,14 @@ using Coelum.Phoenix.OpenGL.UBO;
 
 namespace Coelum.Phoenix.ECS.System {
 	
+	// TODO to remove
+	[Obsolete]
 	public class CameraSystem : EcsSystem {
 		
 		private readonly CameraMatrices _ubo;
 
 		public CameraSystem(ShaderProgram shader) : base("Camera Render") {
-			_ubo = new();
-			shader.CreateBufferBinding(_ubo);
-			
+			_ubo = shader.CreateBufferBinding<CameraMatrices>();
 			Action = ActionImpl;
 		}
 

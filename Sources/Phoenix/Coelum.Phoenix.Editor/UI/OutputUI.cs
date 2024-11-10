@@ -17,7 +17,7 @@ namespace Coelum.Phoenix.Editor.UI {
 					var size = ImGui.GetContentRegionAvail();
 
 					if(size != _lastSize && size is { X: > 0, Y: > 0 }) {
-						_output.OutputFramebuffer = new((uint) size.X, (uint) size.Y);
+						_output.OutputFramebuffer.Size = new((int) size.X, (int) size.Y);
 						_lastSize = size;
 					}
 					

@@ -18,11 +18,9 @@ namespace Coelum.Phoenix {
 		private static IGLContext? _sharedContext;
 		
 		public IWindow SilkImpl { get; }
-		public IInputContext? Input { get; private set; }
+		public IInputContext Input { get; private set; }
 
 		public Framebuffer Framebuffer { get; private set; }
-		public uint FramebufferWidth => (uint) SilkImpl.FramebufferSize.X;
-		public uint FramebufferHeight => (uint) SilkImpl.FramebufferSize.Y;
 
 		static SilkWindow() {
 			if(ExperimentalFlags.ForceSDL) {
@@ -57,9 +55,10 @@ namespace Coelum.Phoenix {
 				SilkImpl.MakeCurrent();
 				Gl.Viewport(SilkImpl.FramebufferSize);
 
-				Framebuffer = new(SilkImpl);
+				Framebuffer = new(this);
+				
 				Input = SilkImpl.CreateInput();
-
+				
 				SilkImpl.IsVisible = true;
 			};
 
@@ -83,20 +82,6 @@ namespace Coelum.Phoenix {
 			SilkImpl.FramebufferResize += size => {
 				SilkImpl.MakeCurrent();
 				Gl.Viewport(size);
-				
-				Framebuffer?.Dispose();
-				Framebuffer = new(SilkImpl);
-
-				if(Scene is PhoenixScene ps) {
-					if(ps.Framebuffer is { AutoResize: true }) {
-						ps.Framebuffer.Dispose();
-						ps.Framebuffer = new(
-							(uint) (size.X * ps.Framebuffer.AutoResizeFactor),
-							(uint) (size.Y * ps.Framebuffer.AutoResizeFactor),
-							ps.Framebuffer.Target
-						);
-					}
-				}
 			};
 			
 			SilkImpl.Initialize();

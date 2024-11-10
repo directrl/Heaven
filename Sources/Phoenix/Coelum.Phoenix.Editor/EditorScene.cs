@@ -49,9 +49,7 @@ namespace Coelum.Phoenix.Editor {
 			OutputViewUI = new(this, EditorView);
 			OutputViewUI = new(this, OutputView, false);
 
-			var scene = EditorApplication.TargetScene;
-
-			var debugUi = new DebugUI(this) { Scene = EditorView };
+			var debugUi = new DebugUI(this) { Scene = EditorApplication.TargetScene };
 			debugUi.AdditionalInfo += (_, _) => {
 				if(EditorView.CurrentCamera is Camera3D c3d) {
 					var t3d = c3d.GetComponent<Transform, Transform3D>();
@@ -62,15 +60,26 @@ namespace Coelum.Phoenix.Editor {
 			};
 		#endregion
 
-			var camera = new PerspectiveCamera(window) {
-				Current = true
-			};
-			FreeCamera = new(new PerspectiveCamera(window), this, KeyBindings);
+			// var camera = new PerspectiveCamera() {
+			// 	Current = true
+			// };
+			// FreeCamera = new(new PerspectiveCamera(), this, KeyBindings);
 			
 			// TODO this is quite messy with two different OnLoad methods
 			EditorApplication.TargetScene.OnLoad((WindowBase) window);
+			
+			EditorApplication.TargetScene.QueryChildren<Viewport>()
+			                 .Each(viewport => {
+				                 if(viewport.Framebuffer == window.Framebuffer) {
+					                 viewport.Enabled = false;
+				                 }
+			                 })
+			                 .Execute();
+			
 			EditorView.OnLoad((WindowBase) window);
 			OutputView.OnLoad((WindowBase) window);
+			
+			Add(new Viewport(new Camera2D(), window.Framebuffer));
 		}
 
 		public override void OnUnload() {
@@ -83,6 +92,8 @@ namespace Coelum.Phoenix.Editor {
 		public override void OnUpdate(float delta) {
 			base.OnUpdate(delta);
 			EditorApplication.TargetScene.OnUpdate(delta);
+			EditorView.OnUpdate(delta);
+			OutputView.OnUpdate(delta);
 			
 			this.UpdateKeyBindings(KeyBindings);
 		}

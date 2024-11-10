@@ -55,21 +55,14 @@ namespace Coelum.Phoenix.Camera {
 			}
 		}
 
-		protected Camera3D(SilkWindow window) {
+		protected Camera3D() {
 			AddComponent<Transform>(new Transform3D());
 			
-			Width = window.SilkImpl.FramebufferSize.X;
-			Height = window.SilkImpl.FramebufferSize.Y;
+			// Width = window.SilkImpl.FramebufferSize.X;
+			// Height = window.SilkImpl.FramebufferSize.Y;
 			
 			RecalculateProjectionMatrix();
 			RecalculateViewMatrix();
-
-			window.SilkImpl.FramebufferResize += size => {
-				Width = size.X;
-				Height = size.Y;
-				
-				RecalculateProjectionMatrix();
-			};
 		}
 
 		public void MoveUp(float amount) => GetComponent<Transform, Transform3D>().Position += _up = Vector3.Multiply(ViewMatrix.PositiveY(), amount);

@@ -9,6 +9,8 @@ namespace Coelum.ECS {
 		
 		public ulong Id { get; internal set; }
 		
+		public bool Hidden { get; set; }
+		
 		// private string _name = new string(Enumerable.Repeat("abcdefghijklmnopqrstuvwxyz", 8)
 		//                                             .Select(s => s[_RANDOM.Next(s.Length)])
 		//                                             .ToArray());

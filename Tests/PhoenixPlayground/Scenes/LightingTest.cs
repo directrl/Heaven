@@ -112,13 +112,14 @@ namespace PhoenixPlayground.Scenes {
 			});
 
 			if(_camera == null) {
-				_camera = new PerspectiveCamera(window) {
+				_camera = new PerspectiveCamera() {
 					FOV = 60,
 					Current = true
 				};
 				_camera.GetComponent<Transform, Transform3D>().Position = new(0, 0, -3);
 			}
 			Add(_camera);
+			Add(new Viewport(_camera, window.Framebuffer));
 
 			{
 				var playgroundModel =

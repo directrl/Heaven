@@ -6,6 +6,7 @@ using Coelum.Phoenix.ECS.Nodes;
 using Coelum.Phoenix.ECS.System;
 using Coelum.Phoenix.Lighting;
 using Coelum.Phoenix.OpenGL;
+using Coelum.Phoenix.OpenGL.UBO;
 using Coelum.Resources;
 using Silk.NET.Maths;
 using Silk.NET.OpenGL;
@@ -14,17 +15,10 @@ namespace Coelum.Phoenix {
 	
 	public abstract class PhoenixScene : SceneBase {
 
-	#region Delegates
-		public delegate void ShaderSetupEventHandler(ShaderProgram shader);
-	#endregion
-
-	#region Events
-		public event ShaderSetupEventHandler? PrimaryShaderSetup;
-	#endregion
-
 		public Color ClearColor { get; protected set; } = Color.Black;
 		public Framebuffer? Framebuffer { get; set; }
 		public ShaderProgram PrimaryShader { get; protected set; }
+		public Viewport? Viewport { get; set; }
 		
 		protected ShaderOverlay[][]? ShaderOverlays { get; set; }
 
@@ -46,7 +40,7 @@ namespace Coelum.Phoenix {
 				return currentCamera;
 			}
 		}
-		
+
 		protected PhoenixScene(string id) : base(id) { }
 
 		public virtual void OnLoad(SilkWindow window) {
@@ -83,13 +77,14 @@ namespace Coelum.Phoenix {
 			             "Phoenix renderer windows!");
 			OnLoad((SilkWindow) window);
 			
-			AddSystem("RenderPre", new CameraSystem(PrimaryShader));
-			AddSystem("RenderPost", new RenderSystem(PrimaryShader));
+			//AddSystem("RenderPre", new CameraSystem(PrimaryShader));
+			AddSystem("RenderPost", new ObjectRenderSystem(PrimaryShader));
+			AddSystem("Render", new ViewportRenderSystem(PrimaryShader, DoRender));
 			AddSystem("UpdatePost", new TransformSystem());
 			
 			if(PrimaryShader.HasOverlays(PhongShading.OVERLAYS)
 			   || PrimaryShader.HasOverlays(GouraudShading.OVERLAYS)) {
-				AddSystem("RenderPre", new LightSystem(PrimaryShader));
+				AddSystem("RenderPre", new LightingSystem(PrimaryShader));
 			}
 
 			var pWindow = (SilkWindow) window;
@@ -114,6 +109,8 @@ namespace Coelum.Phoenix {
 				Options.Set("window_x", newPosition.X);
 				Options.Set("window_y", newPosition.Y);
 			};
+
+			_cubo = PrimaryShader.CreateBufferBinding<CameraMatrices>();
 		}
 
 		public override void OnUpdate(float delta) {
@@ -122,9 +119,32 @@ namespace Coelum.Phoenix {
 			this.Process("UpdatePost", delta);
 		}
 
+		private CameraMatrices _cubo;
+
 		public override void OnRender(float delta) {
-			Framebuffer?.Bind();
-			
+			this.Process("Render", delta);
+			// QueryChildren<Viewport>()
+			// 	.Each(viewport => {
+			// 		viewport.Framebuffer.Bind();
+			// 		viewport.Camera.GetComponent<ECS.Component.Camera>().Load(_cubo);
+			// 		_cubo.Upload();
+			// 		DoRender(delta);
+			// 	})
+			// 	.Execute();
+
+			// if(Framebuffer != null && Window != null) {
+			// 	Window.Framebuffer.Bind();
+			// 	
+			// 	Clear();
+			// 	Gl.Disable(EnableCap.DepthTest);
+			// 	
+			// 	Framebuffer.Render();
+			// 	
+			// 	// TODO render (imgui) UI separately here
+			// }
+		}
+
+		protected virtual void DoRender(float delta) {
 			void Clear() {
 				Gl.Clear((uint) (ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit));
 				Gl.ClearColor(ClearColor);
@@ -134,7 +154,6 @@ namespace Coelum.Phoenix {
 			GLManager.SetDefaults();
 			
 			PrimaryShader.Bind();
-			PrimaryShaderSetup?.Invoke(PrimaryShader);
 
 			var environment = QuerySingleton<SceneEnvironment>();
 			if(environment != null) {
@@ -144,17 +163,6 @@ namespace Coelum.Phoenix {
 			this.Process("RenderPre", delta);
 			base.OnRender(delta);
 			this.Process("RenderPost", delta);
-
-			if(Framebuffer != null && Window != null) {
-				Window.Framebuffer.Bind();
-				
-				Clear();
-				Gl.Disable(EnableCap.DepthTest);
-				
-				Framebuffer.Render();
-				
-				// TODO render (imgui) UI separately here
-			}
 		}
 	}
 }
