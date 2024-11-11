@@ -1,4 +1,5 @@
 using System.Numerics;
+using Coelum.LanguageExtensions;
 
 namespace Coelum.Phoenix.ECS.Component {
 	
@@ -9,18 +10,18 @@ namespace Coelum.Phoenix.ECS.Component {
 		public Vector3 Scale;
 
 		public float Yaw {
-			get => Rotation.Y;
-			set => Rotation.Y = value;
+			get => Rotation.Y.ToDegrees();
+			set => Rotation.Y = value.ToRadians();
 		}
 
 		public float Pitch {
-			get => Rotation.Z;
-			set => Rotation.Z = value;
+			get => Rotation.Z.ToDegrees();
+			set => Rotation.Z = value.ToRadians();
 		}
 
 		public float Roll {
-			get => Rotation.X;
-			set => Rotation.X = value;
+			get => Rotation.X.ToDegrees();
+			set => Rotation.X = value.ToRadians();
 		}
 
 		public Vector3 GlobalPosition {

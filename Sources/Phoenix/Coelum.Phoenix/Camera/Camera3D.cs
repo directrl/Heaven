@@ -14,36 +14,32 @@ namespace Coelum.Phoenix.Camera {
 		protected static float Z_FAR = 1000f;
 		
 		private Vector3 _direction = new();
-		private Vector3 _front = new(0.0f, 0.0f, 1.0f);
+		private Vector3 _front = new();
 		private Vector3 _up = Vector3.UnitY;
 
 		public float Yaw {
-			get => GetComponent<Transform, Transform3D>().Rotation.Y;
+			get => GetComponent<Transform, Transform3D>().Yaw;
 			set {
 				var t3d = GetComponent<Transform, Transform3D>();
 
-				t3d.Rotation = t3d.Rotation with {
-					Y = value
-				};
+				t3d.Yaw = value;
 				
-				_direction.X = MathF.Cos(t3d.Rotation.Y.ToRadians()) * MathF.Cos(t3d.Rotation.X.ToRadians());
-				_direction.Z = MathF.Sin(t3d.Rotation.Y.ToRadians()) * MathF.Cos(t3d.Rotation.X.ToRadians());
+				_direction.X = MathF.Cos(t3d.Rotation.Y) * MathF.Cos(t3d.Rotation.Z);
+				_direction.Z = MathF.Sin(t3d.Rotation.Y) * MathF.Cos(t3d.Rotation.Z);
 				_front = Vector3.Normalize(_direction);
 			}
 		}
 		
 		public float Pitch {
-			get => GetComponent<Transform, Transform3D>().Rotation.X;
+			get => GetComponent<Transform, Transform3D>().Pitch;
 			set {
 				var t3d = GetComponent<Transform, Transform3D>();
+
+				t3d.Pitch = value;
 				
-				t3d.Rotation = t3d.Rotation with {
-					X = value
-				};
-				
-				_direction.X = MathF.Cos(t3d.Rotation.Y.ToRadians()) * MathF.Cos(t3d.Rotation.X.ToRadians());
-				_direction.Y = MathF.Sin(t3d.Rotation.X.ToRadians());
-				_direction.Z = MathF.Sin(t3d.Rotation.Y.ToRadians()) * MathF.Cos(t3d.Rotation.X.ToRadians());
+				_direction.X = MathF.Cos(t3d.Rotation.Y) * MathF.Cos(t3d.Rotation.Z);
+				_direction.Y = MathF.Sin(t3d.Rotation.Z);
+				_direction.Z = MathF.Sin(t3d.Rotation.Y) * MathF.Cos(t3d.Rotation.Z);
 				_front = Vector3.Normalize(_direction);
 			}
 		}
@@ -57,14 +53,12 @@ namespace Coelum.Phoenix.Camera {
 			}
 		}
 
+		// TODO fix camera stretching
 		protected Camera3D() {
 			AddComponent<Transform>(new Transform3D());
 			// TODO replace with billboard image
 			// TODO do not render for current camera
 			AddComponent<Renderable>(new ModelRenderable(ModelLoader.Load(Module.RESOURCES[ResourceType.MODEL, "camera.glb"])));
-			
-			// Width = window.SilkImpl.FramebufferSize.X;
-			// Height = window.SilkImpl.FramebufferSize.Y;
 			
 			RecalculateProjectionMatrix();
 			RecalculateViewMatrix();

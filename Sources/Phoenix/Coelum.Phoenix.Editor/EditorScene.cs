@@ -8,9 +8,12 @@ using Coelum.Phoenix.Editor.Camera;
 using Coelum.Phoenix.Editor.UI;
 using Coelum.Phoenix.Input;
 using Coelum.Phoenix.UI;
+using Hexa.NET.ImGui;
 
 namespace Coelum.Phoenix.Editor {
 	
+	// TODO node adding menu with shortcut (similar to blender, godot)
+	// TODO node picking with raycasting (bepuphysics?)
 	public class EditorScene : PhoenixScene {
 
 		private bool _initialSceneUpdate = true;
@@ -63,8 +66,21 @@ namespace Coelum.Phoenix.Editor {
 				NodeSelector
 			});
 
-			var debugOverlay = new DebugOverlay(this, EditorApplication.TargetScene);
-			UIOverlays.Add(debugOverlay);
+			if(Debugging.Enabled) {
+				var debugOverlay = new DebugOverlay(this, EditorApplication.TargetScene);
+				debugOverlay.AdditionalInfo += delta => {
+					var camera = EditorView.FreeCamera.Camera;
+					
+					ImGui.Text($"View camera position: {camera.GetComponent<Transform, Transform3D>().Position}");
+					ImGui.Text($"View camera rotation: {camera.GetComponent<Transform, Transform3D>().Rotation}");
+					ImGui.Separator();
+					ImGui.Text($"View camera yaw: {camera.Yaw}");
+					ImGui.Text($"View camera pitch: {camera.Pitch}");
+					ImGui.Separator();
+				};
+				
+				UIOverlays.Add(debugOverlay);
+			}
 		#endregion
 			
 			// TODO this is quite messy with two different OnLoad methods

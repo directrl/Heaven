@@ -65,7 +65,9 @@ namespace Coelum.Phoenix.Editor.UI {
 				ImGui.SetNextItemWidth(DragWidth * 2);
 				
 				if(property == "Roll" || property == "Yaw" || property == "Pitch") {
+					value = value.ToRadians();
 					ImGui.SliderAngle(property, ref value, -180, 180);
+					value = value.ToDegrees();
 				} else {
 					ImGui.DragFloat(property, ref value, DragSpeed);
 				}
@@ -119,6 +121,7 @@ namespace Coelum.Phoenix.Editor.UI {
 				float[] color = new float[] { valueVec4.X, valueVec4.Y, valueVec4.Z, valueVec4.W };
 
 				fixed(float* ptr = &color[0]) {
+					ImGui.SetNextItemWidth(DragWidth * 2);
 					ImGui.ColorPicker4(property, ptr);
 				}
 				

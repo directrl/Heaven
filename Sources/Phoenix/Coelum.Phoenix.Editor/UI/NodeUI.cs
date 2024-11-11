@@ -8,6 +8,7 @@ using Serilog;
 
 namespace Coelum.Phoenix.Editor.UI {
 	
+	// TODO node reparenting (dragging), tree view collapse
 	public partial class NodeUI : ImGuiUI {
 
 		private Node? _selectedNode;
