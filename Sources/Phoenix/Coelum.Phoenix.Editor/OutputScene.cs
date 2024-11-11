@@ -19,7 +19,7 @@ namespace Coelum.Phoenix.Editor {
 		private PhoenixScene _scene;
 		internal bool _editor;
 
-		private FreeCamera3D? _freeCamera;
+		public FreeCamera3D? FreeCamera { get; private set; }
 		
 		public KeyBindings KeyBindings { get; }
 		public Framebuffer OutputFramebuffer { get; internal set; }
@@ -47,7 +47,7 @@ namespace Coelum.Phoenix.Editor {
 				};
 				camera.Current = true;
 				
-				_freeCamera = new((Camera3D) camera, this, KeyBindings);
+				FreeCamera = new((Camera3D) camera, this, KeyBindings);
 			}
 
 			if(camera != null) {

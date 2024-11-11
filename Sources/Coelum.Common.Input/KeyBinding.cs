@@ -1,5 +1,6 @@
 using Coelum.Debug;
 using Newtonsoft.Json;
+using Serilog;
 using Silk.NET.Input;
 
 namespace Coelum.Common.Input {
@@ -15,7 +16,7 @@ namespace Coelum.Common.Input {
 		private bool _down;
 		public bool Down {
 			get {
-				Tests.Assert(Keys.Length <= 1, "KeyBinding.Down is supported only for single-key inputs");
+				Log.Warning("KeyBinding.Down is supported only for single-key inputs");
 				return _down;
 			}
 			internal set => _down = value;

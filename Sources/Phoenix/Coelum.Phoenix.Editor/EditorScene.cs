@@ -8,7 +8,6 @@ using Coelum.Phoenix.Editor.Camera;
 using Coelum.Phoenix.Editor.UI;
 using Coelum.Phoenix.Input;
 using Coelum.Phoenix.UI;
-using Hexa.NET.ImGui;
 
 namespace Coelum.Phoenix.Editor {
 	
@@ -31,18 +30,11 @@ namespace Coelum.Phoenix.Editor {
 	#endregion
 		
 		public KeyBindings KeyBindings { get; }
-		public FreeCamera3D FreeCamera { get; private set; }
 
-		// TODO imgui window settings dont save
 		public EditorScene() : base("editor_main") {
 			KeyBindings = new(Id);
+			EditorApplication.KeyBindings = new(KeyBindings);
 			this.SetupKeyBindings(KeyBindings);
-
-			/*var scene = EditorApplication.TargetScene;
-			Load += scene.OnLoad;
-			Unload += scene.OnUnload;
-			Update += scene.OnUpdate;
-			FixedUpdate += scene.OnFixedUpdate;*/
 
 			EditorView = new("editor_view");
 			OutputView = new("editor_output", false);
@@ -106,6 +98,8 @@ namespace Coelum.Phoenix.Editor {
 
 		public override void OnUpdate(float delta) {
 			base.OnUpdate(delta);
+			
+			EditorApplication.KeyBindings.Update(delta);
 
 			// need to update for 1-frame at the beginning for stuff like lighting TODO why?
 			if(MainUI.TargetSceneUpdate || _initialSceneUpdate) {

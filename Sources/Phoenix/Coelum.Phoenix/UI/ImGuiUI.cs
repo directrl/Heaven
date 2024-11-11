@@ -4,10 +4,10 @@ namespace Coelum.Phoenix.UI {
 	
 	public abstract class ImGuiUI : OverlayUI {
 
-		private ImGuiController _controller;
+		protected ImGuiController Controller { get; }
 
 		public ImGuiUI(PhoenixScene scene) : base(scene) {
-			_controller = ImGuiManager.CreateController(scene);
+			Controller = ImGuiManager.CreateController(scene);
 		}
 	}
 }

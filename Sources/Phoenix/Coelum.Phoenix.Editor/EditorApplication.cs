@@ -22,6 +22,8 @@ namespace Coelum.Phoenix.Editor {
 		
 		public static SilkWindow MainWindow { get; private set; }
 		public static EditorScene MainScene { get; private set; }
+		
+		public static EditorKeyBindings KeyBindings { get; internal set; }
 
 		public EditorApplication(Assembly assembly, PhoenixScene scene) : base(Id) {
 			TargetAssembly = assembly;

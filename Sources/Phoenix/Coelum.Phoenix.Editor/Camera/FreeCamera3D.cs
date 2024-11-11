@@ -15,8 +15,6 @@ namespace Coelum.Phoenix.Editor.Camera {
 		public static float CameraSpeed { get; set; } = 10;
 
 	#region Key bindings
-		private KeyBinding _cursorToggle;
-		
 		private KeyBinding _cameraUp;
 		private KeyBinding _cameraDown;
 		private KeyBinding _cameraForward;
@@ -38,8 +36,6 @@ namespace Coelum.Phoenix.Editor.Camera {
 
 			Camera = camera;
 			_scene = scene;
-
-			_cursorToggle = keyBindings.Register(new("fc_cursor_toggle", Key.R));
 			
 			_cameraUp = keyBindings.Register(new("fc_camera_up", Key.Space));
 			_cameraDown = keyBindings.Register(new("fc_camera_down", Key.ShiftLeft));
@@ -60,7 +56,7 @@ namespace Coelum.Phoenix.Editor.Camera {
 			// (although stuff like shortcuts would want to work even with ImGui)
 			if(ImGui.GetIO().WantCaptureKeyboard) return;
 			
-			if(_cursorToggle.Pressed) {
+			if(EditorApplication.KeyBindings.FreeCameraEngage.Pressed) {
 				_cursorEnabled = !_cursorEnabled;
 				
 				// TODO maybe Window (and other stuff) shouldn't be nullable?
