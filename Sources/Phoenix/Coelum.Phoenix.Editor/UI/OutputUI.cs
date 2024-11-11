@@ -1,9 +1,11 @@
 using System.Numerics;
 using Coelum.LanguageExtensions;
+using Coelum.Phoenix.Camera;
 using Coelum.Phoenix.ECS.Component;
 using Coelum.Phoenix.UI;
 using Hexa.NET.ImGui;
 using Hexa.NET.ImGuizmo;
+using Silk.NET.Maths;
 
 namespace Coelum.Phoenix.Editor.UI {
 	
@@ -61,7 +63,7 @@ namespace Coelum.Phoenix.Editor.UI {
 					#region ImGuizmo setup
 						ImGuizmo.SetImGuiContext(Controller.Context);
 						ImGuizmo.BeginFrame();
-						ImGuizmo.SetOrthographic(false);
+						ImGuizmo.SetOrthographic(fc.Camera is OrthographicCamera);
 						ImGuizmo.SetDrawlist(ImGui.GetWindowDrawList());
 						ImGuizmo.Enable(true);
 						
@@ -80,7 +82,7 @@ namespace Coelum.Phoenix.Editor.UI {
 						                    &nodeGlobalMatrix.M11);
 						
 						// TODO
-						// ImGuizmo.ViewManipulate(&vm.M11,
+						// ImGuizmo.ViewManipulate(&cameraView.M11,
 						//                         100,
 						//                         wPos + new Vector2(20, 20),
 						//                         new(100, 100),
@@ -94,7 +96,13 @@ namespace Coelum.Phoenix.Editor.UI {
 							if(sn.Parent != null &&
 							   sn.Parent.TryGetComponent<Transform, Transform3D>(out var pt)) {
 								Matrix4x4.Invert(pt.GlobalMatrix, out var parentGlobalMatrix);
-								newNodeMatrix = parentGlobalMatrix * nodeGlobalMatrix;
+								
+								// for whatever reason translation requires * while everything needs +
+								// weird hack, but if it works it's not stupid
+								newNodeMatrix =
+									GizmoOperation == ImGuizmoOperation.Translate
+									? parentGlobalMatrix + nodeGlobalMatrix
+									: parentGlobalMatrix * nodeGlobalMatrix;
 							} else {
 								newNodeMatrix = nodeGlobalMatrix;
 							}
@@ -111,20 +119,20 @@ namespace Coelum.Phoenix.Editor.UI {
 							);
 							
 							var translation = new Vector3(translationMatrix.M11, translationMatrix.M12, translationMatrix.M13);
-							var rotation = new Vector3(rotationMatrix.M11, rotationMatrix.M12, rotationMatrix.M13);
+							var rotation = new Vector3(rotationMatrix.M11.ToRadians(), rotationMatrix.M12.ToRadians(), rotationMatrix.M13.ToRadians());
 							var scale = new Vector3(scaleMatrix.M11, scaleMatrix.M12, scaleMatrix.M13);
 							
 							Matrix4x4.Decompose(newNodeMatrix, out var s, out var r, out var t);
 
 							switch(GizmoOperation) {
 								case ImGuizmoOperation.Translate:
-									t3d.Position = t;
+									t3d.Position = translation;
 									break;
 								case ImGuizmoOperation.Rotate:
-									t3d.Rotation = r.ToPitchYawRoll(); // TODO switch to quaternions
+									t3d.Rotation = rotation;
 									break;
 								case ImGuizmoOperation.Scale:
-									t3d.Scale = s;
+									t3d.Scale = scale;
 									break;
 							}
 						}

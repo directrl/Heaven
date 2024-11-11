@@ -1,5 +1,6 @@
 using System.Numerics;
 using Coelum.ECS;
+using Coelum.LanguageExtensions;
 using Coelum.Phoenix.ECS.Component;
 
 namespace Coelum.Phoenix.ECS.System {
@@ -16,16 +17,28 @@ namespace Coelum.Phoenix.ECS.System {
 			    .Each((node, t) => {
 				    switch(t) {
 					    case Transform2D t2d:
-						    t.LocalMatrix =
-							    Matrix4x4.CreateScale(t2d.Scale.X, t2d.Scale.Y, 1)
-							    * Matrix4x4.CreateFromYawPitchRoll(1, 1, t2d.Rotation)
-							    * Matrix4x4.CreateTranslation(t2d.Position.X, t2d.Position.Y, 1);
+						    var matrix = new Matrix4x4();
+
+						    matrix.ComposeFromComponents(
+							    new(t2d.Position, 1),
+							    new(1, 1, t2d.Rotation),
+							    new(t2d.Scale, 1)
+						    );
+						    
+						    t2d.LocalMatrix = matrix;
+						    
 						    break;
 					    case Transform3D t3d:
-						    t.LocalMatrix =
-							    Matrix4x4.CreateScale(t3d.Scale)
-							    * Matrix4x4.CreateFromYawPitchRoll(-t3d.Rotation.Y, -t3d.Rotation.X, -t3d.Rotation.Z)
-							    * Matrix4x4.CreateTranslation(t3d.Position);
+						    matrix = new();
+						    
+						    matrix.ComposeFromComponents(
+							    t3d.Position,
+							    t3d.Rotation,
+							    t3d.Scale
+						    );
+
+						    t3d.LocalMatrix = matrix;
+						    
 						    break;
 				    }
 
