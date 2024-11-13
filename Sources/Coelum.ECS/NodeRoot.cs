@@ -9,11 +9,12 @@ namespace Coelum.ECS {
 		private ulong _lastId = 0; // TODO better way
 
 		private Dictionary<ulong, Node> _nodes = new();
-		
 		private Dictionary<string, Node> _pathNodeMap = new();
 		private Dictionary<Type, List<Node>> _componentNodeMap = new();
 
 		private Dictionary<string, List<EcsSystem>> _systems = new();
+
+		private List<Action> _futureActions = new();
 
 		public int ChildCount => _nodes.Count;
 		
@@ -33,6 +34,16 @@ namespace Coelum.ECS {
 			foreach(var system in _systems[phase]) {
 				system.Invoke(this, delta);
 			}
+			
+			foreach(var action in _futureActions) {
+				action.Invoke();
+			}
+			
+			_futureActions.Clear();
+		}
+
+		public void RunLater(Action action) {
+			_futureActions.Add(action);
 		}
 		
 		public void Add(Node node) {
@@ -63,29 +74,30 @@ namespace Coelum.ECS {
 		}
 
 		internal void Remap(Node node, string newPath) {
-			var pathsToRemove = new List<string>();
-			var pathsToAdd = new Dictionary<string, Node>();
-			
-			QueryChildren(node)
-				.Each(child => {
-					pathsToRemove.Add(child.Path);
-					child.Path = child.Path.Replace(node.Path, newPath);
-					pathsToAdd[child.Path] = child;
-				})
-				.Execute();
+			var pathsToReplace = new Dictionary<string, string>();
 
-			foreach(string path in pathsToRemove) {
-				_pathNodeMap.Remove(path);
-			}
-
-			foreach((string path, var child) in pathsToAdd) {
-				_pathNodeMap[path] = child;
+			void UpdatePath(Node node, string newPath) {
+				pathsToReplace[node.Path] = newPath;
+				
+				QueryChildren(node, depth: 1)
+					.Each(child => {
+						var newChildPath = newPath + "." + child.Name;
+						UpdatePath(child, newChildPath);
+					})
+					.Execute();
 			}
 			
-			_pathNodeMap.Remove(node.Path);
-			_pathNodeMap[newPath] = node;
+			UpdatePath(node, newPath);
 
-			node.Path = newPath;
+			RunLater(() => {
+				foreach(var (oldNodePath, newNodePath) in pathsToReplace) {
+					var node = _pathNodeMap[oldNodePath];
+					_pathNodeMap.Remove(oldNodePath);
+					_pathNodeMap[newNodePath] = node;
+
+					node._path = newNodePath;
+				}
+			});
 		}
 
 		public void Remove(Node node) {

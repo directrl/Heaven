@@ -18,17 +18,31 @@ namespace Coelum.ECS {
 			set {
 				if(Root is not null) {
 					string newPath = _parent is null ? value : _parent.Path + "." + value;
-					Root.Remap(this, newPath);
+					Path = newPath;
 				}
 				
 				_name = value;
 			}
 		}
 
-		private string? _path;
+		internal string? _path;
 		public string Path {
 			get => _path ?? Name;
-			internal set => _path = value;
+			internal set {
+				if(Root is not null) {
+					Root.Remap(this, value);
+				}
+				
+				_path = value;
+			}
+		}
+
+		public string PathDirectory {
+			get {
+				var p = Path.Replace(Name, "");
+				if(p.Length > 0) return p[..^1];
+				else return p;
+			}
 		}
 		
 		public NodeRoot? Root { get; set; }
@@ -36,9 +50,9 @@ namespace Coelum.ECS {
 		private Node? _parent;
 		public Node? Parent {
 			get => _parent;
-			private set {
+			set {
+				Path = value is null ? Name : value.Path + "." + Name;
 				_parent = value;
-				if(_parent != null) Path = _parent.Path + "." + Name;
 			}
 		}
 

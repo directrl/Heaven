@@ -109,8 +109,6 @@ namespace Coelum.Phoenix {
 				Options.Set("window_x", newPosition.X);
 				Options.Set("window_y", newPosition.Y);
 			};
-
-			_cubo = PrimaryShader.CreateBufferBinding<CameraMatrices>();
 		}
 
 		public override void OnUpdate(float delta) {
@@ -119,29 +117,8 @@ namespace Coelum.Phoenix {
 			this.Process("UpdatePost", delta);
 		}
 
-		private CameraMatrices _cubo;
-
 		public override void OnRender(float delta) {
 			this.Process("Render", delta);
-			// QueryChildren<Viewport>()
-			// 	.Each(viewport => {
-			// 		viewport.Framebuffer.Bind();
-			// 		viewport.Camera.GetComponent<ECS.Component.Camera>().Load(_cubo);
-			// 		_cubo.Upload();
-			// 		DoRender(delta);
-			// 	})
-			// 	.Execute();
-
-			// if(Framebuffer != null && Window != null) {
-			// 	Window.Framebuffer.Bind();
-			// 	
-			// 	Clear();
-			// 	Gl.Disable(EnableCap.DepthTest);
-			// 	
-			// 	Framebuffer.Render();
-			// 	
-			// 	// TODO render (imgui) UI separately here
-			// }
 		}
 
 		protected virtual void DoRender(float delta) {

@@ -1,5 +1,6 @@
 using System.Numerics;
 using System.Reflection;
+using Coelum.Debug;
 using Coelum.ECS;
 using Coelum.Phoenix.Camera;
 using Coelum.Phoenix.UI;
@@ -23,7 +24,7 @@ namespace Coelum.Phoenix.Editor.UI {
 		
 		public NodeUI(PhoenixScene scene) : base(scene) { }
 
-		public override void Render(float delta) {
+		public unsafe override void Render(float delta) {
 			var scene = EditorApplication.TargetScene;
 
 			ImGui.Begin("Node Editor");
@@ -35,8 +36,28 @@ namespace Coelum.Phoenix.Editor.UI {
 						if(node.Hidden) return;
 						
 						ImGui.PushID(node.Path);
-						if(ImGui.Selectable(node.Name, SelectedNode == node)) {
-							SelectedNode = node;
+						{
+							if(ImGui.Selectable(node.Name, SelectedNode == node)) {
+								SelectedNode = node;
+							}
+							
+							if(ImGui.BeginDragDropSource()) {
+								ImGui.SetDragDropPayload("NODE_DND", &node, (uint) sizeof(Node));
+								ImGui.Text(node.Name);
+								ImGui.EndDragDropSource();
+							}
+
+							if(ImGui.BeginDragDropTarget()) {
+								ImGuiPayloadPtr payload;
+								
+								if((payload = ImGui.AcceptDragDropPayload("NODE_DND")).Handle is not null) {
+									Tests.Assert(payload.DataSize == sizeof(Node));
+									var nodePayload =  *((Node*) payload.Data);
+									nodePayload.Parent = node;
+								}
+								
+								ImGui.EndDragDropTarget();
+							}
 						}
 						ImGui.PopID();
 					
@@ -48,6 +69,26 @@ namespace Coelum.Phoenix.Editor.UI {
 						     })
 						     .Execute();
 					}
+					
+				#region Null (root) reparent
+					ImGui.PushID("##root");
+					{
+						ImGui.BulletText("Root");
+						
+						if(ImGui.BeginDragDropTarget()) {
+							ImGuiPayloadPtr payload;
+								
+							if((payload = ImGui.AcceptDragDropPayload("NODE_DND")).Handle is not null) {
+								Tests.Assert(payload.DataSize == sizeof(Node));
+								var nodePayload =  *((Node*) payload.Data);
+								nodePayload.Parent = null;
+							}
+								
+							ImGui.EndDragDropTarget();
+						}
+					}
+					ImGui.PopID();
+				#endregion
 				
 					scene.QueryChildren(depth: 1)
 					     .Each(DrawNodeTree)

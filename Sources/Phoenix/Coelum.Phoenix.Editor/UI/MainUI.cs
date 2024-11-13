@@ -49,6 +49,8 @@ namespace Coelum.Phoenix.Editor.UI {
 				}
 			}
 			ImGui.EndMainMenuBar();
+			
+			ImGui.ShowDemoWindow();
 		}
 	}
 }
