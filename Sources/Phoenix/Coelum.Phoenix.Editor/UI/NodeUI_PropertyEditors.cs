@@ -109,7 +109,6 @@ namespace Coelum.Phoenix.Editor.UI {
 
 				if(rs.Result is not null) {
 					value = ModelLoader.Load(rs.Result);
-					rs.Reset();
 				}
 
 				return value;
@@ -145,7 +144,6 @@ namespace Coelum.Phoenix.Editor.UI {
 				
 				if(ns.Result is not null) {
 					value = ns.Result;
-					ns.Reset();
 				}
 
 				return value;

@@ -30,6 +30,7 @@ namespace Coelum.Phoenix.Editor.Camera {
 		private PhoenixScene _scene;
 		
 		public Camera3D Camera { get; set; }
+		public bool Active => !_cursorEnabled;
 
 		public FreeCamera3D(Camera3D camera, PhoenixScene scene, KeyBindings keyBindings) {
 			Tests.Assert(scene.Window != null);

@@ -1,31 +1,21 @@
-using System.Numerics;
-using System.Reflection;
-using Coelum.Debug;
 using Coelum.ECS;
 using Coelum.Phoenix.UI;
-using Coelum.Resources;
 using Hexa.NET.ImGui;
 
-namespace Coelum.Phoenix.Editor.UI {
+namespace Coelum.Phoenix.Editor.UI.Prompts {
 	
-	public class NodeSelector : ImGuiUI {
+	public class NodeSelector : PopupPrompt<Node> {
 
 		private Type? _typeRestriction;
-		private bool _open = false;
-		
-		public Node? Result { get; private set; }
 
-		public NodeSelector(PhoenixScene scene) : base(scene) { }
+		public NodeSelector(PhoenixScene scene) : base(scene, "Node Selector") { }
 
 		public override void Render(float delta) {
+			base.Render(delta);
+			
 			var scene = EditorApplication.TargetScene;
 			
-			if(_open) {
-				ImGui.OpenPopup("Node Selector");
-				_open = false;
-			}
-			
-			if(ImGui.BeginPopupModal("Node Selector", ImGuiWindowFlags.AlwaysAutoResize)) {
+			if(ImGui.BeginPopupModal(Name, ImGuiWindowFlags.AlwaysAutoResize)) {
 				if(_typeRestriction is not null) {
 					ImGui.Text($"Of type: {_typeRestriction.Name}");
 				}
@@ -71,15 +61,14 @@ namespace Coelum.Phoenix.Editor.UI {
 			}
 		}
 
-		public void Prompt(Type? restrictType = null) {
-			Result = null;
-			_typeRestriction = restrictType;
-			_open = true;
+		public override void Prompt() {
+			base.Prompt();
+			_typeRestriction = null;
 		}
 
-		public void Reset() {
-			Result = null;
-			_typeRestriction = null;
+		public void Prompt(Type? restrictType) {
+			base.Prompt();
+			_typeRestriction = restrictType;
 		}
 	}
 }

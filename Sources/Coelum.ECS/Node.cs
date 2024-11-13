@@ -62,9 +62,12 @@ namespace Coelum.ECS {
 		public Dictionary<Type, INodeComponent> Components { get; protected set; } = new();
 		
 		public void Add(params Node[] nodes) {
-			Tests.Assert(Root != null,
-			             "Root is unexpectedly null. If you are adding children to it before adding it to a root node," +
-			             " make sure to forward-declare Root in the object initializer");
+			if(Root is null) {
+				throw new ArgumentNullException(nameof(Root),
+				                                "Root is unexpectedly null." +
+				                                " If you are adding children to it before adding it to a root node," +
+				                                " make sure to forward-declare Root in the object initializer");
+			}
 			
 			foreach(var node in nodes) {
 				node.Parent = this;

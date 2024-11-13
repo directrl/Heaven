@@ -121,8 +121,6 @@ namespace Coelum.Phoenix.Editor.UI {
 							var translation = new Vector3(translationMatrix.M11, translationMatrix.M12, translationMatrix.M13);
 							var rotation = new Vector3(rotationMatrix.M11.ToRadians(), rotationMatrix.M12.ToRadians(), rotationMatrix.M13.ToRadians());
 							var scale = new Vector3(scaleMatrix.M11, scaleMatrix.M12, scaleMatrix.M13);
-							
-							Matrix4x4.Decompose(newNodeMatrix, out var s, out var r, out var t);
 
 							switch(GizmoOperation) {
 								case ImGuizmoOperation.Translate:

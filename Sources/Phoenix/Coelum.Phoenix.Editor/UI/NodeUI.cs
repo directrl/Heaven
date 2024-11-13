@@ -174,10 +174,11 @@ namespace Coelum.Phoenix.Editor.UI {
 						ImGui.SeparatorText("Components");
 
 					#region Component editors
-						foreach(var (type, component) in SelectedNode.Components) {
+						foreach(var (_, component) in SelectedNode.Components) {
 							var cType = component.GetType();
 							
 							ImGui.SetNextItemOpen(true, ImGuiCond.FirstUseEver);
+							
 							if(ImGui.TreeNode(cType.Name)) {
 								foreach(var field in cType.GetFields()) {
 									if(field.IsInitOnly) continue;
@@ -194,6 +195,7 @@ namespace Coelum.Phoenix.Editor.UI {
 									DrawPropertyEditor(property.PropertyType, property.Name, pValue,
 									                   v => property.SetValue(component, v));
 								}
+								
 								ImGui.TreePop();
 							}
 						}

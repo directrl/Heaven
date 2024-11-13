@@ -6,6 +6,7 @@ using Coelum.Phoenix.ECS.Component;
 using Coelum.Phoenix.ECS.System;
 using Coelum.Phoenix.Editor.Camera;
 using Coelum.Phoenix.Editor.UI;
+using Coelum.Phoenix.Editor.UI.Prompts;
 using Coelum.Phoenix.Input;
 using Coelum.Phoenix.UI;
 using Hexa.NET.ImGui;
@@ -20,19 +21,20 @@ namespace Coelum.Phoenix.Editor {
 		
 	#region UI
 		public MainUI MainUI { get; private set; }
-		public PrefabUI PrefabUI { get; private set; }
 		public OutputUI EditorViewUI { get; private set; }
 		public OutputUI OutputViewUI { get; private set; }
 		public NodeUI NodeUI { get; private set; }
 		
 		public ResourceSelector ResourceSelector { get; private set; }
 		public NodeSelector NodeSelector { get; private set; }
+		public NodeSpawner NodeSpawner { get; private set; }
 		
 		public OutputScene EditorView { get; private set; }
 		public OutputScene OutputView { get; private set; }
 	#endregion
 		
 		public KeyBindings KeyBindings { get; }
+		public CameraBase? Camera => EditorView.FreeCamera?.Camera;
 
 		public EditorScene() : base("editor_main") {
 			KeyBindings = new(Id);
@@ -48,22 +50,22 @@ namespace Coelum.Phoenix.Editor {
 
 		#region UI
 			MainUI = new(this);
-			PrefabUI = new(this);
 			EditorViewUI = new(this, EditorView);
 			OutputViewUI = new(this, OutputView);
 			NodeUI = new(this);
 			
 			ResourceSelector = new(this, EditorApplication.TargetAssembly);
 			NodeSelector = new(this);
+			NodeSpawner = new(this);
 
 			UIOverlays.AddRange(new OverlayUI[] {
 				MainUI,
-				PrefabUI,
 				EditorViewUI,
 				OutputViewUI,
 				NodeUI,
 				ResourceSelector,
-				NodeSelector
+				NodeSelector,
+				NodeSpawner
 			});
 
 			if(Debugging.Enabled) {
@@ -130,6 +132,12 @@ namespace Coelum.Phoenix.Editor {
 		}
 
 		public override void OnRender(float delta) {
+			if(EditorView.FreeCamera?.Active ?? false) {
+				ImGui.GetIO().ConfigFlags |= ImGuiConfigFlags.NoMouse;
+			} else {
+				ImGui.GetIO().ConfigFlags &= ~ImGuiConfigFlags.NoMouse;
+			}
+
 			base.OnRender(delta);
 			EditorView.OnRender(delta);
 			OutputView.OnRender(delta);

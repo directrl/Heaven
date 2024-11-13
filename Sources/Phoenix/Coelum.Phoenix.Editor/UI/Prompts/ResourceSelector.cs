@@ -4,26 +4,19 @@ using Coelum.Phoenix.UI;
 using Coelum.Resources;
 using Hexa.NET.ImGui;
 
-namespace Coelum.Phoenix.Editor.UI {
+namespace Coelum.Phoenix.Editor.UI.Prompts {
 	
-	public class ResourceSelector : ImGuiUI {
+	public class ResourceSelector : PopupPrompt<IResource> {
 
-		private Assembly _assembly;
+		private readonly Assembly _assembly;
 		private ResourceType? _typeRestriction;
 
-		private bool _open = false;
-		
-		public IResource? Result { get; private set; }
-
-		public ResourceSelector(PhoenixScene scene, Assembly assembly) : base(scene) {
+		public ResourceSelector(PhoenixScene scene, Assembly assembly) : base(scene, "Resource Selector") {
 			_assembly = assembly;
 		}
 
 		public override void Render(float delta) {
-			if(_open) {
-				ImGui.OpenPopup("Resource Selector");
-				_open = false;
-			}
+			base.Render(delta);
 			
 			ImGui.SetNextWindowSize(
 				new(Scene.Window.Framebuffer.Size.X / 1.5f, Scene.Window.Framebuffer.Size.Y / 1.5f),
@@ -36,7 +29,7 @@ namespace Coelum.Phoenix.Editor.UI {
 				new(0.75f, 0.75f) // TODO why does neither (0.5f, 0.5f) nor (0.75f, 0.75f) center properly?
 			);
 			
-			if(ImGui.BeginPopupModal("Resource Selector")) {
+			if(ImGui.BeginPopupModal(Name)) {
 				var wSize = ImGui.GetWindowSize();
 				
 				var resources = new Dictionary<ResourceType, List<IResource>>() {
@@ -98,15 +91,14 @@ namespace Coelum.Phoenix.Editor.UI {
 			}
 		}
 
-		public void Prompt(ResourceType? restrictType = null) {
-			Result = null;
-			_typeRestriction = restrictType;
-			_open = true;
+		public override void Prompt() {
+			base.Prompt();
+			_typeRestriction = null;
 		}
 
-		public void Reset() {
-			Result = null;
-			_typeRestriction = null;
+		public void Prompt(ResourceType? restrictType) {
+			base.Prompt();
+			_typeRestriction = restrictType;
 		}
 	}
 }
