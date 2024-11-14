@@ -5,7 +5,10 @@ using Silk.NET.Maths;
 namespace Coelum.Phoenix {
 	
 	public class Viewport : Node {
-		
+
+		// Viewports should not be exported
+		public override bool Export => false;
+
 		public CameraBase Camera { get; set; }
 
 		private Framebuffer _framebuffer;

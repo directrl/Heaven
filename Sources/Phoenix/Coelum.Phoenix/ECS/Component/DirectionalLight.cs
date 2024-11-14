@@ -1,6 +1,7 @@
 using System.Drawing;
 using System.Numerics;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using Coelum.ECS;
 using Coelum.LanguageExtensions;
 using Coelum.LanguageExtensions.Serialization;
@@ -42,9 +43,21 @@ namespace Coelum.Phoenix.ECS.Component {
 			};
 		}
 
-		public virtual void Export(Utf8JsonWriter writer) {
-			Diffuse.Serializer().Export("diffuse", writer);
-			Specular.Serializer().Export("specular", writer);
+		public void Serialize(string name, Utf8JsonWriter writer) {
+			writer.WriteStartObject(GetType().FullName);
+			writer.WriteString("backing_type", name);
+			{
+				Diffuse.Serializer().Serialize("diffuse", writer);
+				Specular.Serializer().Serialize("specular", writer);
+			}
+			writer.WriteEndObject();
+		}
+		
+		public INodeComponent Deserialize(JsonNode node) {
+			Diffuse = new ColorSerializer().Deserialize(node["diffuse"]);
+			Specular = new ColorSerializer().Deserialize(node["specular"]);
+
+			return this;
 		}
 	}
 }

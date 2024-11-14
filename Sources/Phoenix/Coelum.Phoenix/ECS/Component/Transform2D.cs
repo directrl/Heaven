@@ -1,5 +1,6 @@
 using System.Numerics;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using Coelum.ECS;
 using Coelum.LanguageExtensions.Serialization;
 
@@ -48,6 +49,8 @@ namespace Coelum.Phoenix.ECS.Component {
 				return Scale;
 			}
 		}
+		
+		public Transform2D() { }
 
 		public Transform2D(Vector2? position = null,
 		                   float rotation = 0,
@@ -58,10 +61,23 @@ namespace Coelum.Phoenix.ECS.Component {
 			Scale = scale ?? new(1, 1);
 		}
 
-		public void Export(Utf8JsonWriter writer) {
-			Position.Serializer().Export("position", writer);
-			writer.WriteNumber("rotation", Rotation);
-			Scale.Serializer().Export("scale", writer);
+		public void Serialize(string name, Utf8JsonWriter writer) {
+			writer.WriteStartObject(GetType().FullName);
+			writer.WriteString("backing_type", name);
+			{
+				Position.Serializer().Serialize("position", writer);
+				writer.WriteNumber("rotation", Rotation);
+				Scale.Serializer().Serialize("scale", writer);
+			}
+			writer.WriteEndObject();
+		}
+		
+		public INodeComponent Deserialize(JsonNode node) {
+			Position = new Vector2Serializer().Deserialize(node["position"]);
+			Rotation = node["rotation"].GetValue<float>();
+			Scale = new Vector2Serializer().Deserialize(node["scale"]);
+			
+			return this;
 		}
 	}
 }

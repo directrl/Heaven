@@ -1,5 +1,6 @@
 using System.Numerics;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using Coelum.ECS;
 using Coelum.LanguageExtensions;
 using Coelum.LanguageExtensions.Serialization;
@@ -69,6 +70,8 @@ namespace Coelum.Phoenix.ECS.Component {
 		public float GlobalPitch => GlobalRotation.X;
 		public float GlobalRoll => GlobalRotation.Z;
 
+		public Transform3D() { }
+		
 		public Transform3D(Vector3? position = null,
 		                   Vector3? rotation = null,
 		                   Vector3? scale = null) {
@@ -78,10 +81,23 @@ namespace Coelum.Phoenix.ECS.Component {
 			Scale = scale ?? new(1, 1, 1);
 		}
 
-		public void Export(Utf8JsonWriter writer) {
-			Position.Serializer().Export("position", writer);
-			Rotation.Serializer().Export("rotation", writer);
-			Scale.Serializer().Export("scale", writer);
+		public void Serialize(string name, Utf8JsonWriter writer) {
+			writer.WriteStartObject(GetType().FullName);
+			writer.WriteString("backing_type", name);
+			{
+				Position.Serializer().Serialize("position", writer);
+				Rotation.Serializer().Serialize("rotation", writer);
+				Scale.Serializer().Serialize("scale", writer);
+			}
+			writer.WriteEndObject();
+		}
+		
+		public INodeComponent Deserialize(JsonNode node) {
+			Position = new Vector3Serializer().Deserialize(node["position"]);
+			Rotation = new Vector3Serializer().Deserialize(node["rotation"]);
+			Scale = new Vector3Serializer().Deserialize(node["scale"]);
+			
+			return this;
 		}
 	}
 }

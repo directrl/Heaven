@@ -44,7 +44,7 @@ namespace EditorPlayground.Nodes {
 		};
 
 		public ColorCube(Color color) {
-			var model = new Model() {
+			var model = new Model(null) {
 				Meshes = DEFAULT_MODEL.Meshes,
 				Materials = new() {
 					new() {

@@ -1,4 +1,5 @@
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using Coelum.ECS;
 
 namespace PhoenixPlayground.Components {
@@ -7,6 +8,10 @@ namespace PhoenixPlayground.Components {
 
 		public Node? Owner { get; set; }
 
-		public void Export(Utf8JsonWriter writer) { }
+		public void Serialize(string name, Utf8JsonWriter writer) { }
+
+		public INodeComponent Deserialize(JsonNode node) {
+			return new TestCubeRotate();
+		}
 	}
 }

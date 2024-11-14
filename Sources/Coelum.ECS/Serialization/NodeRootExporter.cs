@@ -1,4 +1,5 @@
 using System.Text.Json;
+using Coelum.Debug;
 
 namespace Coelum.ECS.Serialization {
 	
@@ -6,7 +7,7 @@ namespace Coelum.ECS.Serialization {
 		
 		public static void Export(this NodeRoot root, Stream output) {
 			using var writer = new Utf8JsonWriter(output, new() {
-				SkipValidation = true
+				SkipValidation = Debugging.Enabled
 			});
 			
 			root.Export(writer);
@@ -18,7 +19,7 @@ namespace Coelum.ECS.Serialization {
 			// nodes
 			writer.WriteStartArray("nodes");
 			{
-				root.QueryChildren(depth: 1)
+				root.QueryChildren()
 				    .Each(node => {
 					    node.Export(writer);
 				    })

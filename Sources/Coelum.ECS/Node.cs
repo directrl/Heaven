@@ -9,9 +9,11 @@ namespace Coelum.ECS {
 		private static readonly Random _RANDOM = new();
 		
 		public ulong Id { get; internal set; }
-		public bool Hidden { get; set; }
 
-		private string _name = new string(Enumerable.Repeat("abcdefghijklmnopqrstuvwxyz", 8)
+		public virtual bool Hidden { get; set; } = false;
+		public virtual bool Export { get; set; } = true;
+
+		internal string _name = new string(Enumerable.Repeat("abcdefghijklmnopqrstuvwxyz", 8)
 		                                            .Select(s => s[_RANDOM.Next(s.Length)])
 		                                            .ToArray());
 		public string Name {

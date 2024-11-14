@@ -1,4 +1,5 @@
 using System.Text.Json;
+using System.Text.Json.Nodes;
 
 namespace Coelum.ECS.Tags {
 
@@ -6,6 +7,10 @@ namespace Coelum.ECS.Tags {
 
 		public Node? Owner { get; set; }
 
-		public void Export(Utf8JsonWriter writer) { }
+		public void Serialize(string name, Utf8JsonWriter writer) { }
+
+		public INodeComponent Deserialize(JsonNode node) {
+			return new Singleton();
+		}
 	}
 }

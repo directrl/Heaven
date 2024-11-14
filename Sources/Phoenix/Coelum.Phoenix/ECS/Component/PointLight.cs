@@ -1,8 +1,10 @@
 using System.Drawing;
 using System.Numerics;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using Coelum.ECS;
 using Coelum.LanguageExtensions;
+using Coelum.LanguageExtensions.Serialization;
 using Coelum.Phoenix.OpenGL;
 using Coelum.Phoenix.OpenGL.UBO;
 
@@ -94,14 +96,25 @@ namespace Coelum.Phoenix.ECS.Component {
 			return light;
 		}
 
-		public virtual void Export(Utf8JsonWriter writer) {
-			var diffuseObj = JsonSerializer.SerializeToElement(Diffuse);
-			diffuseObj.WriteTo(writer);
-
-			var specularObj = JsonSerializer.SerializeToElement(Specular);
-			specularObj.WriteTo(writer);
+		public virtual void Serialize(string name, Utf8JsonWriter writer) {
+			writer.WriteStartObject(GetType().FullName);
+			writer.WriteString("backing_type", name);
+			{
+				Diffuse.Serializer().Serialize("diffuse", writer);
+				Specular.Serializer().Serialize("specular", writer);
 			
-			writer.WriteNumber("distance", Distance);
+				writer.WriteNumber("distance", Distance);
+			}
+			writer.WriteEndObject();
+		}
+		
+		public virtual INodeComponent Deserialize(JsonNode node) {
+			Diffuse = new ColorSerializer().Deserialize(node["diffuse"]);
+			Specular = new ColorSerializer().Deserialize(node["specular"]);
+
+			Distance = node["distance"].GetValue<int>();
+
+			return this;
 		}
 	}
 }

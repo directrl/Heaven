@@ -1,6 +1,9 @@
 using System.Numerics;
 using System.Text.Json;
+using System.Text.Json.Nodes;
+using Coelum.ECS;
 using Coelum.LanguageExtensions;
+using Coelum.LanguageExtensions.Serialization;
 using Coelum.Phoenix.OpenGL;
 using Coelum.Phoenix.OpenGL.UBO;
 
@@ -52,11 +55,28 @@ namespace Coelum.Phoenix.ECS.Component {
 			};
 		}
 
-		public override void Export(Utf8JsonWriter writer) {
-			base.Export(writer);
+		public override void Serialize(string name, Utf8JsonWriter writer) {
+			writer.WriteStartObject(GetType().FullName);
+			writer.WriteString("backing_type", name);
+			{
+				Diffuse.Serializer().Serialize("diffuse", writer);
+				Specular.Serializer().Serialize("specular", writer);
 			
-			writer.WriteNumber("cutoff", Cutoff);
-			writer.WriteNumber("fade", Fade);
+				writer.WriteNumber("distance", Distance);
+				
+				writer.WriteNumber("cutoff", Cutoff);
+				writer.WriteNumber("fade", Fade);
+			}
+			writer.WriteEndObject();
+		}
+
+		public override INodeComponent Deserialize(JsonNode node) {
+			base.Deserialize(node);
+
+			Cutoff = node["cutoff"].GetValue<float>();
+			Fade = node["fade"].GetValue<float>();
+
+			return this;
 		}
 	}
 }

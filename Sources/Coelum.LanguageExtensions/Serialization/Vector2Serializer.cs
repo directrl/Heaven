@@ -8,7 +8,7 @@ namespace Coelum.LanguageExtensions.Serialization {
 		
 		public Vector2 Value { get; init; }
 
-		public void Export(string name, Utf8JsonWriter writer) {
+		public void Serialize(string name, Utf8JsonWriter writer) {
 			writer.WriteStartObject(name);
 			{
 				writer.WriteNumber("x", Value.X);
@@ -17,7 +17,7 @@ namespace Coelum.LanguageExtensions.Serialization {
 			writer.WriteEndObject();
 		}
 		
-		public Vector2 Import(JsonNode node) {
+		public Vector2 Deserialize(JsonNode node) {
 			return new(
 				node["x"].GetValue<float>(),
 				node["y"].GetValue<float>()

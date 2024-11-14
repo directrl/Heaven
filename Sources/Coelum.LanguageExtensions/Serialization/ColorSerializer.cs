@@ -8,7 +8,7 @@ namespace Coelum.LanguageExtensions.Serialization {
 
 		public Color Value { get; init; }
 
-		public void Export(string name, Utf8JsonWriter writer) {
+		public void Serialize(string name, Utf8JsonWriter writer) {
 			writer.WriteStartObject(name);
 			{
 				writer.WriteNumber("a", Value.A);
@@ -19,7 +19,7 @@ namespace Coelum.LanguageExtensions.Serialization {
 			writer.WriteEndObject();
 		}
 		
-		public Color Import(JsonNode node) {
+		public Color Deserialize(JsonNode node) {
 			return Color.FromArgb(
 				node["a"].GetValue<byte>(),
 				node["r"].GetValue<byte>(),

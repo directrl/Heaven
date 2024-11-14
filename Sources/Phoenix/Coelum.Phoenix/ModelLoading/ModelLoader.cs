@@ -23,7 +23,7 @@ namespace Coelum.Phoenix.ModelLoading {
 		}
 
 		public static Model? Load(IResource resource) {
-			if(ModelCache.GLOBAL.TryGet(resource, out var model)) {
+			if(ModelRegistry.TryGet(resource, out var model)) {
 				return model;
 			}
 
@@ -44,7 +44,6 @@ namespace Coelum.Phoenix.ModelLoading {
 				model = Create(resource.UID, data: data);
 			}
 			
-			ModelCache.GLOBAL.Set(resource, model);
 			return model;
 		}
 

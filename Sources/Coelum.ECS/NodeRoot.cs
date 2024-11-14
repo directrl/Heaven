@@ -1,5 +1,6 @@
 using Coelum.Debug;
 using Coelum.ECS.Tags;
+using Coelum.LanguageExtensions.Serialization;
 using Serilog;
 
 namespace Coelum.ECS {
@@ -35,11 +36,11 @@ namespace Coelum.ECS {
 				system.Invoke(this, delta);
 			}
 			
-			foreach(var action in _futureActions) {
+			var a = _futureActions.ToArray();
+			foreach(var action in a) {
 				action.Invoke();
+				_futureActions.Remove(action);
 			}
-			
-			_futureActions.Clear();
 		}
 
 		public void RunLater(Action action) {

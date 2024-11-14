@@ -15,6 +15,7 @@
 
     <ItemGroup>
       <PackageReference Include="Hexa.NET.ImGuizmo" Version="2.2.0" />
+      <PackageReference Include="NativeFileDialog.Extended" Version="1.2.0" />
       <PackageReference Include="Silk.NET.SDL" Version="2.22.0" />
     </ItemGroup>
 

@@ -1,7 +1,10 @@
+using System.Text;
 using Coelum.Debug;
+using Coelum.ECS.Serialization;
 using Coelum.Phoenix.ECS.System;
 using Coelum.Phoenix.UI;
 using Hexa.NET.ImGui;
+using NativeFileDialog.Extended;
 
 namespace Coelum.Phoenix.Editor.UI {
 	
@@ -16,6 +19,36 @@ namespace Coelum.Phoenix.Editor.UI {
 		public override void Render(float delta) {
 			ImGui.BeginMainMenuBar();
 			{
+				if(ImGui.BeginMenu("File")) {
+					if(ImGui.MenuItem("Import")) {
+						// TODO imgui file chooser?
+						var filePath = NFD.OpenDialog(".", new() {
+							["json File"] = "json"
+						});
+
+						if(!string.IsNullOrWhiteSpace(filePath)) {
+							using(var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read)) {
+								EditorApplication.TargetScene.Import(stream);
+							}
+						
+							// reset output scenes
+							EditorApplication.MainScene.EditorView.OnLoad(EditorApplication.MainWindow);
+							EditorApplication.MainScene.OutputView.OnLoad(EditorApplication.MainWindow);
+						}
+					}
+					
+					if(ImGui.MenuItem("Export")) {
+						using(var stream = new MemoryStream()) {
+							EditorApplication.TargetScene.Export(stream);
+
+							string json = Encoding.UTF8.GetString(stream.ToArray());
+							Console.WriteLine(json);
+						}
+					}
+					
+					ImGui.EndMenu();
+				}
+				
 				if(ImGui.BeginMenu("Options")) {
 					if(ImGui.BeginMenu("Target Scene")) {
 						if(ImGui.MenuItem("Update", "", ref TargetSceneUpdate)) { }

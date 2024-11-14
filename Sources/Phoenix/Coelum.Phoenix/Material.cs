@@ -31,6 +31,23 @@ namespace Coelum.Phoenix {
 		public List<(TextureType, Texture2D)> Textures { get; init; } = new() {
 			(TextureType.Diffuse, Texture2D.DefaultTexture)
 		};
+		
+		public Material() { }
+
+		public Material(Material other) {
+			Albedo = other.Albedo;
+			AmbientColor = other.AmbientColor;
+			DiffuseColor = other.DiffuseColor;
+			SpecularColor = other.SpecularColor;
+
+			Shininess = other.Shininess;
+			Reflectivity = other.Reflectivity;
+			
+			Textures.Clear();
+			foreach(var entry in other.Textures) {
+				Textures.Add(entry);
+			}
+		}
 
 		public void Load(ShaderProgram shader) {
 			shader.SetUniform("material.albedo", Albedo);

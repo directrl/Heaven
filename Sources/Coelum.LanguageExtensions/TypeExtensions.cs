@@ -16,5 +16,14 @@ namespace Coelum.LanguageExtensions {
 
 			return prevType;
 		}
+
+		public static Type? FindType(string type) {
+			foreach(var assembly in AppDomain.CurrentDomain.GetAssemblies()) {
+				var t = assembly.GetType(type);
+				if(t != null) return t;
+			}
+
+			return null;
+		}
 	}
 }
