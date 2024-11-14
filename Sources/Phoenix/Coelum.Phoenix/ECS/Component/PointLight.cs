@@ -1,5 +1,6 @@
 using System.Drawing;
 using System.Numerics;
+using System.Text.Json;
 using Coelum.ECS;
 using Coelum.LanguageExtensions;
 using Coelum.Phoenix.OpenGL;
@@ -91,6 +92,16 @@ namespace Coelum.Phoenix.ECS.Component {
 			}
 			
 			return light;
+		}
+
+		public virtual void Export(Utf8JsonWriter writer) {
+			var diffuseObj = JsonSerializer.SerializeToElement(Diffuse);
+			diffuseObj.WriteTo(writer);
+
+			var specularObj = JsonSerializer.SerializeToElement(Specular);
+			specularObj.WriteTo(writer);
+			
+			writer.WriteNumber("distance", Distance);
 		}
 	}
 }

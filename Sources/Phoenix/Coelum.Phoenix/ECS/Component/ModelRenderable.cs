@@ -1,3 +1,4 @@
+using System.Text.Json;
 using Coelum.ECS;
 using Coelum.Phoenix.OpenGL;
 
@@ -14,6 +15,10 @@ namespace Coelum.Phoenix.ECS.Component {
 
 		public void Render(ShaderProgram shader) {
 			Model.Render(shader);
+		}
+
+		public void Export(Utf8JsonWriter writer) {
+			writer.WriteString("model_resource", ""); // TODO
 		}
 	}
 }

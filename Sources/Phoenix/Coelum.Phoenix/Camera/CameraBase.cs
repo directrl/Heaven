@@ -1,6 +1,7 @@
 using System.Numerics;
 using Coelum.ECS;
 using Coelum.Phoenix.ECS.Component;
+using Coelum.Phoenix.OpenGL.UBO;
 
 namespace Coelum.Phoenix.Camera {
 	
@@ -34,11 +35,20 @@ namespace Coelum.Phoenix.Camera {
 			}
 		}
 
-		protected CameraBase() {
-			AddComponent(new ECS.Component.Camera(this));
-		}
+		protected CameraBase() { }
 		
 		internal abstract void RecalculateProjectionMatrix();
 		internal abstract void RecalculateViewMatrix();
+		
+		public void Load(CameraMatrices ubo) {
+			RecalculateViewMatrix();
+			
+			ubo.Projection = ProjectionMatrix;
+			ubo.View = ViewMatrix;
+
+			ubo.CameraPos = this is Camera3D
+				? GetComponent<Transform, Transform3D>().GlobalPosition
+				: new(GetComponent<Transform, Transform2D>().GlobalPosition, 0);
+		}
 	}
 }

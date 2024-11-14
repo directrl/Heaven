@@ -1,4 +1,5 @@
 using System.Numerics;
+using System.Text.Json;
 using Coelum.LanguageExtensions;
 using Coelum.Phoenix.OpenGL;
 using Coelum.Phoenix.OpenGL.UBO;
@@ -49,6 +50,13 @@ namespace Coelum.Phoenix.ECS.Component {
 				OuterCutoff = Fade,
 				Direction = Direction
 			};
+		}
+
+		public override void Export(Utf8JsonWriter writer) {
+			base.Export(writer);
+			
+			writer.WriteNumber("cutoff", Cutoff);
+			writer.WriteNumber("fade", Fade);
 		}
 	}
 }

@@ -1,9 +1,17 @@
 using System.Numerics;
+using System.Text.Json;
+using Coelum.ECS;
+using Coelum.LanguageExtensions.Serialization;
 
 namespace Coelum.Phoenix.ECS.Component {
 	
 	public class Transform2D : Transform {
 
+		public Node? Owner { get; set; }
+		
+		public Matrix4x4 LocalMatrix { get; set; }
+		public Matrix4x4 GlobalMatrix { get; set; }
+		
 		public Vector2 Position;
 		public float Rotation;
 		public Vector2 Scale;
@@ -48,6 +56,12 @@ namespace Coelum.Phoenix.ECS.Component {
 			Position = position ?? new(0, 0);
 			Rotation = rotation;
 			Scale = scale ?? new(1, 1);
+		}
+
+		public void Export(Utf8JsonWriter writer) {
+			Position.Serializer().Export("position", writer);
+			writer.WriteNumber("rotation", Rotation);
+			Scale.Serializer().Export("scale", writer);
 		}
 	}
 }
