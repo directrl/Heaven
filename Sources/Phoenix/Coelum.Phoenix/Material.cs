@@ -1,17 +1,30 @@
 using System.Numerics;
 using System.Runtime.InteropServices;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 using Coelum.Debug;
 using Coelum.LanguageExtensions;
+using Coelum.LanguageExtensions.Serialization;
 using Coelum.Phoenix.OpenGL;
 using Coelum.Phoenix.Texture;
 using Coelum.Resources;
+using Silk.NET.Assimp;
 using Silk.NET.OpenGL;
 using Shader = Coelum.Phoenix.OpenGL.Shader;
 using ShadingModel = Silk.NET.OpenGL.ShadingModel;
 
 namespace Coelum.Phoenix {
 	
-	public struct Material {
+	public struct Material : ISerializable<Material> {
+		
+		public enum TextureType {
+			
+			Diffuse,
+			Specular,
+			Normal,
+			Height,
+			Unknown
+		}
 		
 		private static readonly Dictionary<TextureType, string> _UNIFORM_NAMES = new() {
 			{ TextureType.Diffuse, "material.tex_diffuse" },
@@ -28,7 +41,7 @@ namespace Coelum.Phoenix {
 		public float Shininess = 0.3f;
 		public float Reflectivity = 0.5f;
 
-		public List<(TextureType, Texture2D)> Textures { get; init; } = new() {
+		public List<(TextureType Type, Texture2D Texture)> Textures { get; init; } = new() {
 			(TextureType.Diffuse, Texture2D.DefaultTexture)
 		};
 		
@@ -54,16 +67,68 @@ namespace Coelum.Phoenix {
 				textureUnit++;
 			}
 		}
-		
-		public enum TextureType {
-			
-			Diffuse,
-			Specular,
-			Normal,
-			Height,
-			Unknown
-		}
 
+	#region Serialization
+		public void Serialize(string name, Utf8JsonWriter writer) {
+			writer.WriteStartObject();
+			{
+				Albedo.Serializer().Serialize("albedo", writer);
+				AmbientColor.Serializer().Serialize("ambient_color", writer);
+				DiffuseColor.Serializer().Serialize("diffuse_color", writer);
+				SpecularColor.Serializer().Serialize("specular_color", writer);
+				
+				writer.WriteNumber("shininess", Shininess);
+				writer.WriteNumber("reflectivity", Reflectivity);
+				
+				// textures
+				writer.WriteStartArray("textures");
+				foreach(var texture in Textures) {
+					writer.WriteStartObject();
+					{
+						writer.WriteNumber("type", (int) texture.Type);
+						// TODO
+						writer.WriteString("name", texture.Texture.Name);
+					}
+					writer.WriteEndObject();
+				}
+				writer.WriteEndArray();
+			}
+			writer.WriteEndObject();
+		}
+		
+		public Material Deserialize(JsonNode node) {
+			var albedo = new Vector4Serializer().Deserialize(node["albedo"]);
+			var ambientColor = new Vector4Serializer().Deserialize(node["ambient_color"]);
+			var diffuseColor = new Vector4Serializer().Deserialize(node["diffuse_color"]);
+			var specularColor = new Vector4Serializer().Deserialize(node["specular_color"]);
+
+			var shininess = node["shininess"].GetValue<float>();
+			var reflectivity = node["reflectivity"].GetValue<float>();
+			
+			// textures
+			var texturesJson = node["textures"].AsArray();
+			var textures = new List<(TextureType Type, Texture2D Texture)>();
+
+			foreach(var textureJson in texturesJson) {
+				var type = (TextureType) textureJson["type"].GetValue<int>();
+				var name = textureJson["name"].GetValue<string>();
+				
+				// TODO
+			}
+
+			return new() {
+				Albedo = albedo,
+				AmbientColor = ambientColor,
+				DiffuseColor = diffuseColor,
+				SpecularColor = specularColor,
+				Shininess = shininess,
+				Reflectivity = reflectivity,
+				Textures = textures
+			};
+		}
+	#endregion
+
+	#region Overlays
 		public static readonly ShaderOverlay[] OVERLAYS = {
 			FragmentShaderOverlay.OVERLAY,
 			VertexShaderOverlay.OVERLAY
@@ -98,5 +163,6 @@ namespace Coelum.Phoenix {
 			
 			public override ResourceManager ResourceManager => Module.RESOURCES;
 		}
+	#endregion
 	}
 }

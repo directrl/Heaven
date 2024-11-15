@@ -9,6 +9,12 @@ namespace Coelum.Phoenix.ECS {
 				writer.WriteStartObject(name);
 				{
 					writer.WriteString("model", ((Model) value).Name);
+					
+					writer.WriteStartArray("materials");
+					foreach(var material in ((Model) value).Materials) {
+						material.Serialize(null, writer);
+					}
+					writer.WriteEndArray();
 				}
 				writer.WriteEndObject();
 			};

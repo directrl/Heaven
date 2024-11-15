@@ -11,7 +11,15 @@ namespace Coelum.Phoenix.ECS {
 				if(!ModelRegistry.TryGet(modelName, out var model)) {
 					throw new Exception($"Model with name [{modelName}] could not be found in registry");
 				}
-
+				
+				// TODO fix this or whatever
+				// model.Materials.Clear();
+				//
+				// var materialsJson = json["materials"].AsArray();
+				// foreach(var materialJson in materialsJson) {
+				// 	model.Materials.Add(new Material().Deserialize(materialJson));
+				// }
+				
 				return model;
 			};
 		}
