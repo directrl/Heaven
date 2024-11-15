@@ -20,6 +20,8 @@ namespace Coelum.ECS.Serialization {
 				return;
 			}
 			
+			Tests.Assert(node.Root is not null, "node must have a root assigned to be exported");
+			
 			writer.WriteStartObject();
 			
 			// basic data
@@ -37,6 +39,23 @@ namespace Coelum.ECS.Serialization {
 				}
 				writer.WriteEndObject();
 			}
+			
+			// children
+			writer.WriteStartArray("children");
+			{
+				void WriteChild(Node child) {
+					child.Export(writer);
+					
+					child.Root.QueryChildren(child, depth: 1)
+					     .Each(WriteChild)
+					     .Execute();
+				}
+				
+				node.Root.QueryChildren(node, depth: 1)
+				    .Each(WriteChild)
+				    .Execute();
+			}
+			writer.WriteEndArray();
 			
 			// components
 			writer.WriteStartObject("components");

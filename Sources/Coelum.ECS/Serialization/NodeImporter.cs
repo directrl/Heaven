@@ -32,22 +32,16 @@ namespace Coelum.ECS.Serialization {
 			// parent
 			if(json["parent"] is not null) {
 				// we run it at a later time to make sure all nodes are imported
-
-				// TODO fix
-				void FindAndSetParent(Node node) {
-					if(node.Parent is not null) return;
-					
+				node.Root.RunLater(() => {
 					var pId = json["parent"]["id"].GetValue<ulong>();
 					var p = node.Root.QueryChild(pId);
 
 					if(p is null) {
-						node.Root.RunLater(() => FindAndSetParent(node));
+						Log.Warning($"[NodeImporter] Could not find parent with ID {pId} for {node}");
 					} else {
 						node.Parent = p;
 					}
-				}
-				
-				node.Root.RunLater(() => FindAndSetParent(node));
+				});
 			}
 			
 			// components
@@ -82,6 +76,10 @@ namespace Coelum.ECS.Serialization {
 				
 					node.Components[backingComponentType] = component;
 				}
+			}
+			
+			if(node.Root.QueryChild(node.Id) is null) {
+				node.Root.Add(node);
 			}
 		}
 	}

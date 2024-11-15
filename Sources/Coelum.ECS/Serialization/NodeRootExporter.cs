@@ -17,12 +17,20 @@ namespace Coelum.ECS.Serialization {
 			writer.WriteStartObject();
 			
 			// nodes
-			writer.WriteStartArray("nodes");
+			/*writer.WriteStartArray("nodes");
 			{
 				root.QueryChildren()
 				    .Each(node => {
 					    node.Export(writer);
 				    })
+				    .Execute();
+			}
+			writer.WriteEndArray();*/
+			
+			writer.WriteStartArray("nodetree");
+			{
+				root.QueryChildren(depth: 1)
+				    .Each(node => node.Export(writer))
 				    .Execute();
 			}
 			writer.WriteEndArray();
