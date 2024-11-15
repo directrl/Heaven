@@ -57,39 +57,6 @@ namespace Coelum.Phoenix.Editor.UI {
 					
 					ImGui.EndMenu();
 				}
-
-				if(ImGui.BeginMenu("Registry")) {
-					if(ImGui.BeginMenu("Model...")) {
-						if(ImGui.MenuItem("Import")) {
-							var filePath = NFD.OpenDialog(Environment.CurrentDirectory, new() {
-								["json File"] = "json"
-							});
-
-							if(!string.IsNullOrWhiteSpace(filePath)) {
-								using(var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read)) {
-									ModelRegistry.Import(stream);
-								}
-							}
-						}
-					
-						if(ImGui.MenuItem("Export")) {
-							var filePath = NFD.SaveDialog(Environment.CurrentDirectory, "registry.model.json");
-
-							if(!string.IsNullOrWhiteSpace(filePath)) {
-								using(var stream = new MemoryStream()) {
-									ModelRegistry.Export(stream);
-
-									string json = Encoding.UTF8.GetString(stream.ToArray());
-									File.WriteAllText(filePath, json);
-								}
-							}
-						}
-						
-						ImGui.EndMenu();
-					}
-					
-					ImGui.EndMenu();
-				}
 				
 				if(ImGui.BeginMenu("Options")) {
 					if(ImGui.BeginMenu("Target Scene")) {

@@ -56,7 +56,7 @@ namespace Coelum.Phoenix {
 				Materials.Clear();
 
 				foreach(var material in other.Materials) {
-					Materials.Add(new(material));
+					Materials.Add(material);
 				}
 			} else {
 				Materials = new(other.Materials);
