@@ -111,8 +111,7 @@ namespace Coelum.Phoenix.Editor.UI {
 						void DrawPropertyEditor(Type type, string pName, object? pValue, Action<object> setValue) {
 							ImGui.PushID(pName);
 							{
-								var pType = pValue.GetType();
-								if(pType.IsAssignableTo(typeof(Node))) pType = typeof(Node);
+								var pType = pValue.GetType().GetCommonTypeForNodeUse(useDecimal: false);
 								
 								if(_PROPERTY_EDITORS.TryGetValue(pType, out var action)) {
 									var newValue = action.Invoke(type, pName, pValue);
