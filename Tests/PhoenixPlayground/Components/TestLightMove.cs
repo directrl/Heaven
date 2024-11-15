@@ -7,11 +7,5 @@ namespace PhoenixPlayground.Components {
 	public class TestLightMove : INodeComponent {
 
 		public Node? Owner { get; set; }
-
-		public void Serialize(string name, Utf8JsonWriter writer) { }
-		
-		public INodeComponent Deserialize(JsonNode node) {
-			return new TestLightMove();
-		}
 	}
 }

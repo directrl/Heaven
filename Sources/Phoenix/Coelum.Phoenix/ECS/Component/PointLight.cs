@@ -95,26 +95,5 @@ namespace Coelum.Phoenix.ECS.Component {
 			
 			return light;
 		}
-
-		public virtual void Serialize(string name, Utf8JsonWriter writer) {
-			writer.WriteStartObject(GetType().FullName);
-			writer.WriteString("backing_type", name);
-			{
-				Diffuse.Serializer().Serialize("diffuse", writer);
-				Specular.Serializer().Serialize("specular", writer);
-			
-				writer.WriteNumber("distance", Distance);
-			}
-			writer.WriteEndObject();
-		}
-		
-		public virtual INodeComponent Deserialize(JsonNode node) {
-			Diffuse = new ColorSerializer().Deserialize(node["diffuse"]);
-			Specular = new ColorSerializer().Deserialize(node["specular"]);
-
-			Distance = node["distance"].GetValue<int>();
-
-			return this;
-		}
 	}
 }

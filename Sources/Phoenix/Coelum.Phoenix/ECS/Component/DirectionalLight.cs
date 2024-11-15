@@ -42,22 +42,5 @@ namespace Coelum.Phoenix.ECS.Component {
 				Direction = Direction
 			};
 		}
-
-		public void Serialize(string name, Utf8JsonWriter writer) {
-			writer.WriteStartObject(GetType().FullName);
-			writer.WriteString("backing_type", name);
-			{
-				Diffuse.Serializer().Serialize("diffuse", writer);
-				Specular.Serializer().Serialize("specular", writer);
-			}
-			writer.WriteEndObject();
-		}
-		
-		public INodeComponent Deserialize(JsonNode node) {
-			Diffuse = new ColorSerializer().Deserialize(node["diffuse"]);
-			Specular = new ColorSerializer().Deserialize(node["specular"]);
-
-			return this;
-		}
 	}
 }

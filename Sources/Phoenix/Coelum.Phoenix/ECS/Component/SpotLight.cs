@@ -54,29 +54,5 @@ namespace Coelum.Phoenix.ECS.Component {
 				Direction = Direction
 			};
 		}
-
-		public override void Serialize(string name, Utf8JsonWriter writer) {
-			writer.WriteStartObject(GetType().FullName);
-			writer.WriteString("backing_type", name);
-			{
-				Diffuse.Serializer().Serialize("diffuse", writer);
-				Specular.Serializer().Serialize("specular", writer);
-			
-				writer.WriteNumber("distance", Distance);
-				
-				writer.WriteNumber("cutoff", Cutoff);
-				writer.WriteNumber("fade", Fade);
-			}
-			writer.WriteEndObject();
-		}
-
-		public override INodeComponent Deserialize(JsonNode node) {
-			base.Deserialize(node);
-
-			Cutoff = node["cutoff"].GetValue<float>();
-			Fade = node["fade"].GetValue<float>();
-
-			return this;
-		}
 	}
 }

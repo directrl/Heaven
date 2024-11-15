@@ -75,24 +75,5 @@ namespace Coelum.Phoenix.ECS.Component {
 			if(rotation.HasValue) Rotation = rotation.Value;
 			if(scale.HasValue) Scale = scale.Value;
 		}
-
-		public void Serialize(string name, Utf8JsonWriter writer) {
-			writer.WriteStartObject(GetType().FullName);
-			writer.WriteString("backing_type", name);
-			{
-				Position.Serializer().Serialize("position", writer);
-				Rotation.Serializer().Serialize("rotation", writer);
-				Scale.Serializer().Serialize("scale", writer);
-			}
-			writer.WriteEndObject();
-		}
-		
-		public INodeComponent Deserialize(JsonNode node) {
-			Position = new Vector3Serializer().Deserialize(node["position"]);
-			Rotation = new Vector3Serializer().Deserialize(node["rotation"]);
-			Scale = new Vector3Serializer().Deserialize(node["scale"]);
-			
-			return this;
-		}
 	}
 }

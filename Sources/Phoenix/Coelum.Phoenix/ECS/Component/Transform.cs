@@ -11,12 +11,5 @@ namespace Coelum.Phoenix.ECS.Component {
 
 		public Matrix4x4 LocalMatrix { get; internal set; }
 		public Matrix4x4 GlobalMatrix { get; internal set; }
-
-		public void Serialize(string name, Utf8JsonWriter writer) {
-			throw new NotImplementedException();
-		}
-		public INodeComponent Deserialize(JsonNode node) {
-			throw new NotImplementedException();
-		}
 	}
 }
