@@ -2,6 +2,7 @@ using System.Drawing;
 using Coelum.Common.Graphics;
 using Coelum.Debug;
 using Coelum.Phoenix.Camera;
+using Coelum.Phoenix.ECS;
 using Coelum.Phoenix.ECS.Nodes;
 using Coelum.Phoenix.ECS.System;
 using Coelum.Phoenix.Lighting;
@@ -25,6 +26,27 @@ namespace Coelum.Phoenix {
 		public new SilkWindow? Window
 			=> base.Window == null ? null : (SilkWindow) base.Window;
 
+		public Viewport? PrimaryViewport {
+			get {
+				Viewport? viewport = null;
+				
+				QueryChildren<Viewport>()
+					.Each(node => {
+						if(node.Framebuffer == Window?.Framebuffer) {
+							viewport = node;
+						}
+					})
+					.Execute();
+
+				return viewport;
+			}
+		}
+		
+		public CameraBase? PrimaryCamera {
+			get => PrimaryViewport?.Camera;
+		}
+		
+		[Obsolete("Use PrimaryCamera instead")] // TODO Obsolete
 		public CameraBase? CurrentCamera {
 			get {
 				CameraBase? currentCamera = null;
@@ -41,7 +63,11 @@ namespace Coelum.Phoenix {
 			}
 		}
 
-		protected PhoenixScene(string id) : base(id) { }
+		protected PhoenixScene(string id) : base(id) {
+			// initialize additional property importers/exporters
+			typeof(PropertyExporters).TypeInitializer?.Invoke(null, null);
+			typeof(PropertyImporters).TypeInitializer?.Invoke(null, null);
+		}
 
 		public virtual void OnLoad(SilkWindow window) {
 			base.Window = window;
@@ -63,7 +89,7 @@ namespace Coelum.Phoenix {
 			}
 			
 			ClearSystems();
-			ClearNodes();
+			ClearNodes(unexportable: true);
 			base.OnLoad(window);
 			
 			if(!PrimaryShader._ready) {

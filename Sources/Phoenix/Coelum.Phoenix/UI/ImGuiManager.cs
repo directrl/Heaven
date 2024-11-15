@@ -1,3 +1,4 @@
+using System.Runtime.InteropServices;
 using System.Text;
 using Coelum.Configuration;
 using Coelum.Phoenix.Extensions.ImGui;
@@ -34,15 +35,22 @@ namespace Coelum.Phoenix.UI {
 			io->ConfigFlags |= ImGuiConfigFlags.DockingEnable;
 
 			byte[] iniPathBytes = Encoding.UTF8.GetBytes(iniPath);
-			byte[] c_str = new byte[iniPathBytes.Length + 1];
+			byte[] cStr = new byte[iniPathBytes.Length + 1];
 			
-			Array.Copy(iniPathBytes, c_str, iniPathBytes.Length);
-			c_str[^1] = 0;
+			Array.Copy(iniPathBytes, cStr, iniPathBytes.Length);
+			cStr[^1] = 0;
 			
-			fixed(byte* ptr = c_str) {
-				io->IniFilename = ptr;
+			/*
+			 * not sure if this is completely necessary, but ImGui might do funky stuff if the IniFilename
+			 * gets freed by .NET's GC
+			 */
+			
+			var cStrAddr = Marshal.AllocHGlobal(cStr.Length);
+			for(int i = 0; i < cStr.Length; i++) {
+				Marshal.WriteByte(cStrAddr + i, cStr[i]);
 			}
-
+			
+			io->IniFilename = (byte*) cStrAddr;
 			io->WantSaveIniSettings = 1;
 		}
 	}

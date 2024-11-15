@@ -19,6 +19,14 @@ namespace Coelum.ECS {
 
 			return null;
 		}
+
+		public Node? QueryChild(ulong id) {
+			if(_nodes.TryGetValue(id, out var node)) {
+				return node;
+			}
+
+			return node;
+		}
 		
 		/// <summary>
 		/// Creates a query for all children of the current NodeRoot

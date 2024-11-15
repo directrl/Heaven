@@ -58,6 +58,13 @@ namespace Coelum.Phoenix {
 			
 			Gl.BindVertexArray(0);
 		}
+		
+		public Mesh(Mesh other): this(other.Type,
+		                              other.Vertices,
+		                              other.Indices) {
+			
+			MaterialIndex = other.MaterialIndex;
+		}
 
 		public unsafe virtual void Render() {
 			VAO.Bind();

@@ -1,13 +1,17 @@
 using System.Numerics;
+using System.Text.Json;
+using System.Text.Json.Nodes;
+using Coelum.ECS;
 using Coelum.LanguageExtensions;
+using Coelum.LanguageExtensions.Serialization;
 
 namespace Coelum.Phoenix.ECS.Component {
 	
 	public class Transform3D : Transform {
 	
-		public Vector3 Position;
-		public Vector3 Rotation;
-		public Vector3 Scale;
+		public Vector3 Position = new(0, 0, 0);
+		public Vector3 Rotation = new(0, 0, 0);
+		public Vector3 Scale = new(1, 1, 1);
 
 		public float Yaw {
 			get => Rotation.Y.ToDegrees();
@@ -61,13 +65,15 @@ namespace Coelum.Phoenix.ECS.Component {
 		public float GlobalPitch => GlobalRotation.X;
 		public float GlobalRoll => GlobalRotation.Z;
 
+		public Transform3D() { }
+		
 		public Transform3D(Vector3? position = null,
 		                   Vector3? rotation = null,
 		                   Vector3? scale = null) {
 
-			Position = position ?? new(0, 0, 0);
-			Rotation = rotation ?? new(0, 0, 0);
-			Scale = scale ?? new(1, 1, 1);
+			if(position.HasValue) Position = position.Value;
+			if(rotation.HasValue) Rotation = rotation.Value;
+			if(scale.HasValue) Scale = scale.Value;
 		}
 	}
 }

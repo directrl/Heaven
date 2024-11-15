@@ -13,8 +13,8 @@ namespace Coelum.Phoenix.Camera {
 		protected static float Z_NEAR = 0.01f;
 		protected static float Z_FAR = 1000f;
 		
-		private Vector3 _direction = new();
-		private Vector3 _front = new();
+		private Vector3 _direction = new(0, 0, 0);
+		private Vector3 _front = new(0, 0, 1);
 		private Vector3 _up = Vector3.UnitY;
 
 		public float Yaw {

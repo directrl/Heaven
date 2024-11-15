@@ -1,9 +1,13 @@
 using System.Numerics;
+using System.Text.Json;
+using System.Text.Json.Nodes;
+using Coelum.ECS;
+using Coelum.LanguageExtensions.Serialization;
 
 namespace Coelum.Phoenix.ECS.Component {
 	
 	public class Transform2D : Transform {
-
+		
 		public Vector2 Position;
 		public float Rotation;
 		public Vector2 Scale;
@@ -40,6 +44,8 @@ namespace Coelum.Phoenix.ECS.Component {
 				return Scale;
 			}
 		}
+		
+		public Transform2D() { }
 
 		public Transform2D(Vector2? position = null,
 		                   float rotation = 0,

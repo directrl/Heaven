@@ -1,4 +1,6 @@
 using System.Numerics;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 using Coelum.ECS;
 
 namespace Coelum.Phoenix.ECS.Component {

@@ -24,7 +24,7 @@ namespace Coelum.Phoenix.ECS.System {
 				    if(!viewport.Enabled) return;
 				    
 				    viewport.Framebuffer.Bind();
-				    viewport.Camera.GetComponent<Component.Camera>().Load(_ubo);
+				    viewport.Camera.Load(_ubo);
 				    _ubo.Upload();
 				    _renderAction.Invoke(delta);
 			    })

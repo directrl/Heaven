@@ -19,10 +19,12 @@ namespace Coelum.Phoenix.Editor {
 		private PhoenixScene _scene;
 		internal bool _editor;
 
+		// TODO support 2D camera
 		public FreeCamera3D? FreeCamera { get; private set; }
 		
 		public KeyBindings KeyBindings { get; }
-		public Framebuffer OutputFramebuffer { get; internal set; }
+		public Framebuffer OutputFramebuffer { get; }
+		public Viewport OutputViewport { get; private set; }
 		
 		// TODO how would you resize target scene cameras to imgui window size? (i guess you could just not)
 		public OutputScene(string name, bool setupEditorCamera = true) : base(name) {
@@ -38,23 +40,25 @@ namespace Coelum.Phoenix.Editor {
 		public override void OnLoad(SilkWindow window) {
 			base.OnLoad(window);
 
-			var camera = _scene.CurrentCamera;
+			var camera = _scene.PrimaryCamera;
 
 			if(_editor) {
 				camera = new PerspectiveCamera() {
 					FOV = 60,
 					Name = "EditorCamera"
 				};
-				camera.Current = true;
 				
 				FreeCamera = new((Camera3D) camera, this, KeyBindings);
 			}
 
 			if(camera != null) {
-				_scene.Add(new Viewport(camera, OutputFramebuffer) {
+				camera.Current = true;
+				
+				OutputViewport = new(camera, OutputFramebuffer) {
 					Hidden = _editor,
 					Name = _editor ? "Editor Viewport" : "Editor Output Viewport"
-				});
+				};
+				_scene.Add(OutputViewport);
 			} else {
 				Heaven.AppLogger.Warning("Scene does not contain an active camera");
 			}

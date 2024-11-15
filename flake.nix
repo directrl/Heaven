@@ -46,6 +46,8 @@
 						vulkan-headers
 						vulkan-loader
 						stdenv.cc.cc.lib
+
+						dbus # for nfd
 					];
 					LD_LIBRARY_PATH = pkgs.lib.makeLibraryPath libs;
 
