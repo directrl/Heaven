@@ -1,4 +1,6 @@
+using System.Text.Json;
 using Coelum.Debug;
+using Coelum.LanguageExtensions.Serialization;
 using Coelum.Phoenix.OpenGL;
 using Coelum.Resources;
 using Serilog;
@@ -36,13 +38,13 @@ namespace Coelum.Phoenix {
 		}
 
 		/// <summary>
-		/// Creates a(n optionally) deep copy of an existing model
+		/// Creates a unique, (optionally) deep copy of an existing model
 		/// </summary>
 		/// <param name="other">The model to create a copy of</param>
 		/// <param name="deepMeshes">Whether or not to deeply copy meshes</param>
 		/// <param name="deepMaterials">Whether or not to deeply copy materials</param>
 		public Model(Model other, bool deepMeshes = false, bool deepMaterials = true) {
-			Name = other.Name;
+			Name = other.Name + "$" + new Random().Next();
 
 			if(deepMeshes) {
 				foreach(var mesh in other.Meshes) {
@@ -61,6 +63,8 @@ namespace Coelum.Phoenix {
 			} else {
 				Materials = new(other.Materials);
 			}
+			
+			ModelRegistry.Add(this);
 		}
 		
 		public virtual void Render(ShaderProgram shader) {
@@ -111,5 +115,57 @@ namespace Coelum.Phoenix {
 
 			return false;
 		}
+
+	#region Serialization
+		public static void Export(Stream stream) {
+			using var writer = new Utf8JsonWriter(stream, new() {
+				SkipValidation = Debugging.Enabled
+			});
+			
+			writer.WriteStartObject();
+			{
+				// meshes
+				var writtenMeshes = new List<uint>();
+				
+				writer.WriteStartObject("meshes");
+				foreach(var model in REGISTRY.Values) {
+					foreach(var mesh in model.Meshes) {
+						if(writtenMeshes.Contains(mesh.VAO.Id)) continue;
+						mesh.Serialize(null, writer);
+						writtenMeshes.Add(mesh.VAO.Id);
+					}
+				}
+				writer.WriteEndObject();
+				
+				// models
+				writer.WriteStartObject("models");
+				foreach(var (name, model) in REGISTRY) {
+					writer.WriteStartObject(name);
+					
+					// meshes
+					writer.WriteStartArray("meshes");
+					foreach(var mesh in model.Meshes) {
+						writer.WriteNumberValue(mesh.VAO.Id);
+					}
+					writer.WriteEndArray();
+					
+					// materials
+					writer.WriteStartArray("materials");
+					foreach(var material in model.Materials) {
+						material.Serialize(null, writer);
+					}
+					writer.WriteEndArray();
+					
+					writer.WriteEndObject();
+				}
+				writer.WriteEndObject();
+			}
+			writer.WriteEndObject();
+		}
+
+		public static void Import(Stream stream) {
+			throw new NotImplementedException();
+		}
+	#endregion
 	}
 }

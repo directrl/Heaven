@@ -1,20 +1,24 @@
 using System.Runtime.InteropServices;
+using System.Text.Json;
+using System.Text.Json.Nodes;
+using System.Text.Json.Serialization;
+using Coelum.LanguageExtensions.Serialization;
 using Coelum.Phoenix.OpenGL;
 using Silk.NET.OpenGL;
 
 namespace Coelum.Phoenix {
 	
-	public class Mesh : IDisposable {
+	public class Mesh : IDisposable, ISerializable<Mesh> {
 
 		internal readonly List<VertexBufferObject> _vbos = new();
 
 		public VertexArrayObject VAO { get; }
 
-		public Vertex[] Vertices { get; }
-		public uint[] Indices { get; }
-
 		public PrimitiveType Type { get; }
 		public int MaterialIndex { get; set; } = 0;
+		
+		public Vertex[] Vertices { get; }
+		public uint[] Indices { get; }
 
 		public unsafe Mesh(PrimitiveType type, Vertex[] vertices, uint[] indices) {
 			Type = type;
@@ -79,6 +83,51 @@ namespace Coelum.Phoenix {
 			}
 			
 			VAO.Dispose();
+		}
+
+		public void Serialize(string name, Utf8JsonWriter writer) {
+			writer.WriteStartObject(VAO.Id.ToString());
+			{
+				writer.WriteNumber("type", (int) Type);
+				writer.WriteNumber("material_index", MaterialIndex);
+				
+				writer.WriteStartArray("vertices");
+				foreach(var vertex in Vertices) {
+					var json = JsonSerializer.SerializeToNode(vertex);
+					writer.WriteRawValue(json.ToJsonString());
+				}
+				writer.WriteEndArray();
+				
+				writer.WriteStartArray("indicies");
+				foreach(var index in Indices) {
+					writer.WriteNumberValue(index);
+				}
+				writer.WriteEndArray();
+			}
+			writer.WriteEndObject();
+		}
+		
+		public Mesh Deserialize(JsonNode node) {
+			var type = (PrimitiveType) node["type"].GetValue<int>();
+			var materialIndex = node["material_index"].GetValue<int>();
+
+			var vertices = new List<Vertex>();
+			var verticesJson = node["vertices"].AsArray();
+
+			var indices = new List<uint>();
+			var indicesJson = node["indices"].AsArray();
+
+			foreach(var vertexJson in verticesJson) {
+				vertices.Add(vertexJson.Deserialize<Vertex>());
+			}
+
+			foreach(var indexJson in indicesJson) {
+				indices.Add(indexJson.GetValue<uint>());
+			}
+
+			return new(type, vertices.ToArray(), indices.ToArray()) {
+				MaterialIndex = materialIndex
+			};
 		}
 	}
 }

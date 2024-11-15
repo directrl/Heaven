@@ -1,7 +1,10 @@
 using System.Numerics;
 using System.Runtime.InteropServices;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 using Coelum.Debug;
 using Coelum.LanguageExtensions;
+using Coelum.LanguageExtensions.Serialization;
 using Coelum.Phoenix.OpenGL;
 using Coelum.Phoenix.Texture;
 using Coelum.Resources;
@@ -11,7 +14,16 @@ using ShadingModel = Silk.NET.OpenGL.ShadingModel;
 
 namespace Coelum.Phoenix {
 	
-	public class Material {
+	public class Material : ISerializable<Model> {
+		
+		public enum TextureType {
+			
+			Diffuse,
+			Specular,
+			Normal,
+			Height,
+			Unknown
+		}
 		
 		private static readonly Dictionary<TextureType, string> _UNIFORM_NAMES = new() {
 			{ TextureType.Diffuse, "material.tex_diffuse" },
@@ -28,7 +40,7 @@ namespace Coelum.Phoenix {
 		public float Shininess = 0.3f;
 		public float Reflectivity = 0.5f;
 
-		public List<(TextureType, Texture2D)> Textures { get; init; } = new() {
+		public List<(TextureType Type, Texture2D Texture)> Textures { get; init; } = new() {
 			(TextureType.Diffuse, Texture2D.DefaultTexture)
 		};
 		
@@ -70,15 +82,37 @@ namespace Coelum.Phoenix {
 			}
 		}
 		
-		public enum TextureType {
-			
-			Diffuse,
-			Specular,
-			Normal,
-			Height,
-			Unknown
+		public void Serialize(string name, Utf8JsonWriter writer) {
+			writer.WriteStartObject();
+			{
+				Albedo.Serializer().Serialize("albedo", writer);
+				AmbientColor.Serializer().Serialize("albedo", writer);
+				DiffuseColor.Serializer().Serialize("albedo", writer);
+				SpecularColor.Serializer().Serialize("albedo", writer);
+				
+				writer.WriteNumber("shininess", Shininess);
+				writer.WriteNumber("reflectivity", Reflectivity);
+				
+				// textures
+				writer.WriteStartArray("textures");
+				foreach(var texture in Textures) {
+					writer.WriteStartObject();
+					{
+						writer.WriteNumber("type", (int) texture.Type);
+						writer.WriteString("name", texture.Texture.Name);
+					}
+					writer.WriteEndObject();
+				}
+				writer.WriteEndArray();
+			}
+			writer.WriteEndObject();
+		}
+		
+		public Model Deserialize(JsonNode node) {
+			throw new NotImplementedException();
 		}
 
+	#region Overlays
 		public static readonly ShaderOverlay[] OVERLAYS = {
 			FragmentShaderOverlay.OVERLAY,
 			VertexShaderOverlay.OVERLAY
@@ -113,5 +147,6 @@ namespace Coelum.Phoenix {
 			
 			public override ResourceManager ResourceManager => Module.RESOURCES;
 		}
+	#endregion
 	}
 }
