@@ -16,7 +16,11 @@ namespace Coelum.Common.Input {
 		private bool _down;
 		public bool Down {
 			get {
-				Log.Warning($"{Name}.Down is supported only for single-key inputs");
+				if(Keys.Length > 1) {
+					Log.Warning($"{Name}.Down is supported only for single-key inputs");
+					return false;
+				}
+				
 				return _down;
 			}
 			internal set => _down = value;

@@ -518,7 +518,7 @@ namespace Coelum.Phoenix.Extensions.ImGui {
 							_gl.CheckGlError("Scissor");
 
 							// Bind texture, Draw
-							_gl.BindTexture(GLEnum.Texture2D, (uint) cmdPtr.TextureId.Handle); // TODO
+							_gl.BindTexture(GLEnum.Texture2D, (uint) cmdPtr.TextureId.Handle);
 							_gl.CheckGlError("Texture");
 
 							_gl.DrawElementsBaseVertex(GLEnum.Triangles, cmdPtr.ElemCount,
@@ -656,7 +656,6 @@ namespace Coelum.Phoenix.Extensions.ImGui {
 			// Build texture atlas
 			var io = HImGui.GetIO();
 			
-			// TODO
 			int width = 0;
 			int height = 0;
 			int bytesPerPixel = 0;

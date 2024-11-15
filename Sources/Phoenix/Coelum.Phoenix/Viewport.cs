@@ -15,7 +15,10 @@ namespace Coelum.Phoenix {
 		public Framebuffer Framebuffer {
 			get => _framebuffer;
 			set {
-				_framebuffer.Resize -= _FramebufferResizeHandler;
+				if(_framebuffer is not null) {
+					_framebuffer.Resize -= _FramebufferResizeHandler;
+				}
+				
 				_framebuffer = value;
 				value.Resize += _FramebufferResizeHandler;
 			}
@@ -25,7 +28,7 @@ namespace Coelum.Phoenix {
 
 		public Viewport(CameraBase camera, Framebuffer framebuffer) {
 			Camera = camera;
-			_framebuffer = framebuffer;
+			Framebuffer = framebuffer;
 
 			_FramebufferResizeHandler(framebuffer.Size); // initial resize
 		}

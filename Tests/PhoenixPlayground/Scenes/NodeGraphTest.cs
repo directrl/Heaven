@@ -48,8 +48,7 @@ namespace PhoenixPlayground.Scenes {
 			base.OnLoad(window);
 
 			_camera1 = new PerspectiveCamera() {
-				FOV = 60,
-				Current = true
+				FOV = 60
 			};
 			_camera1.GetComponent<Transform, Transform3D>().Position = new(0, 0, -3);
 			Add(_camera1);
@@ -99,7 +98,7 @@ namespace PhoenixPlayground.Scenes {
 			debugOverlay.AdditionalInfo += (delta) => {
 				ImGui.Separator();
 
-				var camera = (Camera3D) CurrentCamera;
+				var camera = (Camera3D) PrimaryCamera;
 				
 				/*if(ImGui.Begin("Info"))*/ {
 					ImGui.Text($"Camera position: {camera.GetComponent<Transform, Transform3D>().Position.ToString() ?? "Unknown"}");
@@ -129,7 +128,7 @@ namespace PhoenixPlayground.Scenes {
 			UIOverlays.Add(debugOverlay);
 
 			window.GetMice()[0].MouseMove += (_, pos) => {
-				var camera = CurrentCamera;
+				var camera = PrimaryCamera;
 				if(camera is Camera3D c3d) _freeCamera.CameraMove(c3d, pos);
 			};
 		}
@@ -138,11 +137,11 @@ namespace PhoenixPlayground.Scenes {
 			base.OnUpdate(delta);
 
 			var mouse = Window.GetMice()[0];
-			var camera = CurrentCamera;
+			var camera = PrimaryCamera;
 			if(camera is Camera3D c3d) _freeCamera.Update(c3d, ref mouse, delta);
 
-			if(_camera1Bind.Pressed) _camera1.Current = true;
-			if(_camera2Bind.Pressed) _camera2.Current = true;
+			if(_camera1Bind.Pressed) PrimaryViewport.Camera = _camera1;
+			if(_camera2Bind.Pressed) PrimaryViewport.Camera = _camera2;
 			
 			_keyBindings.Update(new SilkKeyboard(Window.Input.Keyboards[0]));
 		}

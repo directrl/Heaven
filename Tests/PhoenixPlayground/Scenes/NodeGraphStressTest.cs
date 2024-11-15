@@ -97,8 +97,7 @@ namespace PhoenixPlayground.Scenes {
 			Add(_player);
 			
 			_camera = new PerspectiveCamera() {
-				FOV = 60,
-				Current = true
+				FOV = 60
 			};
 			_camera.GetComponent<Transform, Transform3D>().Position = new(0, 0, -5);
 			_player.Add(_camera);

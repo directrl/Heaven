@@ -111,8 +111,7 @@ namespace PhoenixPlayground.Scenes {
 
 			if(_camera == null) {
 				_camera = new PerspectiveCamera() {
-					FOV = 60,
-					Current = true
+					FOV = 60
 				};
 				_camera.GetComponent<Transform, Transform3D>().Position = new(0, 0, -3);
 			}
@@ -193,11 +192,9 @@ namespace PhoenixPlayground.Scenes {
 			AddSystem("UpdatePre", _testCubeMove); // TODO phases should be enums or smth
 			AddSystem("UpdatePre", _testCubeRotate);
 
-			// TODO multiple uis break everything because there are multiple of it (obviously)
-			// but for whatever reasons PushID/PopID doesnt work
 			var debugOverlay = new DebugOverlay(this);
 			debugOverlay.AdditionalInfo += _ => {
-				if(CurrentCamera is Camera3D c3d) {
+				if(PrimaryCamera is Camera3D c3d) {
 					ImGui.Text($"Camera pos: {c3d.GetComponent<Transform, Transform3D>().GlobalPosition}");
 					ImGui.Text($"Camera yaw: {c3d.Yaw}");
 					ImGui.Text($"Camera pitch: {c3d.Pitch}");
@@ -271,13 +268,6 @@ namespace PhoenixPlayground.Scenes {
 				PrimaryShader.DisableOverlays(GouraudShading.OVERLAYS);
 				PrimaryShader.EnableOverlays(PhongShading.OVERLAYS);
 			}
-		}
-
-		public override void OnRender(float delta) {
-			// TODO impossible to render multiple uis because black screen or maybe its because single context?
-			//ImGuiManager.Begin(_debug.Context);
-			base.OnRender(delta);
-			//ImGuiManager.End(_debug.Context);
 		}
 	}
 }

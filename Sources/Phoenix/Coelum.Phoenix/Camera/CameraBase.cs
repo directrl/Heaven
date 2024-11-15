@@ -16,26 +16,6 @@ namespace Coelum.Phoenix.Camera {
 		public Matrix4x4 InverseProjectionMatrix { get; protected set; }
 		public Matrix4x4 InverseViewMatrix { get; protected set; }
 
-		private bool _current = false;
-		[Obsolete] // TODO Obsolete
-		public bool Current {
-			get => _current;
-			set {
-				if(value && Root != null) {
-					Root.QueryChildren()
-					    .Parallel(true)
-					    .Each(node => {
-						    if(node is CameraBase camera) {
-							    camera._current = false;
-						    }
-					    })
-					    .Execute();
-				}
-
-				_current = value;
-			}
-		}
-
 		protected CameraBase() { }
 		
 		internal abstract void RecalculateProjectionMatrix();

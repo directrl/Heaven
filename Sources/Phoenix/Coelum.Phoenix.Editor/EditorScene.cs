@@ -13,7 +13,6 @@ using Hexa.NET.ImGui;
 
 namespace Coelum.Phoenix.Editor {
 	
-	// TODO node adding menu with shortcut (similar to blender, godot)
 	// TODO node picking with raycasting (bepuphysics?)
 	public class EditorScene : PhoenixScene {
 
@@ -104,9 +103,7 @@ namespace Coelum.Phoenix.Editor {
 			EditorView.OnLoad((WindowBase) window);
 			OutputView.OnLoad((WindowBase) window);
 			
-			Add(new Viewport(new Camera2D() {
-				Current = true
-			}, window.Framebuffer));
+			Add(new Viewport(new Camera2D(), window.Framebuffer));
 		}
 
 		public override void OnUnload() {

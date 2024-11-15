@@ -53,15 +53,12 @@ namespace Coelum.Phoenix.Editor.Camera {
 		}
 		
 		private void OnUpdate(float delta) {
-			// TODO do this in KeyBindings after merging with main project?
-			// (although stuff like shortcuts would want to work even with ImGui)
 			if(ImGui.GetIO().WantCaptureKeyboard) return;
 			
 			if(EditorApplication.KeyBindings.FreeCameraEngage.Pressed) {
 				_cursorEnabled = !_cursorEnabled;
 				
-				// TODO maybe Window (and other stuff) shouldn't be nullable?
-				_scene.Window.GetMice()[0].Cursor.CursorMode =
+				_scene.Window!.GetMice()[0].Cursor.CursorMode =
 					_cursorEnabled 
 						? CursorMode.Normal 
 						: CursorMode.Disabled;
@@ -72,7 +69,6 @@ namespace Coelum.Phoenix.Editor.Camera {
 			if(_cursorEnabled) return;
 
 			if(_cameraUp.Down) {
-				// TODO make it possible to only query by child class e.g. GetComponent<Transform3D>
 				Camera.GetComponent<Transform, Transform3D>().Position += new Vector3(0, CameraSpeed * delta, 0);
 			}
 			

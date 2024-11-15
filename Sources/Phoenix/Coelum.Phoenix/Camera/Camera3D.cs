@@ -53,12 +53,13 @@ namespace Coelum.Phoenix.Camera {
 			}
 		}
 
-		// TODO fix camera stretching
 		protected Camera3D() {
 			AddComponent<Transform>(new Transform3D());
 			// TODO replace with billboard image
 			// TODO do not render for current camera
 			AddComponent<Renderable>(new ModelRenderable(ModelLoader.Load(Module.RESOURCES[ResourceType.MODEL, "camera.glb"])));
+			
+			Yaw = 90; // default for Z+
 			
 			RecalculateProjectionMatrix();
 			RecalculateViewMatrix();

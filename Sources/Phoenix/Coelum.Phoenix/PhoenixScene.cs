@@ -45,23 +45,6 @@ namespace Coelum.Phoenix {
 		public CameraBase? PrimaryCamera {
 			get => PrimaryViewport?.Camera;
 		}
-		
-		[Obsolete("Use PrimaryCamera instead")] // TODO Obsolete
-		public CameraBase? CurrentCamera {
-			get {
-				CameraBase? currentCamera = null;
-				
-				QueryChildren()
-					.Each(node => {
-						if(node is CameraBase { Current: true } camera) {
-							currentCamera = camera;
-						}
-					})
-					.Execute();
-
-				return currentCamera;
-			}
-		}
 
 		protected PhoenixScene(string id) : base(id) {
 			// initialize additional property importers/exporters

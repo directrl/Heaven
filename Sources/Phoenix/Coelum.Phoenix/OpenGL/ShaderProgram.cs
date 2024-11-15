@@ -9,7 +9,6 @@ using Silk.NET.OpenGL;
 
 namespace Coelum.Phoenix.OpenGL {
 	
-	// TODO cache
 	public class ShaderProgram : IDisposable {
 		
 		public const string UNIFORM_PREFIX = "u_";

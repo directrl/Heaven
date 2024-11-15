@@ -4,7 +4,6 @@ using Silk.NET.OpenGL;
 
 namespace Coelum.Phoenix.OpenGL {
 	
-	// TODO cache
 	public class Shader {
 		
 		internal ShaderOverlay[] _overlays = { };

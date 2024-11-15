@@ -21,7 +21,7 @@ namespace PhoenixPlayground.Scenes {
 				AutoResizeFactor = 0.2f
 			};
 			
-			Add(new Viewport(CurrentCamera, _fbo));
+			Add(new Viewport(PrimaryCamera, _fbo));
 		}
 
 		protected override void DoRender(float delta) {

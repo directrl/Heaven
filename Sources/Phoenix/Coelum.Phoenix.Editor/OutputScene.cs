@@ -26,7 +26,6 @@ namespace Coelum.Phoenix.Editor {
 		public Framebuffer OutputFramebuffer { get; }
 		public Viewport OutputViewport { get; private set; }
 		
-		// TODO how would you resize target scene cameras to imgui window size? (i guess you could just not)
 		public OutputScene(string name, bool setupEditorCamera = true) : base(name) {
 			_scene = EditorApplication.TargetScene;
 			_editor = setupEditorCamera;
@@ -52,8 +51,6 @@ namespace Coelum.Phoenix.Editor {
 			}
 
 			if(camera != null) {
-				camera.Current = true;
-				
 				OutputViewport = new(camera, OutputFramebuffer) {
 					Hidden = _editor,
 					Name = _editor ? "Editor Viewport" : "Editor Output Viewport"
