@@ -1,17 +1,12 @@
-using System.Drawing;
-using Silk.NET.GLFW;
-using Silk.NET.Windowing;
-using Silk.NET.Input;
-using Silk.NET.OpenGL;
-using Silk.NET.OpenGL.Extensions.ImGui;
+using Coelum.Phoenix.Editor;
+using PhoenixPlayground;
+using PhoenixPlayground.Scenes;
 
-namespace PhoenixPlayground {
-	
-	public class Program {
+var heaven = new Playground();
 
-		public unsafe static void Main(string[] args) {
-			var heaven = new Playground();
-			heaven.Start(args);
-		}
-	}
+if(args.Contains("--editor")) {
+	var editor = new EditorApplication(heaven.GetType().Assembly, new LightingTest());
+	editor.Start(args);
+} else {
+	heaven.Start(args);
 }

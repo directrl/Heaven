@@ -19,21 +19,42 @@ namespace Coelum.ECS {
 
 			return null;
 		}
+
+		public Node? QueryChild(ulong id) {
+			if(_nodes.TryGetValue(id, out var node)) {
+				return node;
+			}
+
+			return node;
+		}
 		
 		/// <summary>
 		/// Creates a query for all children of the current NodeRoot
 		/// </summary>
+		/// <param name="depth">The depth to scan children for. Set to 0 for infinite</param>
 		/// <returns>The query</returns>
-		public Query<Node> QueryChildren() {
+		public Query<Node> QueryChildren(int depth = 0) {
 			return new(
 				each => {
 					foreach(var node in _nodes.Values) {
-						each?.Invoke(node);
+						if(depth <= 0) {
+							each?.Invoke(node);
+						} else {
+							if(node.Name == node.Path) {
+								each?.Invoke(node);
+							}
+						}
 					}
 				},
 				each => {
 					Parallel.ForEach(_nodes.Values, node => {
-						each?.Invoke(node);
+						if(depth <= 0) {
+							each?.Invoke(node);
+						} else {
+							if(node.Name == node.Path) {
+								each?.Invoke(node);
+							}
+						}
 					});
 				}
 			);
@@ -43,17 +64,30 @@ namespace Coelum.ECS {
 		/// Creates a query for all children of the current NodeRoot of given type TNode
 		/// </summary>
 		/// <typeparam name="TNode">Node type to match against</typeparam>
+		/// <param name="depth">The depth to scan children for. Set to 0 for infinite</param>
 		/// <returns>The query</returns>
-		public Query<TNode> QueryChildren<TNode>() where TNode : Node {
+		public Query<TNode> QueryChildren<TNode>(int depth = 0) where TNode : Node {
 			return new(
 				each => {
 					foreach(var node in _nodes.Values) {
-						if(node is TNode proper) each?.Invoke(proper);
+						if(depth <= 0) {
+							if(node is TNode proper) each?.Invoke(proper);
+						} else {
+							if(node is TNode proper && node.Name == node.Path) {
+								each?.Invoke(proper);
+							}
+						}
 					}
 				},
 				each => {
 					Parallel.ForEach(_nodes.Values, node => {
-						if(node is TNode proper) each?.Invoke(proper);
+						if(depth <= 0) {
+							if(node is TNode proper) each?.Invoke(proper);
+						} else {
+							if(node is TNode proper && node.Name == node.Path) {
+								each?.Invoke(proper);
+							}
+						}
 					});
 				}
 			);
@@ -63,20 +97,37 @@ namespace Coelum.ECS {
 		/// Creates a query for all children of given node
 		/// </summary>
 		/// <param name="parent">The parent node to query children of</param>
+		/// <param name="depth">The depth to scan children for. Set to 0 for infinite</param>
 		/// <returns>The query</returns>
-		public Query<Node> QueryChildren(Node parent) {
+		public Query<Node> QueryChildren(Node parent, int depth = 0) {
 			return new(
 				each => {
-					foreach((var path, var child) in _pathNodeMap) {
-						if(path.StartsWith(parent.Path)) each?.Invoke(child);
+					foreach(var (path, child) in _pathNodeMap) {
+						if(child == parent) continue;
+						
+						if(depth <= 0) {
+							if(path.StartsWith(parent.Path)) each?.Invoke(child);
+						} else {
+							if(string.Equals(path, parent.Path + "." + child.Name)) {
+								each?.Invoke(child);
+							}
+						}
 					}
 				},
 				each => {
 					Parallel.ForEach(_pathNodeMap, kv => {
 						var path = kv.Key;
 						var child = kv.Value;
+						
+						if(child == parent) return;
 
-						if(path.StartsWith(parent.Path)) each?.Invoke(child);
+						if(depth <= 0) {
+							if(path.StartsWith(parent.Path)) each?.Invoke(child);
+						} else {
+							if(string.Equals(path, parent.Path + "." + child.Name)) {
+								each?.Invoke(child);
+							}
+						}
 					});
 				}
 			);

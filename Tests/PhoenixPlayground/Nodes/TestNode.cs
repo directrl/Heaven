@@ -1,5 +1,4 @@
 using Coelum.ECS;
-using Coelum.Phoenix;
 using Coelum.Phoenix.ECS.Component;
 using Coelum.Phoenix.ModelLoading;
 using Coelum.Resources;

@@ -23,7 +23,7 @@ namespace Coelum.Common.Graphics {
 		public event RenderEventHandler? Render;
 	#endregion
 
-		public WindowBase? Window { get; private set; }
+		public WindowBase? Window { get; protected set; }
 		public GameOptions? Options { get; }
 		
 		public string Id { get; }

@@ -59,11 +59,13 @@ namespace PhoenixPlayground.Scenes {
 			_lightZneg = _keyBindings.Register(new("z2", Key.L));
 			
 			this.SetupKeyBindings(_keyBindings);
-			
-			PrimaryShader.AddOverlays(Material.OVERLAYS);
-			PrimaryShader.AddOverlays(SceneEnvironment.OVERLAYS);
-			PrimaryShader.AddOverlays(PhongShading.OVERLAYS);
-			PrimaryShader.AddOverlays(GouraudShading.OVERLAYS);
+
+			ShaderOverlays = new[] {
+				Material.OVERLAYS,
+				SceneEnvironment.OVERLAYS,
+				PhongShading.OVERLAYS,
+				GouraudShading.OVERLAYS
+			};
 
 			_testCubeMove = new("cube move", (root, delta) => {
 				root.Query<Transform, Light>()
@@ -108,13 +110,13 @@ namespace PhoenixPlayground.Scenes {
 			});
 
 			if(_camera == null) {
-				_camera = new PerspectiveCamera(window) {
-					FOV = 60,
-					Current = true
+				_camera = new PerspectiveCamera() {
+					FOV = 60
 				};
 				_camera.GetComponent<Transform, Transform3D>().Position = new(0, 0, -3);
 			}
 			Add(_camera);
+			Add(new Viewport(_camera, window.Framebuffer));
 
 			{
 				var playgroundModel =
@@ -190,9 +192,9 @@ namespace PhoenixPlayground.Scenes {
 			AddSystem("UpdatePre", _testCubeMove); // TODO phases should be enums or smth
 			AddSystem("UpdatePre", _testCubeRotate);
 
-			var debug = new DebugUI(this);
-			debug.AdditionalInfo += (_, _) => {
-				if(CurrentCamera is Camera3D c3d) {
+			var debugOverlay = new DebugOverlay(this);
+			debugOverlay.AdditionalInfo += _ => {
+				if(PrimaryCamera is Camera3D c3d) {
 					ImGui.Text($"Camera pos: {c3d.GetComponent<Transform, Transform3D>().GlobalPosition}");
 					ImGui.Text($"Camera yaw: {c3d.Yaw}");
 					ImGui.Text($"Camera pitch: {c3d.Pitch}");
@@ -224,17 +226,19 @@ namespace PhoenixPlayground.Scenes {
 					})
 					.Execute();
 			};
+			
+			UIOverlays.Add(debugOverlay);
 
-			window.GetMice()[0].MouseMove += (_, pos) => {
-				if(CurrentCamera is Camera3D c3d) _freeCamera.CameraMove(c3d, pos);
-			};
+			// window.GetMice()[0].MouseMove += (_, pos) => {
+			// 	if(CurrentCamera is Camera3D c3d) _freeCamera.CameraMove(c3d, pos);
+			// };
 		}
 
 		public override void OnUpdate(float delta) {
 			base.OnUpdate(delta);
 
 			var mouse = Window.GetMice()[0];
-			if(CurrentCamera is Camera3D c3d) _freeCamera.Update(c3d, ref mouse, delta);
+			//if(CurrentCamera is Camera3D c3d) _freeCamera.Update(c3d, ref mouse, delta);
 
 			if(_phong.Pressed) {
 				Playground.AppLogger.Information("Switching to Phong shading");

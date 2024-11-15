@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\Coelum.Core\Coelum.Core.csproj" />
+      <ProjectReference Include="..\Coelum.Phoenix.Input\Coelum.Phoenix.Input.csproj" />
+      <ProjectReference Include="..\Coelum.Phoenix\Coelum.Phoenix.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Hexa.NET.ImGuizmo" Version="2.2.0" />
+      <PackageReference Include="NativeFileDialog.Extended" Version="1.2.0" />
+      <PackageReference Include="Silk.NET.SDL" Version="2.22.0" />
+    </ItemGroup>
+
+</Project>

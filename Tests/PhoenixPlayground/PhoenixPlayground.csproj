@@ -11,10 +11,9 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Sources\Coelum.Core\Coelum.Core.csproj" />
     <ProjectReference Include="..\..\Sources\Coelum.ECS\Coelum.ECS.csproj" />
+    <ProjectReference Include="..\..\Sources\Phoenix\Coelum.Phoenix.Editor\Coelum.Phoenix.Editor.csproj" />
     <ProjectReference Include="..\..\Sources\Phoenix\Coelum.Phoenix.Input\Coelum.Phoenix.Input.csproj" />
     <ProjectReference Include="..\..\Sources\Phoenix\Coelum.Phoenix\Coelum.Phoenix.csproj" />
-    <ProjectReference Include="..\..\Sources\Phoenix\Coelum.Phoenix.ModelLoading\Coelum.Phoenix.ModelLoading.csproj" />
-    <ProjectReference Include="..\..\Sources\Phoenix\Coelum.Phoenix.UI\Coelum.Phoenix.UI.csproj" />
   </ItemGroup>
   
   <ItemGroup>
@@ -22,7 +21,6 @@
   </ItemGroup>
   
   <ItemGroup>
-    <PackageReference Include="Silk.NET.Input.Glfw" Version="2.21.0" />
     <PackageReference Include="Silk.NET.OpenGL.Extensions.ImGui" Version="2.21.0" />
     <PackageReference Include="SixLabors.ImageSharp" Version="3.1.5" />
   </ItemGroup>

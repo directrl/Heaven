@@ -3,8 +3,6 @@ using System.Numerics;
 namespace Coelum.Phoenix.Camera {
 	
 	public class OrthographicCamera : Camera3D {
-		
-		public OrthographicCamera(SilkWindow window) : base(window) { }
 
 		internal override void RecalculateProjectionMatrix() {
 			ProjectionMatrix = Matrix4x4.CreateOrthographic(

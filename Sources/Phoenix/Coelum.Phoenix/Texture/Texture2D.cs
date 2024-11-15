@@ -59,6 +59,7 @@ namespace Coelum.Phoenix.Texture {
 			}
 			
 			if(EngineOptions.Texture.Mipmapping) Gl.GenerateMipmap(texture.Target);
+			texture.Name = name;
 			return texture;
 		}
 		

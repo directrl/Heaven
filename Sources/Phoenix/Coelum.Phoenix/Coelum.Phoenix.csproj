@@ -8,9 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Silk.NET.Input.Common" Version="2.21.0" />
-    <PackageReference Include="Silk.NET.OpenGL" Version="2.21.0" />
-    <PackageReference Include="Silk.NET.Windowing.Glfw" Version="2.21.0" />
+    <PackageReference Include="Silk.NET.Assimp" Version="2.22.0" />
+    <PackageReference Include="Silk.NET.Input.Common" Version="2.22.0" />
+    <PackageReference Include="Silk.NET.OpenGL" Version="2.22.0" />
+    <PackageReference Include="Silk.NET.Windowing.Glfw" Version="2.22.0" />
     <PackageReference Include="SixLabors.ImageSharp" Version="3.1.5" />
   </ItemGroup>
 
@@ -190,6 +191,7 @@
     <ProjectReference Include="..\..\Coelum.LanguageExtensions\Coelum.LanguageExtensions.csproj" />
     <ProjectReference Include="..\..\Coelum.ECS\Coelum.ECS.csproj" />
     <ProjectReference Include="..\..\Coelum.Resources\Coelum.Resources.csproj" />
+    <ProjectReference Include="..\Coelum.Phoenix.Extensions.ImGui\Coelum.Phoenix.Extensions.ImGui.csproj" />
   </ItemGroup>
 
   <ItemGroup>

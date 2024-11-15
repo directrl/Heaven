@@ -42,10 +42,11 @@ namespace PhoenixPlayground.Nodes {
 				}
 			}
 		};
+		
+		public ColorCube() { }
 
 		public ColorCube(Color color) {
-			var model = new Model() {
-				Meshes = DEFAULT_MODEL.Meshes,
+			var model = new Model(DEFAULT_MODEL) {
 				Materials = new() {
 					new() {
 						Albedo = color.ToVector4()

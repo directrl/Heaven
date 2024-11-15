@@ -1,4 +1,5 @@
 using System.Security.Cryptography;
+using System.Text.Json.Serialization;
 using Coelum.Debug;
 
 namespace Coelum.ECS {
@@ -8,28 +9,43 @@ namespace Coelum.ECS {
 		private static readonly Random _RANDOM = new();
 		
 		public ulong Id { get; internal set; }
-		
-		// private string _name = new string(Enumerable.Repeat("abcdefghijklmnopqrstuvwxyz", 8)
-		//                                             .Select(s => s[_RANDOM.Next(s.Length)])
-		//                                             .ToArray());
-		//
-		// public string Name {
-		// 	get => _name;
-		// 	set {
-		// 		Root.Remove(this);
-		// 		_name = value;
-		// 		Root.Add(this);
-		// 	}
-		// }
-		
-		public string Name { get; init; } = new string(Enumerable.Repeat("abcdefghijklmnopqrstuvwxyz", 8)
-																 .Select(s => s[_RANDOM.Next(s.Length)])
-																 .ToArray());
 
-		private string? _path;
+		public virtual bool Hidden { get; set; } = false;
+		public virtual bool Export { get; set; } = true;
+
+		internal string _name = new string(Enumerable.Repeat("abcdefghijklmnopqrstuvwxyz", 8)
+		                                            .Select(s => s[_RANDOM.Next(s.Length)])
+		                                            .ToArray());
+		public string Name {
+			get => _name;
+			set {
+				if(Root is not null) {
+					string newPath = _parent is null ? value : _parent.Path + "." + value;
+					Path = newPath;
+				}
+				
+				_name = value;
+			}
+		}
+
+		internal string? _path;
 		public string Path {
 			get => _path ?? Name;
-			private set => _path = value;
+			internal set {
+				if(Root is not null) {
+					Root.Remap(this, value);
+				}
+				
+				_path = value;
+			}
+		}
+
+		public string PathDirectory {
+			get {
+				var p = Path.Replace(Name, "");
+				if(p.Length > 0) return p[..^1];
+				else return p;
+			}
 		}
 		
 		public NodeRoot? Root { get; set; }
@@ -37,9 +53,9 @@ namespace Coelum.ECS {
 		private Node? _parent;
 		public Node? Parent {
 			get => _parent;
-			private set {
+			set {
+				Path = value is null ? Name : value.Path + "." + Name;
 				_parent = value;
-				if(_parent != null) Path = _parent.Path + "." + Name;
 			}
 		}
 
@@ -49,9 +65,12 @@ namespace Coelum.ECS {
 		public Dictionary<Type, INodeComponent> Components { get; protected set; } = new();
 		
 		public void Add(params Node[] nodes) {
-			Tests.Assert(Root != null,
-			             "Root is unexpectedly null. If you are adding children to it before adding it to a root node," +
-			             " make sure to forward-declare Root in the object initializer");
+			if(Root is null) {
+				throw new ArgumentNullException(nameof(Root),
+				                                "Root is unexpectedly null." +
+				                                " If you are adding children to it before adding it to a root node," +
+				                                " make sure to forward-declare Root in the object initializer");
+			}
 			
 			foreach(var node in nodes) {
 				node.Parent = this;

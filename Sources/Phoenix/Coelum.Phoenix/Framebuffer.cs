@@ -42,38 +42,78 @@ namespace Coelum.Phoenix {
 			_FBO_SHADER.Build();
 		}
 	#endregion
+
+	#region Delegates
+		public delegate void ResizeEventHandler(Vector2D<int> newSize);
+	#endregion
+
+	#region Events
+		public event ResizeEventHandler? Resize;
+	#endregion
+		
+		private SilkWindow? _window;
 		
 		public FramebufferTarget Target { get; }
-		public uint Handle { get; }
-		
-		public uint Width { get; }
-		public uint Height { get; }
-		
-		public Texture2D Texture { get; }
+		public uint Handle { get; private set; }
 
-		public bool AutoResize { get; set; } = false;
+		private Vector2D<int> _size;
+		public Vector2D<int> Size {
+			get => _size;
+			set {
+				Resize?.Invoke(value);
+				
+				var nfb = new Framebuffer(value, _window, Target);
+
+				Dispose();
+			
+				Handle = nfb.Handle;
+				_size = value;
+				Texture = nfb.Texture;
+			}
+		}
+		
+		public Texture2D Texture { get; private set; }
+
+		private bool _autoResize = false;
+		public bool AutoResize {
+			get => _autoResize;
+			set {
+				if(value && _window != null) {
+					_autoResize = true;
+					_window.SilkImpl.FramebufferResize += _WindowFramebufferResizeHandler;
+					return;
+				} else if(_window != null) {
+					_window.SilkImpl.FramebufferResize -= _WindowFramebufferResizeHandler;
+				}
+
+				_autoResize = false;
+			}
+		}
+
 		public float AutoResizeFactor { get; set; } = 1.0f;
 		
-		public unsafe Framebuffer(uint width, uint height, 
+		public unsafe Framebuffer(Vector2D<int> size,
+		                          SilkWindow? window = null,
 		                          FramebufferTarget target = FramebufferTarget.Framebuffer) {
 
+			_window = window;
+			
 			Target = target;
 			Handle = Gl.GenFramebuffer();
 			
 			Gl.BindFramebuffer(Target, Handle);
 
-			Width = width;
-			Height = height;
+			_size = size;
 
 			// create texture
-			Texture = new((int) width, (int) height);
+			Texture = new(Size.X, Size.Y);
 			Texture.Bind();
 			
 			Gl.TexImage2D(
 				Texture.Target,
 				0,
 				InternalFormat.Rgb,
-				Width, Height,
+				(uint) Size.X, (uint) Size.Y,
 				0,
 				PixelFormat.Rgb,
 				PixelType.UnsignedByte,
@@ -91,7 +131,7 @@ namespace Coelum.Phoenix {
 			// create depth and stencil buffer
 			uint rbo = Gl.GenRenderbuffer();
 			Gl.BindRenderbuffer(RenderbufferTarget.Renderbuffer, rbo);
-			Gl.RenderbufferStorage(RenderbufferTarget.Renderbuffer, InternalFormat.Depth24Stencil8, Width, Height);
+			Gl.RenderbufferStorage(RenderbufferTarget.Renderbuffer, InternalFormat.Depth24Stencil8, (uint) Size.X, (uint) Size.Y);
 			Gl.BindRenderbuffer(RenderbufferTarget.Renderbuffer, 0);
 			
 			// and attach it to the framebuffer
@@ -107,17 +147,25 @@ namespace Coelum.Phoenix {
 		}
 
 		// this constructor is only used for creating the default (0) framebuffer
-		internal Framebuffer(IWindow window) {
+		internal Framebuffer(SilkWindow window) {
 			Target = FramebufferTarget.Framebuffer;
 			Handle = 0;
+
+			_size = window.SilkImpl.FramebufferSize;
+			_autoResize = true;
 			
-			Width = (uint) window.FramebufferSize.X;
-			Height = (uint) window.FramebufferSize.Y;
+			window.SilkImpl.FramebufferResize += newSize => {
+				var size = new Vector2D<int>((int) (newSize.X * AutoResizeFactor),
+				                             (int) (newSize.Y * AutoResizeFactor));
+				
+				Resize?.Invoke(size);
+				_size = size;
+			};
 		}
 
 		public void Bind() {
 			Gl.BindFramebuffer(Target, Handle);
-			Gl.Viewport(new Vector2D<int>((int) Width, (int) Height));
+			Gl.Viewport(Size);
 		}
 
 		public void Render() {
@@ -134,6 +182,21 @@ namespace Coelum.Phoenix {
 			
 			Gl.DeleteFramebuffer(Handle);
 			Texture.Dispose();
+
+			Handle = uint.MaxValue;
+
+			if(_window != null) {
+				_window.SilkImpl.FramebufferResize -= _WindowFramebufferResizeHandler;
+			}
 		}
+
+	#region Event handlers
+		private void _WindowFramebufferResizeHandler(Vector2D<int> newSize) {
+			var size = new Vector2D<int>((int) (newSize.X * AutoResizeFactor),
+			                             (int) (newSize.Y * AutoResizeFactor));
+
+			Size = size;
+		}
+	#endregion
 	}
 }

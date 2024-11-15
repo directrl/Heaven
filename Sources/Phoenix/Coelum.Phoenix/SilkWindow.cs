@@ -1,6 +1,7 @@
 using Coelum.Configuration;
 using Coelum.Debug;
 using Coelum.Common.Graphics;
+using Coelum.Phoenix.GLFW;
 using Coelum.Phoenix.OpenGL;
 using Silk.NET.Core;
 using Silk.NET.Core.Contexts;
@@ -17,11 +18,9 @@ namespace Coelum.Phoenix {
 		private static IGLContext? _sharedContext;
 		
 		public IWindow SilkImpl { get; }
-		public IInputContext? Input { get; private set; }
+		public IInputContext Input { get; private set; }
 
 		public Framebuffer Framebuffer { get; private set; }
-		public uint FramebufferWidth => (uint) SilkImpl.FramebufferSize.X;
-		public uint FramebufferHeight => (uint) SilkImpl.FramebufferSize.Y;
 
 		static SilkWindow() {
 			if(ExperimentalFlags.ForceSDL) {
@@ -31,12 +30,10 @@ namespace Coelum.Phoenix {
 			}
 			
 			if(OperatingSystem.IsLinux() && !ExperimentalFlags.ForceWayland) {
-				var glfw = Glfw.GetApi();
-				
 				//			  GLFW_PLATFORM			 GLFW_PLATFORM_X11
-				glfw.InitHint((InitHint) 0x00050003, 0x00060004);
+				GlFw.InitHint((InitHint) 0x00050003, 0x00060004);
 
-				if(!glfw.Init()) {
+				if(!GlFw.Init()) {
 					throw new PlatformException("Could not initialize GLFW");
 				}
 			}
@@ -49,18 +46,19 @@ namespace Coelum.Phoenix {
 				if(_sharedContext == null) {
 					_ = new GlobalOpenGL(SilkImpl.CreateOpenGL());
 					_sharedContext = SilkImpl.GLContext;
+					
+					if(Debugging.Enabled) {
+						GLManager.EnableDebugOutput();
+					}
 				}
 				
 				SilkImpl.MakeCurrent();
 				Gl.Viewport(SilkImpl.FramebufferSize);
+
+				Framebuffer = new(this);
 				
-				if(Debugging.Enabled) {
-					GLManager.EnableDebugOutput();
-				}
-
-				Framebuffer = new(SilkImpl);
 				Input = SilkImpl.CreateInput();
-
+				
 				SilkImpl.IsVisible = true;
 			};
 
@@ -84,20 +82,6 @@ namespace Coelum.Phoenix {
 			SilkImpl.FramebufferResize += size => {
 				SilkImpl.MakeCurrent();
 				Gl.Viewport(size);
-				
-				Framebuffer?.Dispose();
-				Framebuffer = new(SilkImpl);
-
-				if(Scene is PhoenixScene ps) {
-					if(ps.Framebuffer is { AutoResize: true }) {
-						ps.Framebuffer.Dispose();
-						ps.Framebuffer = new(
-							(uint) (size.X * ps.Framebuffer.AutoResizeFactor),
-							(uint) (size.Y * ps.Framebuffer.AutoResizeFactor),
-							ps.Framebuffer.Target
-						);
-					}
-				}
 			};
 			
 			SilkImpl.Initialize();

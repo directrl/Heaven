@@ -19,8 +19,6 @@ namespace PhoenixPlayground.Scenes {
 		
 		private static readonly Random RANDOM = new();
 		
-		private DebugUI _overlay;
-		
 		private Mesh? _mesh;
 
 		private KeyBindings _keyBindings;
@@ -41,20 +39,22 @@ namespace PhoenixPlayground.Scenes {
 			
 			this.SetupKeyBindings(_keyBindings);
 			
-			PrimaryShader.AddOverlays(Material.OVERLAYS);
+			ShaderOverlays = new[] {
+				Material.OVERLAYS
+			};
 		}
 
 		public override void OnLoad(SilkWindow window) {
 			base.OnLoad(window);
 
-			_camera1 = new PerspectiveCamera(window) {
-				FOV = 60,
-				Current = true
+			_camera1 = new PerspectiveCamera() {
+				FOV = 60
 			};
 			_camera1.GetComponent<Transform, Transform3D>().Position = new(0, 0, -3);
 			Add(_camera1);
+			Add(new Viewport(_camera1, window.Framebuffer));
 
-			_camera2 = new OrthographicCamera(window) {
+			_camera2 = new OrthographicCamera() {
 				FOV = 3
 			};
 			_camera2.GetComponent<Transform, Transform3D>().Position = new(2, 2, 2);
@@ -94,11 +94,11 @@ namespace PhoenixPlayground.Scenes {
 				//c3.Add(c1);
 			}
 
-			_overlay = new DebugUI(this);
-			_overlay.AdditionalInfo += (delta, args) => {
+			var debugOverlay = new DebugOverlay(this);
+			debugOverlay.AdditionalInfo += (delta) => {
 				ImGui.Separator();
 
-				var camera = (Camera3D) CurrentCamera;
+				var camera = (Camera3D) PrimaryCamera;
 				
 				/*if(ImGui.Begin("Info"))*/ {
 					ImGui.Text($"Camera position: {camera.GetComponent<Transform, Transform3D>().Position.ToString() ?? "Unknown"}");
@@ -124,9 +124,11 @@ namespace PhoenixPlayground.Scenes {
 					ImGui.End();
 				}
 			};
+			
+			UIOverlays.Add(debugOverlay);
 
 			window.GetMice()[0].MouseMove += (_, pos) => {
-				var camera = CurrentCamera;
+				var camera = PrimaryCamera;
 				if(camera is Camera3D c3d) _freeCamera.CameraMove(c3d, pos);
 			};
 		}
@@ -135,11 +137,11 @@ namespace PhoenixPlayground.Scenes {
 			base.OnUpdate(delta);
 
 			var mouse = Window.GetMice()[0];
-			var camera = CurrentCamera;
+			var camera = PrimaryCamera;
 			if(camera is Camera3D c3d) _freeCamera.Update(c3d, ref mouse, delta);
 
-			if(_camera1Bind.Pressed) _camera1.Current = true;
-			if(_camera2Bind.Pressed) _camera2.Current = true;
+			if(_camera1Bind.Pressed) PrimaryViewport.Camera = _camera1;
+			if(_camera2Bind.Pressed) PrimaryViewport.Camera = _camera2;
 			
 			_keyBindings.Update(new SilkKeyboard(Window.Input.Keyboards[0]));
 		}

@@ -77,13 +77,20 @@ namespace Coelum.Phoenix.OpenGL {
 
 	public static class UBO_ShaderProgramExtensions {
 		
-		public static void CreateBufferBinding(this ShaderProgram shader, UniformBufferObject ubo) {
-			if(shader.UBOs.ContainsKey(ubo.GetType())) return;
+		public static TUBO CreateBufferBinding<TUBO>(this ShaderProgram shader)
+			where TUBO : UniformBufferObject, new() {
+			
+			if(shader.UBOs.ContainsKey(typeof(TUBO))) {
+				return shader.GetUBO<TUBO>();
+			}
+
+			var ubo = new TUBO();
 			
 			uint index = Gl.GetUniformBlockIndex(shader.Id, ubo.Name);
 			Gl.UniformBlockBinding(shader.Id, index, (uint) ubo.Binding);
 			
 			shader.AddUBO(ubo);
+			return ubo;
 		}
 	}
 }

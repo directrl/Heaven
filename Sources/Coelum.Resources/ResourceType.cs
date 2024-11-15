@@ -15,5 +15,23 @@ namespace Coelum.Resources {
 			Path = path;
 			Extension = extension;
 		}
+
+		public static ResourceType MatchPath(string fullPath) {
+			fullPath = fullPath.Replace('/', '.');
+			string[] components = fullPath.Split('.');
+
+			foreach(var component in components) {
+				switch(component) {
+					case "Shaders":
+						return SHADER;
+					case "Textures":
+						return TEXTURE;
+					case "Models":
+						return MODEL;
+				}
+			}
+
+			return CUSTOM;
+		}
 	}
 }

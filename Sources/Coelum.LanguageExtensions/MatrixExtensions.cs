@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Numerics;
 
 namespace Coelum.LanguageExtensions {
@@ -41,6 +42,24 @@ namespace Coelum.LanguageExtensions {
 		
 		public static Vector3 PositiveZ(this Matrix4x4 matrix) {
 			return Vector3.Normalize(new(matrix.M13, matrix.M23, matrix.M33));
+		}
+		
+		// adapted from
+		// https://github.com/CedricGuillemet/ImGuizmo/blob/e552f632bbb17a0ebf5a91a22900f6f68bac6545/ImGuizmo.cpp#L2520
+		public static void ComposeFromComponents(ref this Matrix4x4 matrix,
+		                                         Vector3 translation,
+		                                         Vector3 rotation,
+												 Vector3 scale) {
+
+			// rotation
+			var rotationX = Matrix4x4.CreateFromAxisAngle(Vector3.UnitX, rotation.X);
+			var rotationY = Matrix4x4.CreateFromAxisAngle(Vector3.UnitY, rotation.Y);
+			var rotationZ = Matrix4x4.CreateFromAxisAngle(Vector3.UnitZ, rotation.Z);
+
+			//matrix = rotationX * rotationY * rotationZ;
+			matrix = Matrix4x4.CreateScale(scale)
+				* (rotationX * rotationY * rotationZ)
+				* Matrix4x4.CreateTranslation(translation);
 		}
 	}
 }

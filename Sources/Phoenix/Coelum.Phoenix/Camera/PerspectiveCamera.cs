@@ -4,8 +4,6 @@ using Coelum.LanguageExtensions;
 namespace Coelum.Phoenix.Camera {
 	
 	public class PerspectiveCamera : Camera3D {
-		
-		public PerspectiveCamera(SilkWindow window) : base(window) { }
 
 		internal override void RecalculateProjectionMatrix() {
 			ProjectionMatrix = Matrix4x4.CreatePerspectiveFieldOfView(

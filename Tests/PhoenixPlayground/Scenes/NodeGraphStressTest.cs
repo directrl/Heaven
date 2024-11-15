@@ -23,7 +23,6 @@ namespace PhoenixPlayground.Scenes {
 		private Camera3D _camera;
 		private Node _player;
 		
-		private DebugUI _overlay;
 		private Mesh? _mesh;
 
 		private KeyBindings _keyBindings;
@@ -59,8 +58,10 @@ namespace PhoenixPlayground.Scenes {
 		#endregion
 			
 			this.SetupKeyBindings(_keyBindings);
-			
-			PrimaryShader.AddOverlays(Material.OVERLAYS);
+
+			ShaderOverlays = new[] {
+				Material.OVERLAYS
+			};
 
 			_moveStressTest = new("move test", (root, delta) => {
 				root.Query<Transform>()
@@ -95,9 +96,8 @@ namespace PhoenixPlayground.Scenes {
 			_player.GetComponent<Transform, Transform3D>().Position = new(0, -3, -3);
 			Add(_player);
 			
-			_camera = new PerspectiveCamera(window) {
-				FOV = 60,
-				Current = true
+			_camera = new PerspectiveCamera() {
+				FOV = 60
 			};
 			_camera.GetComponent<Transform, Transform3D>().Position = new(0, 0, -5);
 			_player.Add(_camera);
@@ -130,8 +130,8 @@ namespace PhoenixPlayground.Scenes {
 			
 			AddSystem("UpdatePre", _moveStressTest);
 
-			_overlay = new DebugUI(this);
-			_overlay.AdditionalInfo += (delta, args) => {
+			var debugOverlay = new DebugOverlay(this);
+			debugOverlay.AdditionalInfo += (delta) => {
 				ImGui.Separator();
 				
 				/*if(ImGui.Begin("Info"))*/ {
@@ -158,6 +158,8 @@ namespace PhoenixPlayground.Scenes {
 					ImGui.End();
 				}
 			};
+			
+			UIOverlays.Add(debugOverlay);
 
 			window.GetMice()[0].MouseMove += (_, pos) => {
 				_freeCamera.CameraMove(_camera, pos);

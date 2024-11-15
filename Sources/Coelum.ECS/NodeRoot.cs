@@ -1,5 +1,6 @@
 using Coelum.Debug;
 using Coelum.ECS.Tags;
+using Coelum.LanguageExtensions.Serialization;
 using Serilog;
 
 namespace Coelum.ECS {
@@ -9,11 +10,12 @@ namespace Coelum.ECS {
 		private ulong _lastId = 0; // TODO better way
 
 		private Dictionary<ulong, Node> _nodes = new();
-		
 		private Dictionary<string, Node> _pathNodeMap = new();
 		private Dictionary<Type, List<Node>> _componentNodeMap = new();
 
 		private Dictionary<string, List<EcsSystem>> _systems = new();
+
+		private List<Action> _futureActions = new();
 
 		public int ChildCount => _nodes.Count;
 		
@@ -33,6 +35,16 @@ namespace Coelum.ECS {
 			foreach(var system in _systems[phase]) {
 				system.Invoke(this, delta);
 			}
+			
+			var a = _futureActions.ToArray();
+			foreach(var action in a) {
+				action.Invoke();
+				_futureActions.Remove(action);
+			}
+		}
+
+		public void RunLater(Action action) {
+			_futureActions.Add(action);
 		}
 		
 		public void Add(Node node) {
@@ -62,6 +74,33 @@ namespace Coelum.ECS {
 			Log.Verbose($"[ECS] Added new node {node}");
 		}
 
+		internal void Remap(Node node, string newPath) {
+			var pathsToReplace = new Dictionary<string, string>();
+
+			void UpdatePath(Node node, string newPath) {
+				pathsToReplace[node.Path] = newPath;
+				
+				QueryChildren(node, depth: 1)
+					.Each(child => {
+						var newChildPath = newPath + "." + child.Name;
+						UpdatePath(child, newChildPath);
+					})
+					.Execute();
+			}
+			
+			UpdatePath(node, newPath);
+
+			RunLater(() => {
+				foreach(var (oldNodePath, newNodePath) in pathsToReplace) {
+					var node = _pathNodeMap[oldNodePath];
+					_pathNodeMap.Remove(oldNodePath);
+					_pathNodeMap[newNodePath] = node;
+
+					node._path = newNodePath;
+				}
+			});
+		}
+
 		public void Remove(Node node) {
 			_nodes.Remove(node.Id);
 			_pathNodeMap.Remove(node.Path);
@@ -73,15 +112,39 @@ namespace Coelum.ECS {
 			node.Id = 0;
 		}
 
-		public void ClearNodes() {
-			_nodes.Clear();
-			_pathNodeMap.Clear();
+		/// <summary>
+		/// Clears all nodes from this node root
+		/// </summary>
+		/// <param name="unexportable">Whether or not to also clear unexportable nodes</param>
+		public void ClearNodes(bool unexportable = false) {
+			if(unexportable) {
+				_nodes.Clear();
+				_pathNodeMap.Clear();
 
-			foreach(var component in _componentNodeMap.Keys) {
-				_componentNodeMap[component].Clear();
+				foreach(var component in _componentNodeMap.Keys) {
+					_componentNodeMap[component].Clear();
+				}
+				
+				_lastId = 0;
+			} else {
+				_nodes = _nodes
+				         .Where(kv => !kv.Value.Export)
+				         .ToDictionary(kv => kv.Key, kv => kv.Value);
+				
+				_pathNodeMap = _pathNodeMap
+				               .Where(kv => !kv.Value.Export)
+				               .ToDictionary(kv => kv.Key, kv => kv.Value);
+				
+				foreach(var component in _componentNodeMap.Keys) {
+					_componentNodeMap[component] = _componentNodeMap[component]
+					                               .Where(node => !node.Export)
+					                               .ToList();
+				}
+
+				_lastId = _nodes.Count > 0
+					? _nodes.Keys.Max()
+					: 0;
 			}
-			
-			_lastId = 0;
 		}
 
 		public void ClearSystems() {
@@ -92,16 +155,6 @@ namespace Coelum.ECS {
 		public Node? Get(string path) => _pathNodeMap.GetValueOrDefault(path);
 		public List<Node>? Get<TComponent>() where TComponent : INodeComponent {
 			return _componentNodeMap.GetValueOrDefault(typeof(TComponent));
-		}
-
-		public Query<string, List<EcsSystem>> QuerySystems() {
-			return new(
-				each => {
-					foreach((var phase, var systems) in _systems) {
-						each?.Invoke(phase, systems);
-					}
-				}
-			);
 		}
 	}
 }

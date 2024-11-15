@@ -2,10 +2,13 @@ using System.Drawing;
 using Coelum.Common.Graphics;
 using Coelum.Debug;
 using Coelum.Phoenix.Camera;
+using Coelum.Phoenix.ECS;
 using Coelum.Phoenix.ECS.Nodes;
 using Coelum.Phoenix.ECS.System;
 using Coelum.Phoenix.Lighting;
 using Coelum.Phoenix.OpenGL;
+using Coelum.Phoenix.OpenGL.UBO;
+using Coelum.Phoenix.UI;
 using Coelum.Resources;
 using Silk.NET.Maths;
 using Silk.NET.OpenGL;
@@ -14,38 +17,46 @@ namespace Coelum.Phoenix {
 	
 	public abstract class PhoenixScene : SceneBase {
 
-	#region Delegates
-		public delegate void ShaderSetupEventHandler(ShaderProgram shader);
-	#endregion
-
-	#region Events
-		public event ShaderSetupEventHandler? PrimaryShaderSetup;
-	#endregion
-
 		public Color ClearColor { get; protected set; } = Color.Black;
-		public Framebuffer? Framebuffer { get; set; }
 		public ShaderProgram PrimaryShader { get; protected set; }
+		
+		public ShaderOverlay[][]? ShaderOverlays { get; protected set; }
+		public List<OverlayUI> UIOverlays { get; protected set; } = new();
 
 		public new SilkWindow? Window
 			=> base.Window == null ? null : (SilkWindow) base.Window;
 
-		protected CameraBase? CurrentCamera {
+		public Viewport? PrimaryViewport {
 			get {
-				CameraBase? currentCamera = null;
+				Viewport? viewport = null;
 				
-				QueryChildren()
+				QueryChildren<Viewport>()
 					.Each(node => {
-						if(node is CameraBase { Current: true } camera) {
-							currentCamera = camera;
+						if(node.Framebuffer == Window?.Framebuffer) {
+							viewport = node;
 						}
 					})
 					.Execute();
 
-				return currentCamera;
+				return viewport;
 			}
 		}
 		
+		public CameraBase? PrimaryCamera {
+			get => PrimaryViewport?.Camera;
+		}
+
 		protected PhoenixScene(string id) : base(id) {
+			// initialize additional property importers/exporters
+			typeof(PropertyExporters).TypeInitializer?.Invoke(null, null);
+			typeof(PropertyImporters).TypeInitializer?.Invoke(null, null);
+		}
+
+		public virtual void OnLoad(SilkWindow window) {
+			base.Window = window;
+		}
+		
+		public override void OnLoad(WindowBase window) {
 			PrimaryShader = new(
 				Module.RESOURCES,
 				new(ShaderType.FragmentShader,
@@ -53,10 +64,17 @@ namespace Coelum.Phoenix {
 				new(ShaderType.VertexShader,
 				    Module.RESOURCES[ResourceType.SHADER, "scene.vert"])
 			);
-		}
 
-		public virtual void OnLoad(SilkWindow window) { }
-		public override void OnLoad(WindowBase window) {
+			if(ShaderOverlays != null) {
+				foreach(var o in ShaderOverlays) {
+					PrimaryShader.AddOverlays(o);
+				}
+			}
+			
+			ClearSystems();
+			ClearNodes(unexportable: true);
+			base.OnLoad(window);
+			
 			if(!PrimaryShader._ready) {
 				PrimaryShader.Validate();
 				PrimaryShader.Build();
@@ -64,21 +82,18 @@ namespace Coelum.Phoenix {
 			
 			PrimaryShader.Bind();
 			
-			ClearSystems();
-			ClearNodes();
-			base.OnLoad(window);
-			
 			Tests.Assert(window is SilkWindow, "Phoenix renderer scenes work only with" +
 			             "Phoenix renderer windows!");
 			OnLoad((SilkWindow) window);
 			
-			AddSystem("RenderPre", new CameraSystem(PrimaryShader));
-			AddSystem("RenderPre", new RenderSystem(PrimaryShader));
-			AddSystem("UpdatePost", new TransformSystem());
+			AddSystem("RenderPre", new TransformSystem());
+			AddSystem("RenderPost", new ObjectRenderSystem(PrimaryShader));
+			AddSystem("RenderPost", new UISystem());
+			AddSystem("Render", new ViewportRenderSystem(PrimaryShader, DoRender));
 			
 			if(PrimaryShader.HasOverlays(PhongShading.OVERLAYS)
 			   || PrimaryShader.HasOverlays(GouraudShading.OVERLAYS)) {
-				AddSystem("RenderPre", new LightSystem(PrimaryShader));
+				AddSystem("RenderPre", new LightingSystem(PrimaryShader));
 			}
 
 			var pWindow = (SilkWindow) window;
@@ -112,8 +127,10 @@ namespace Coelum.Phoenix {
 		}
 
 		public override void OnRender(float delta) {
-			Framebuffer?.Bind();
-			
+			this.Process("Render", delta);
+		}
+
+		protected virtual void DoRender(float delta) {
 			void Clear() {
 				Gl.Clear((uint) (ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit));
 				Gl.ClearColor(ClearColor);
@@ -123,7 +140,6 @@ namespace Coelum.Phoenix {
 			GLManager.SetDefaults();
 			
 			PrimaryShader.Bind();
-			PrimaryShaderSetup?.Invoke(PrimaryShader);
 
 			var environment = QuerySingleton<SceneEnvironment>();
 			if(environment != null) {
@@ -133,17 +149,6 @@ namespace Coelum.Phoenix {
 			this.Process("RenderPre", delta);
 			base.OnRender(delta);
 			this.Process("RenderPost", delta);
-
-			if(Framebuffer != null && Window != null) {
-				Window.Framebuffer.Bind();
-				
-				Clear();
-				Gl.Disable(EnableCap.DepthTest);
-				
-				Framebuffer.Render();
-				
-				// TODO render (imgui) UI separately here
-			}
 		}
 	}
 }
