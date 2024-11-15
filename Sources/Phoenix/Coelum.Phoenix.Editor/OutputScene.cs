@@ -38,19 +38,20 @@ namespace Coelum.Phoenix.Editor {
 		public override void OnLoad(SilkWindow window) {
 			base.OnLoad(window);
 
-			var camera = _scene.CurrentCamera;
+			var camera = _scene.PrimaryCamera;
 
 			if(_editor) {
 				camera = new PerspectiveCamera() {
 					FOV = 60,
 					Name = "EditorCamera"
 				};
-				camera.Current = true;
 				
 				FreeCamera = new((Camera3D) camera, this, KeyBindings);
 			}
 
 			if(camera != null) {
+				camera.Current = true;
+				
 				_scene.Add(new Viewport(camera, OutputFramebuffer) {
 					Hidden = _editor,
 					Name = _editor ? "Editor Viewport" : "Editor Output Viewport"

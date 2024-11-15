@@ -53,6 +53,7 @@ namespace PhoenixPlayground.Scenes {
 			};
 			_camera1.GetComponent<Transform, Transform3D>().Position = new(0, 0, -3);
 			Add(_camera1);
+			Add(new Viewport(_camera1, window.Framebuffer));
 
 			_camera2 = new OrthographicCamera() {
 				FOV = 3

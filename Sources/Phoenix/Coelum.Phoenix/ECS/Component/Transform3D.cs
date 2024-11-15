@@ -14,9 +14,9 @@ namespace Coelum.Phoenix.ECS.Component {
 		public Matrix4x4 LocalMatrix { get; set; }
 		public Matrix4x4 GlobalMatrix { get; set; }
 	
-		public Vector3 Position;
-		public Vector3 Rotation;
-		public Vector3 Scale;
+		public Vector3 Position = new(0, 0, 0);
+		public Vector3 Rotation = new(0, 0, 0);
+		public Vector3 Scale = new(1, 1, 1);
 
 		public float Yaw {
 			get => Rotation.Y.ToDegrees();
@@ -76,9 +76,9 @@ namespace Coelum.Phoenix.ECS.Component {
 		                   Vector3? rotation = null,
 		                   Vector3? scale = null) {
 
-			Position = position ?? new(0, 0, 0);
-			Rotation = rotation ?? new(0, 0, 0);
-			Scale = scale ?? new(1, 1, 1);
+			if(position.HasValue) Position = position.Value;
+			if(rotation.HasValue) Rotation = rotation.Value;
+			if(scale.HasValue) Scale = scale.Value;
 		}
 
 		public void Serialize(string name, Utf8JsonWriter writer) {

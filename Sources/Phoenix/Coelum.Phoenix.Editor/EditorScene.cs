@@ -104,7 +104,9 @@ namespace Coelum.Phoenix.Editor {
 			EditorView.OnLoad((WindowBase) window);
 			OutputView.OnLoad((WindowBase) window);
 			
-			Add(new Viewport(new Camera2D(), window.Framebuffer));
+			Add(new Viewport(new Camera2D() {
+				Current = true
+			}, window.Framebuffer));
 		}
 
 		public override void OnUnload() {

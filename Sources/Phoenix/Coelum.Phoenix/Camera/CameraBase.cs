@@ -17,6 +17,7 @@ namespace Coelum.Phoenix.Camera {
 		public Matrix4x4 InverseViewMatrix { get; protected set; }
 
 		private bool _current = false;
+		[Obsolete] // TODO Obsolete
 		public bool Current {
 			get => _current;
 			set {

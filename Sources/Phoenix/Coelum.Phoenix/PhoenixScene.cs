@@ -25,6 +25,27 @@ namespace Coelum.Phoenix {
 		public new SilkWindow? Window
 			=> base.Window == null ? null : (SilkWindow) base.Window;
 
+		public Viewport? PrimaryViewport {
+			get {
+				Viewport? viewport = null;
+				
+				QueryChildren<Viewport>()
+					.Each(node => {
+						if(node.Framebuffer == Window?.Framebuffer) {
+							viewport = node;
+						}
+					})
+					.Execute();
+
+				return viewport;
+			}
+		}
+		
+		public CameraBase? PrimaryCamera {
+			get => PrimaryViewport?.Camera;
+		}
+		
+		[Obsolete("Use PrimaryCamera instead")] // TODO Obsolete
 		public CameraBase? CurrentCamera {
 			get {
 				CameraBase? currentCamera = null;
