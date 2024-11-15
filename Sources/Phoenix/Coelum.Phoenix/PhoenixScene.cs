@@ -2,6 +2,7 @@ using System.Drawing;
 using Coelum.Common.Graphics;
 using Coelum.Debug;
 using Coelum.Phoenix.Camera;
+using Coelum.Phoenix.ECS;
 using Coelum.Phoenix.ECS.Nodes;
 using Coelum.Phoenix.ECS.System;
 using Coelum.Phoenix.Lighting;
@@ -62,7 +63,11 @@ namespace Coelum.Phoenix {
 			}
 		}
 
-		protected PhoenixScene(string id) : base(id) { }
+		protected PhoenixScene(string id) : base(id) {
+			// initialize additional property importers/exporters
+			typeof(PropertyExporters).TypeInitializer?.Invoke(null, null);
+			typeof(PropertyImporters).TypeInitializer?.Invoke(null, null);
+		}
 
 		public virtual void OnLoad(SilkWindow window) {
 			base.Window = window;
@@ -84,7 +89,7 @@ namespace Coelum.Phoenix {
 			}
 			
 			ClearSystems();
-			ClearNodes();
+			ClearNodes(unexportable: true);
 			base.OnLoad(window);
 			
 			if(!PrimaryShader._ready) {

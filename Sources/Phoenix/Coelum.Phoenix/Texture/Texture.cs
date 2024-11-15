@@ -6,6 +6,7 @@ namespace Coelum.Phoenix.Texture {
 
 		public TextureTarget Target { get; }
 
+		public string Name { get; internal set; } = "";
 		public uint Id { get; init; }
 		public TSize Size { get; init; }
 

@@ -100,7 +100,7 @@ namespace Coelum.Phoenix.Editor {
 			// disable any UI on the target scene
 			var uiSystem = EditorApplication.TargetScene.QuerySystem<UISystem>();
 			if(uiSystem != null) uiSystem.Enabled = false;
-
+			
 			EditorView.OnLoad((WindowBase) window);
 			OutputView.OnLoad((WindowBase) window);
 			

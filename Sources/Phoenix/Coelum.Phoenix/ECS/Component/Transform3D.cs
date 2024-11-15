@@ -8,11 +8,6 @@ using Coelum.LanguageExtensions.Serialization;
 namespace Coelum.Phoenix.ECS.Component {
 	
 	public class Transform3D : Transform {
-		
-		public Node? Owner { get; set; }
-		
-		public Matrix4x4 LocalMatrix { get; set; }
-		public Matrix4x4 GlobalMatrix { get; set; }
 	
 		public Vector3 Position = new(0, 0, 0);
 		public Vector3 Rotation = new(0, 0, 0);

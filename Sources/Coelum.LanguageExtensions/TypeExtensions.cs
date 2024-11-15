@@ -1,3 +1,5 @@
+using System.Reflection;
+
 namespace Coelum.LanguageExtensions {
 	
 	public static class TypeExtensions {
@@ -7,8 +9,8 @@ namespace Coelum.LanguageExtensions {
 
 			if(type == limit) return type;
 
-			Type prevType = type;
-			Type baseType = type;
+			var prevType = type;
+			var baseType = type;
 			
 			while((baseType = baseType.BaseType) != limit) {
 				prevType = baseType;

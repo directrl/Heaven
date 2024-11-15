@@ -7,11 +7,6 @@ using Coelum.LanguageExtensions.Serialization;
 namespace Coelum.Phoenix.ECS.Component {
 	
 	public class Transform2D : Transform {
-
-		public Node? Owner { get; set; }
-		
-		public Matrix4x4 LocalMatrix { get; set; }
-		public Matrix4x4 GlobalMatrix { get; set; }
 		
 		public Vector2 Position;
 		public float Rotation;

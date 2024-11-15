@@ -31,14 +31,14 @@ namespace Coelum.ECS.Serialization {
 				var nodeType = TypeExtensions.FindType(nodeTypeName);
 				
 				if(nodeType is null) {
-					Log.Warning($"[NodeRootImporter] Could not find node type [{nodeTypeName}]");
+					Log.Error($"[NodeRootImporter] Could not find node type [{nodeTypeName}]");
 					return false;
 				}
 
 				var ctor = nodeType.GetConstructor(Type.EmptyTypes);
 				
 				if(ctor is null) {
-					Log.Warning($"[NodeRootImporter] Could not find a default constructor for node type [{nodeTypeName}]");
+					Log.Error($"[NodeRootImporter] Could not find a default constructor for node type [{nodeTypeName}]");
 					return false;
 				}
 

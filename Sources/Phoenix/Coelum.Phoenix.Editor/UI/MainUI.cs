@@ -1,6 +1,7 @@
 using System.Text;
 using Coelum.Debug;
 using Coelum.ECS.Serialization;
+using Coelum.Phoenix.Camera;
 using Coelum.Phoenix.ECS.System;
 using Coelum.Phoenix.UI;
 using Hexa.NET.ImGui;
@@ -21,8 +22,7 @@ namespace Coelum.Phoenix.Editor.UI {
 			{
 				if(ImGui.BeginMenu("File")) {
 					if(ImGui.MenuItem("Import")) {
-						// TODO imgui file chooser?
-						var filePath = NFD.OpenDialog(".", new() {
+						var filePath = NFD.OpenDialog(Environment.CurrentDirectory, new() {
 							["json File"] = "json"
 						});
 
@@ -32,18 +32,60 @@ namespace Coelum.Phoenix.Editor.UI {
 							}
 						
 							// reset output scenes
-							EditorApplication.MainScene.EditorView.OnLoad(EditorApplication.MainWindow);
-							EditorApplication.MainScene.OutputView.OnLoad(EditorApplication.MainWindow);
+							// EditorApplication.MainScene.EditorView.OnLoad(EditorApplication.MainWindow);
+							// EditorApplication.MainScene.OutputView.OnLoad(EditorApplication.MainWindow);
+
+							if(EditorApplication.TargetScene.PrimaryCamera is not null) {
+								EditorApplication.MainScene.OutputView.OutputViewport.Camera =
+									(Camera3D) EditorApplication.TargetScene.PrimaryCamera;
+							}
 						}
 					}
 					
 					if(ImGui.MenuItem("Export")) {
-						using(var stream = new MemoryStream()) {
-							EditorApplication.TargetScene.Export(stream);
+						var filePath = NFD.SaveDialog(Environment.CurrentDirectory, "scene.json");
 
-							string json = Encoding.UTF8.GetString(stream.ToArray());
-							Console.WriteLine(json);
+						if(!string.IsNullOrWhiteSpace(filePath)) {
+							using(var stream = new MemoryStream()) {
+								EditorApplication.TargetScene.Export(stream);
+
+								string json = Encoding.UTF8.GetString(stream.ToArray());
+								File.WriteAllText(filePath, json);
+							}
 						}
+					}
+					
+					ImGui.EndMenu();
+				}
+
+				if(ImGui.BeginMenu("Registry")) {
+					if(ImGui.BeginMenu("Model...")) {
+						if(ImGui.MenuItem("Import")) {
+							var filePath = NFD.OpenDialog(Environment.CurrentDirectory, new() {
+								["json File"] = "json"
+							});
+
+							if(!string.IsNullOrWhiteSpace(filePath)) {
+								using(var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read)) {
+									ModelRegistry.Import(stream);
+								}
+							}
+						}
+					
+						if(ImGui.MenuItem("Export")) {
+							var filePath = NFD.SaveDialog(Environment.CurrentDirectory, "registry.model.json");
+
+							if(!string.IsNullOrWhiteSpace(filePath)) {
+								using(var stream = new MemoryStream()) {
+									ModelRegistry.Export(stream);
+
+									string json = Encoding.UTF8.GetString(stream.ToArray());
+									File.WriteAllText(filePath, json);
+								}
+							}
+						}
+						
+						ImGui.EndMenu();
 					}
 					
 					ImGui.EndMenu();

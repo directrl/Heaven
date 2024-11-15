@@ -112,15 +112,39 @@ namespace Coelum.ECS {
 			node.Id = 0;
 		}
 
-		public void ClearNodes() {
-			_nodes.Clear();
-			_pathNodeMap.Clear();
+		/// <summary>
+		/// Clears all nodes from this node root
+		/// </summary>
+		/// <param name="unexportable">Whether or not to also clear unexportable nodes</param>
+		public void ClearNodes(bool unexportable = false) {
+			if(unexportable) {
+				_nodes.Clear();
+				_pathNodeMap.Clear();
 
-			foreach(var component in _componentNodeMap.Keys) {
-				_componentNodeMap[component].Clear();
+				foreach(var component in _componentNodeMap.Keys) {
+					_componentNodeMap[component].Clear();
+				}
+				
+				_lastId = 0;
+			} else {
+				_nodes = _nodes
+				         .Where(kv => !kv.Value.Export)
+				         .ToDictionary(kv => kv.Key, kv => kv.Value);
+				
+				_pathNodeMap = _pathNodeMap
+				               .Where(kv => !kv.Value.Export)
+				               .ToDictionary(kv => kv.Key, kv => kv.Value);
+				
+				foreach(var component in _componentNodeMap.Keys) {
+					_componentNodeMap[component] = _componentNodeMap[component]
+					                               .Where(node => !node.Export)
+					                               .ToList();
+				}
+
+				_lastId = _nodes.Count > 0
+					? _nodes.Keys.Max()
+					: 0;
 			}
-			
-			_lastId = 0;
 		}
 
 		public void ClearSystems() {

@@ -2,6 +2,7 @@ using System.Numerics;
 using System.Reflection;
 using Coelum.Debug;
 using Coelum.ECS;
+using Coelum.ECS.Extensions;
 using Coelum.Phoenix.Camera;
 using Coelum.Phoenix.UI;
 using Hexa.NET.ImGui;
@@ -122,32 +123,6 @@ namespace Coelum.Phoenix.Editor.UI {
 							}
 							ImGui.PopID();
 						}
-
-						bool IsFieldUsable(FieldInfo field) {
-							if(field.DeclaringType == typeof(Node)) return false;
-							if(field.IsInitOnly) return false;
-							if(field.IsPrivate
-							   || field.IsFamily
-							   || field.IsAssembly) return false;
-
-							return true;
-						}
-
-						bool IsPropertyUsable(PropertyInfo property) {
-							if(property.DeclaringType == typeof(Node)) return false;
-							if(property.Name == "Owner") return false;
-							if(property.GetMethod == null
-							   || property.GetMethod.IsPrivate
-							   || property.GetMethod.IsFamily
-							   || property.GetMethod.IsAssembly) return false;
-							// TODO should unsettable properties still be displayed?
-							if(property.SetMethod == null
-							   || property.SetMethod.IsPrivate
-							   || property.SetMethod.IsFamily
-							   || property.SetMethod.IsAssembly) return false;
-
-							return true;
-						}
 					#endregion
 
 					#region Node editors
@@ -155,7 +130,7 @@ namespace Coelum.Phoenix.Editor.UI {
 						                   v => SelectedNode.Name = (string) v);
 						
 						foreach(var field in SelectedNode.GetType().GetFields()) {
-							if(!IsFieldUsable(field)) continue;
+							if(!field.IsForPublicNodeUse()) continue;
 							
 							var fValue = field.GetValue(SelectedNode);
 							DrawPropertyEditor(field.FieldType, field.Name, fValue,
@@ -163,7 +138,7 @@ namespace Coelum.Phoenix.Editor.UI {
 						}
 
 						foreach(var property in SelectedNode.GetType().GetProperties()) {
-							if(!IsPropertyUsable(property)) continue;
+							if(!property.IsForPublicNodeUse()) continue;
 
 							var pValue = property.GetValue(SelectedNode);
 							DrawPropertyEditor(property.PropertyType, property.Name, pValue,
@@ -189,7 +164,7 @@ namespace Coelum.Phoenix.Editor.UI {
 								}
 
 								foreach(var property in cType.GetProperties()) {
-									if(!IsPropertyUsable(property)) continue;
+									if(!property.IsForPublicNodeUse()) continue;
 
 									var pValue = property.GetValue(component);
 									DrawPropertyEditor(property.PropertyType, property.Name, pValue,

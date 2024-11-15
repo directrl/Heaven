@@ -1,10 +1,12 @@
+using System.Collections;
 using System.Text.Json;
 using Coelum.Debug;
+using Coelum.ECS.Extensions;
 using Serilog;
 
 namespace Coelum.ECS.Serialization {
 	
-	public static class NodeExporter {
+	public static partial class NodeExporter {
 
 		public static void Export(this Node node, Stream output) {
 			using var writer = new Utf8JsonWriter(output, new() {
@@ -57,16 +59,78 @@ namespace Coelum.ECS.Serialization {
 			}
 			writer.WriteEndArray();
 			
+			// fields
+			writer.WriteStartObject("fields");
+			node.GetType().ExportFields(node, writer);
+			writer.WriteEndObject();
+			
+			// properties
+			writer.WriteStartObject("properties");
+			node.GetType().ExportProperties(node, writer);
+			writer.WriteEndObject();
+			
 			// components
 			writer.WriteStartObject("components");
 			{
 				foreach(var (type, component) in node.Components) {
-					component.Serialize(type.ToString(), writer);
+					//component.Serialize(type.ToString(), writer);
+					writer.WriteStartObject(component.GetType().ToString());
+					{
+						writer.WriteString("backing_type", type.ToString());
+						
+						// fields
+						writer.WriteStartObject("fields");
+						component.GetType().ExportFields(component, writer);
+						writer.WriteEndObject();
+			
+						// properties
+						writer.WriteStartObject("properties");
+						component.GetType().ExportProperties(component, writer);
+						writer.WriteEndObject();
+					}
+					writer.WriteEndObject();
 				}
 			}
 			writer.WriteEndObject();
 			
 			writer.WriteEndObject();
+		}
+		
+		private static void ExportFields(this Type type, object inst, Utf8JsonWriter writer) {
+			foreach(var field in type.GetFields()) {
+				if(!field.IsForPublicNodeUse()) continue;
+
+				ExportProperty(
+					field.Name,
+					field.GetValue(inst),
+					writer
+				);
+			}
+		}
+
+		private static void ExportProperties(this Type type, object inst, Utf8JsonWriter writer) {
+			foreach(var property in type.GetProperties()) {
+				if(!property.IsForPublicNodeUse()) continue;
+				
+				ExportProperty(
+					property.Name,
+					property.GetValue(inst),
+					writer
+				);
+			}
+		}
+		
+		private static void ExportProperty(string pName, object? pValue, Utf8JsonWriter writer) {
+			if(pValue is null) {
+				writer.WriteNull(pName);
+				return;
+			}
+			
+			var pType = pValue.GetType().GetCommonTypeForNodeUse();
+			
+			Tests.Assert(PROPERTY_EXPORTERS.TryGetValue(pType, out var action),
+				$"No exporter for {pType}");
+			action.Invoke(pName, pValue, writer);
 		}
 	}
 }
