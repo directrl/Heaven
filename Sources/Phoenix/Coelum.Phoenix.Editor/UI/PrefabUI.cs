@@ -3,7 +3,6 @@ using System.Numerics;
 using Coelum.Common.Input;
 using Coelum.ECS;
 using Coelum.ECS.Prefab;
-using Coelum.Phoenix.Input;
 using Coelum.Phoenix.UI;
 using Hexa.NET.ImGui;
 using Silk.NET.GLFW;

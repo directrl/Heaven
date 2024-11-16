@@ -3,14 +3,7 @@ using Coelum.Common.Input;
 using Coelum.Core;
 using Coelum.ECS;
 using Coelum.Phoenix.Camera;
-using Coelum.Phoenix.ECS.Component;
-using Coelum.Phoenix.ECS.System;
 using Coelum.Phoenix.Editor.Camera;
-using Coelum.Phoenix.Input;
-using Coelum.Phoenix.OpenGL;
-using Coelum.Phoenix.OpenGL.UBO;
-using Coelum.Phoenix.UI;
-using Hexa.NET.ImGuizmo;
 
 namespace Coelum.Phoenix.Editor {
 	
@@ -29,9 +22,6 @@ namespace Coelum.Phoenix.Editor {
 		public OutputScene(string name, bool setupEditorCamera = true) : base(name) {
 			_scene = EditorApplication.TargetScene;
 			_editor = setupEditorCamera;
-			
-			KeyBindings = new(name);
-			this.SetupKeyBindings(KeyBindings);
 
 			OutputFramebuffer = new(new(512, 512));
 		}
@@ -63,7 +53,7 @@ namespace Coelum.Phoenix.Editor {
 
 		public override void OnUpdate(float delta) {
 			base.OnUpdate(delta);
-			this.UpdateKeyBindings(KeyBindings);
+			UpdateKeyBindings();
 		}
 
 		public override void OnRender(float delta) {

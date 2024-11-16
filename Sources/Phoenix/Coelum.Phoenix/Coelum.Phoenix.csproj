@@ -185,6 +185,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Coelum.Common.Input\Coelum.Common.Input.csproj" />
     <ProjectReference Include="..\..\Coelum.Configuration\Coelum.Configuration.csproj" />
     <ProjectReference Include="..\..\Coelum.Debug\Coelum.Debug.csproj" />
     <ProjectReference Include="..\..\Coelum.Common.Graphics\Coelum.Common.Graphics.csproj" />
@@ -198,6 +199,7 @@
     <Folder Include="..\..\..\Resources\Coeli\Resources\Textures\">
       <Link>Resources\Textures</Link>
     </Folder>
+    <Folder Include="Input\" />
   </ItemGroup>
 
 </Project>

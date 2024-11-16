@@ -7,7 +7,6 @@ using Coelum.Common.Input;
 using Coelum.LanguageExtensions;
 using Coelum.ECS;
 using Coelum.Phoenix.ECS.Component;
-using Coelum.Phoenix.Input;
 using Coelum.Phoenix.UI;
 using ImGuiNET;
 using PhoenixPlayground.Nodes;
@@ -25,7 +24,6 @@ namespace PhoenixPlayground.Scenes {
 		
 		private Mesh? _mesh;
 
-		private KeyBindings _keyBindings;
 		private FreeCamera _freeCamera;
 
 	#region Keybindings
@@ -43,21 +41,18 @@ namespace PhoenixPlayground.Scenes {
 		private EcsSystem _moveStressTest;
 
 		public NodeGraphStressTest() : base("node-graph-stresstest") {
-			_keyBindings = new(Id);
-			_freeCamera = new(_keyBindings);
+			_freeCamera = new(KeyBindings);
 
 		#region Keybindings
-			_playerForward = _keyBindings.Register(new("pforward", Key.I));
-			_playerBackward = _keyBindings.Register(new("pback", Key.K));
-			_playerLeft = _keyBindings.Register(new("pleft", Key.J));
-			_playerRight = _keyBindings.Register(new("pright", Key.L));
+			_playerForward = KeyBindings.Register(new("pforward", Key.I));
+			_playerBackward = KeyBindings.Register(new("pback", Key.K));
+			_playerLeft = KeyBindings.Register(new("pleft", Key.J));
+			_playerRight = KeyBindings.Register(new("pright", Key.L));
 			
-			_playerRot1 = _keyBindings.Register(new("prot1", Key.V));
-			_playerRot2 = _keyBindings.Register(new("prot2", Key.B));
-			_playerRot3 = _keyBindings.Register(new("prot3", Key.N));
+			_playerRot1 = KeyBindings.Register(new("prot1", Key.V));
+			_playerRot2 = KeyBindings.Register(new("prot2", Key.B));
+			_playerRot3 = KeyBindings.Register(new("prot3", Key.N));
 		#endregion
-			
-			this.SetupKeyBindings(_keyBindings);
 
 			ShaderOverlays = new[] {
 				Material.OVERLAYS
@@ -183,7 +178,7 @@ namespace PhoenixPlayground.Scenes {
 			if(_playerRot2.Down) _player.GetComponent<Transform, Transform3D>().Rotation.Y += playerRot;
 			if(_playerRot3.Down) _player.GetComponent<Transform, Transform3D>().Rotation.Z += playerRot;
 			
-			_keyBindings.Update(new SilkKeyboard(Window.Input.Keyboards[0]));
+			UpdateKeyBindings();
 		}
 	}
 }

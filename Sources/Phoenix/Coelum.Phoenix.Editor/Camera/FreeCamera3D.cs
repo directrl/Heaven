@@ -3,7 +3,6 @@ using Coelum.Common.Input;
 using Coelum.Debug;
 using Coelum.Phoenix.Camera;
 using Coelum.Phoenix.ECS.Component;
-using Coelum.Phoenix.Input;
 using Hexa.NET.ImGui;
 using Silk.NET.Input;
 
