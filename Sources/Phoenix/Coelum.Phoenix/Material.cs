@@ -15,7 +15,7 @@ using ShadingModel = Silk.NET.OpenGL.ShadingModel;
 
 namespace Coelum.Phoenix {
 	
-	public struct Material : ISerializable<Material> {
+	public class Material : ISerializable<Material> {
 		
 		public enum TextureType {
 			

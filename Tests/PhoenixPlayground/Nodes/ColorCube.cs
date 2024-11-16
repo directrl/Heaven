@@ -10,7 +10,7 @@ namespace PhoenixPlayground.Nodes {
 	
 	public class ColorCube : Node {
 
-		private static readonly Model DEFAULT_MODEL = new("color_cube") {
+		public static readonly Model DEFAULT_MODEL = new("color_cube") {
 			Meshes = new() {
 				new(PrimitiveType.Triangles,
 					new Vertex[] {

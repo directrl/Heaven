@@ -37,6 +37,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Coelum.Phoenix.Editor", "So
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Coelum.Phoenix.Extensions.ImGui", "Sources\Phoenix\Coelum.Phoenix.Extensions.ImGui\Coelum.Phoenix.Extensions.ImGui.csproj", "{874D9F65-6B20-4EBF-8392-010C992F3E10}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Coelum.Phoenix.Physics", "Sources\Phoenix\Coelum.Phoenix.Physics\Coelum.Phoenix.Physics.csproj", "{B7D800C6-593E-4EE2-9F61-B9C4DA909D40}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -102,6 +104,10 @@ Global
 		{874D9F65-6B20-4EBF-8392-010C992F3E10}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{874D9F65-6B20-4EBF-8392-010C992F3E10}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{874D9F65-6B20-4EBF-8392-010C992F3E10}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B7D800C6-593E-4EE2-9F61-B9C4DA909D40}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B7D800C6-593E-4EE2-9F61-B9C4DA909D40}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B7D800C6-593E-4EE2-9F61-B9C4DA909D40}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B7D800C6-593E-4EE2-9F61-B9C4DA909D40}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{6AFCE2E4-0486-4DE0-8C02-DC257CCE2DC7} = {ECDD9609-5209-4544-910F-099A50C8542D}
@@ -119,5 +125,6 @@ Global
 		{ACA058DA-F842-4E67-BBA6-42B60B4D017F} = {ECDD9609-5209-4544-910F-099A50C8542D}
 		{AD89E056-6B2F-4C0F-84B0-3FE39E845237} = {192F0C92-256C-4049-A24D-2092B9E60738}
 		{874D9F65-6B20-4EBF-8392-010C992F3E10} = {192F0C92-256C-4049-A24D-2092B9E60738}
+		{B7D800C6-593E-4EE2-9F61-B9C4DA909D40} = {192F0C92-256C-4049-A24D-2092B9E60738}
 	EndGlobalSection
 EndGlobal

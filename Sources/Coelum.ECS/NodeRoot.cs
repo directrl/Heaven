@@ -47,7 +47,7 @@ namespace Coelum.ECS {
 			_futureActions.Add(action);
 		}
 		
-		public void Add(Node node) {
+		public TNode Add<TNode>(TNode node) where TNode : Node {
 			node.Id = ++_lastId;
 			node.Root = this;
 
@@ -72,6 +72,7 @@ namespace Coelum.ECS {
 			}
 			
 			Log.Verbose($"[ECS] Added new node {node}");
+			return node;
 		}
 
 		internal void Remap(Node node, string newPath) {

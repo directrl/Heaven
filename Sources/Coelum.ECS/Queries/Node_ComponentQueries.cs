@@ -5,6 +5,11 @@ namespace Coelum.ECS {
 		public TComponent AddComponent<TComponent>(TComponent component) where TComponent : INodeComponent {
 			Components[typeof(TComponent)] = component;
 			component.Owner = this;
+
+			if(component.GetType() != typeof(TComponent)) {
+				Components[component.GetType()] = component;
+			}
+			
 			return component;
 		}
 
@@ -13,8 +18,8 @@ namespace Coelum.ECS {
 		}
 		
 		public TRealComponent GetComponent<TBaseComponent, TRealComponent>()
-			where TRealComponent : INodeComponent
-			where TBaseComponent : INodeComponent {
+			where TBaseComponent : INodeComponent
+			where TRealComponent : TBaseComponent {
 			
 			return (TRealComponent) Components[typeof(TBaseComponent)];
 		}
@@ -30,8 +35,8 @@ namespace Coelum.ECS {
 		}
 		
 		public bool TryGetComponent<TBaseComponent, TRealComponent>(out TRealComponent result)
-			where TRealComponent : INodeComponent
-			where TBaseComponent : INodeComponent {
+			where TBaseComponent : INodeComponent
+			where TRealComponent : TBaseComponent {
 			
 			if(Components.TryGetValue(typeof(TBaseComponent), out var component)) {
 				if(component is TRealComponent real) {
@@ -49,8 +54,8 @@ namespace Coelum.ECS {
 		}
 		
 		public bool HasComponent<TBaseComponent, TRealComponent>()
-			where TRealComponent : INodeComponent
-			where TBaseComponent : INodeComponent {
+			where TBaseComponent : INodeComponent
+			where TRealComponent : TBaseComponent {
 
 			if(!Components.TryGetValue(typeof(TBaseComponent), out var component)) {
 				return false;

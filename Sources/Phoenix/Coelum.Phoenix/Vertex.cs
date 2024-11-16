@@ -19,9 +19,9 @@ namespace Coelum.Phoenix {
 		[FieldOffset(TEXCOORDS_OFFSET)]
 		public Vector2 TexCoords;
 
-		public Vertex(Vector3 position,
-		              Vector3 normal,
-		              Vector2 texCoords) {
+		public Vertex(Vector3 position = new(),
+		              Vector3 normal = new(),
+		              Vector2 texCoords = new()) {
 			
 			Position = position;
 			Normal = normal;

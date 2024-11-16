@@ -28,6 +28,16 @@ namespace Coelum.Phoenix.ECS.Component {
 			set => Rotation.X = value.ToRadians();
 		}
 
+		public Quaternion QRotation {
+			get {
+				var qX = Quaternion.CreateFromAxisAngle(Vector3.UnitX, Rotation.X);
+				var qY = Quaternion.CreateFromAxisAngle(Vector3.UnitY, Rotation.Y);
+				var qZ = Quaternion.CreateFromAxisAngle(Vector3.UnitZ, Rotation.Z);
+
+				return qX * qY * qZ;
+			}
+		}
+
 		public Vector3 GlobalPosition {
 			get {
 				if(Owner is { Parent: not null } && Owner.Parent
@@ -60,6 +70,16 @@ namespace Coelum.Phoenix.ECS.Component {
 				return Scale;
 			}
 		}
+		
+		public Quaternion QGlobalRotation {
+			get {
+				var qX = Quaternion.CreateFromAxisAngle(Vector3.UnitX, GlobalRotation.X);
+				var qY = Quaternion.CreateFromAxisAngle(Vector3.UnitY, GlobalRotation.Y);
+				var qZ = Quaternion.CreateFromAxisAngle(Vector3.UnitZ, GlobalRotation.Z);
+
+				return qX * qY * qZ;
+			}
+		}
 
 		public float GlobalYaw => GlobalRotation.Y;
 		public float GlobalPitch => GlobalRotation.X;
@@ -74,6 +94,24 @@ namespace Coelum.Phoenix.ECS.Component {
 			if(position.HasValue) Position = position.Value;
 			if(rotation.HasValue) Rotation = rotation.Value;
 			if(scale.HasValue) Scale = scale.Value;
+		}
+		
+		public void SetLocalFromGlobal(Vector3? position = null,
+		                               Vector3? rotation = null,
+									   Vector3? scale = null) {
+
+			position ??= GlobalPosition;
+			rotation ??= GlobalRotation;
+			scale ??= GlobalScale;
+
+			var newMatrix = new Matrix4x4();
+
+			if(Owner.Parent != null
+			   && Owner.Parent.TryGetComponent<Transform3D>(out var pt)) {
+				Matrix4x4.Invert(pt.GlobalMatrix, out var parentGlobalMatrix);
+				
+				
+			}
 		}
 	}
 }
