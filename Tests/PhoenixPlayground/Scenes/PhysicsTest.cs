@@ -8,7 +8,6 @@ using Coelum.Phoenix;
 using Coelum.Phoenix.Camera;
 using Coelum.Phoenix.ECS.Component;
 using Coelum.Phoenix.ECS.Nodes;
-using Coelum.Phoenix.Input;
 using Coelum.Phoenix.Lighting;
 using Coelum.Phoenix.Physics;
 using Coelum.Phoenix.Physics.Callbacks;
@@ -24,7 +23,6 @@ namespace PhoenixPlayground.Scenes {
 
 		private static readonly Random _RANDOM = new();
 		
-		private KeyBindings _keyBindings;
 		private FreeCamera _freeCamera;
 		
 		private Camera3D _camera;
@@ -42,16 +40,13 @@ namespace PhoenixPlayground.Scenes {
 	#endregion
 		
 		public PhysicsTest() : base("physics") {
-			_keyBindings = new(Id);
-			_freeCamera = new(_keyBindings);
+			_freeCamera = new(KeyBindings);
 
-			_playerForward = _keyBindings.Register(new("pf", Key.W));
-			_playerBackward = _keyBindings.Register(new("pb", Key.S));
-			_playerLeft = _keyBindings.Register(new("pl", Key.A));
-			_playerRight = _keyBindings.Register(new("pr", Key.D));
-			_playerJump = _keyBindings.Register(new("pj", Key.Space));
-			
-			this.SetupKeyBindings(_keyBindings);
+			_playerForward = KeyBindings.Register(new("pf", Key.W));
+			_playerBackward = KeyBindings.Register(new("pb", Key.S));
+			_playerLeft = KeyBindings.Register(new("pl", Key.A));
+			_playerRight = KeyBindings.Register(new("pr", Key.D));
+			_playerJump = KeyBindings.Register(new("pj", Key.Space));
 			
 			ShaderOverlays = new[] {
 				Material.OVERLAYS,
@@ -183,7 +178,7 @@ namespace PhoenixPlayground.Scenes {
 				playerBody.Awake = true;
 			}
 			
-			this.UpdateKeyBindings(_keyBindings);
+			UpdateKeyBindings();
 		}
 	}
 }
