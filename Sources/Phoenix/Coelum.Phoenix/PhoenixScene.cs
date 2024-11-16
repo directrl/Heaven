@@ -1,5 +1,6 @@
 using System.Drawing;
 using Coelum.Common.Graphics;
+using Coelum.Common.Input;
 using Coelum.Debug;
 using Coelum.Phoenix.Camera;
 using Coelum.Phoenix.ECS;
@@ -25,7 +26,7 @@ namespace Coelum.Phoenix {
 
 		public new SilkWindow? Window
 			=> base.Window == null ? null : (SilkWindow) base.Window;
-
+		
 		public Viewport? PrimaryViewport {
 			get {
 				Viewport? viewport = null;
@@ -45,11 +46,15 @@ namespace Coelum.Phoenix {
 		public CameraBase? PrimaryCamera {
 			get => PrimaryViewport?.Camera;
 		}
+		
+		public KeyBindings KeyBindings { get; }
 
 		protected PhoenixScene(string id) : base(id) {
 			// initialize additional property importers/exporters
 			typeof(PropertyExporters).TypeInitializer?.Invoke(null, null);
 			typeof(PropertyImporters).TypeInitializer?.Invoke(null, null);
+			
+			KeyBindings = new(Id);
 		}
 
 		public virtual void OnLoad(SilkWindow window) {
@@ -57,6 +62,11 @@ namespace Coelum.Phoenix {
 		}
 		
 		public override void OnLoad(WindowBase window) {
+			if(window is not SilkWindow silkWindow) {
+				throw new ArgumentException("Phoenix renderer scenes work only with" +
+				                            " Phoenix renderer windows!");
+			}
+			
 			PrimaryShader = new(
 				Module.RESOURCES,
 				new(ShaderType.FragmentShader,
@@ -70,6 +80,13 @@ namespace Coelum.Phoenix {
 					PrimaryShader.AddOverlays(o);
 				}
 			}
+
+		#region Input
+			foreach(var keyboard in silkWindow.Input.Keyboards) {
+				keyboard.KeyUp += (_, key, _) => KeyBindings.Input(KeyAction.Release, (int) key);
+				keyboard.KeyDown += (_, key, _) => KeyBindings.Input(KeyAction.Press, (int) key);
+			}
+		#endregion
 			
 			ClearSystems();
 			ClearNodes(unexportable: true);
@@ -82,8 +99,6 @@ namespace Coelum.Phoenix {
 			
 			PrimaryShader.Bind();
 			
-			Tests.Assert(window is SilkWindow, "Phoenix renderer scenes work only with" +
-			             "Phoenix renderer windows!");
 			OnLoad((SilkWindow) window);
 			
 			AddSystem("RenderPre", new TransformSystem());
@@ -149,6 +164,12 @@ namespace Coelum.Phoenix {
 			this.Process("RenderPre", delta);
 			base.OnRender(delta);
 			this.Process("RenderPost", delta);
+		}
+
+		protected void UpdateKeyBindings() {
+			foreach(var keyboard in Window!.Input.Keyboards) {
+				KeyBindings.Update(new SilkKeyboard(keyboard));
+			}
 		}
 	}
 }

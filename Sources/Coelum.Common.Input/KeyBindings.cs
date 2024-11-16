@@ -8,6 +8,8 @@ namespace Coelum.Common.Input {
 		public GameOptions Options { get; }
 		public Dictionary<string, KeyBinding> Bindings { get; } = new();
 
+		public bool Enabled { get; set; } = true;
+
 		private readonly List<int> _combo = new();
 
 		public KeyBindings(string id) {
@@ -45,6 +47,7 @@ namespace Coelum.Common.Input {
 		}
 
 		public void Input(KeyAction action, int key) {
+			if(!Enabled) return;
 			if(Bindings.Count <= 0) return;
 
 			switch(action) {
@@ -70,6 +73,11 @@ namespace Coelum.Common.Input {
 		public void Update(IKeyboard keyboard) {
 			foreach(var binding in Bindings.Values) {
 				binding.Pressed = false;
+
+				if(!Enabled) {
+					binding.Down = false;
+					return;
+				}
 
 				if(binding.Keys.Length == 1) {
 					binding.Down = keyboard.IsKeyPressed(binding.Keys[0]);

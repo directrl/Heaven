@@ -6,7 +6,6 @@ using Coelum.Common.Input;
 using Coelum.LanguageExtensions;
 using Coelum.ECS;
 using Coelum.Phoenix.ECS.Component;
-using Coelum.Phoenix.Input;
 using Coelum.Phoenix.UI;
 using ImGuiNET;
 using PhoenixPlayground.Nodes;
@@ -21,7 +20,6 @@ namespace PhoenixPlayground.Scenes {
 		
 		private Mesh? _mesh;
 
-		private KeyBindings _keyBindings;
 		private FreeCamera _freeCamera;
 
 		private Camera3D _camera1;
@@ -31,13 +29,10 @@ namespace PhoenixPlayground.Scenes {
 		private KeyBinding _camera2Bind;
 
 		public NodeGraphTest() : base("node-graph-stresstest") {
-			_keyBindings = new(Id);
-			_freeCamera = new(_keyBindings);
+			_freeCamera = new(KeyBindings);
 
-			_camera1Bind = _keyBindings.Register(new("camera1", Key.Number1));
-			_camera2Bind = _keyBindings.Register(new("camera2", Key.Number2));
-			
-			this.SetupKeyBindings(_keyBindings);
+			_camera1Bind = KeyBindings.Register(new("camera1", Key.Number1));
+			_camera2Bind = KeyBindings.Register(new("camera2", Key.Number2));
 			
 			ShaderOverlays = new[] {
 				Material.OVERLAYS
@@ -143,7 +138,7 @@ namespace PhoenixPlayground.Scenes {
 			if(_camera1Bind.Pressed) PrimaryViewport.Camera = _camera1;
 			if(_camera2Bind.Pressed) PrimaryViewport.Camera = _camera2;
 			
-			_keyBindings.Update(new SilkKeyboard(Window.Input.Keyboards[0]));
+			UpdateKeyBindings();
 		}
 	}
 }

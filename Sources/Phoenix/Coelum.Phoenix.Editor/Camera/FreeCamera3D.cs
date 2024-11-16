@@ -3,7 +3,6 @@ using Coelum.Common.Input;
 using Coelum.Debug;
 using Coelum.Phoenix.Camera;
 using Coelum.Phoenix.ECS.Component;
-using Coelum.Phoenix.Input;
 using Hexa.NET.ImGui;
 using Silk.NET.Input;
 
@@ -32,18 +31,18 @@ namespace Coelum.Phoenix.Editor.Camera {
 		public Camera3D Camera { get; set; }
 		public bool Active => !_cursorEnabled;
 
-		public FreeCamera3D(Camera3D camera, PhoenixScene scene, KeyBindings keyBindings) {
+		public FreeCamera3D(Camera3D camera, PhoenixScene scene) {
 			Tests.Assert(scene.Window != null);
 
 			Camera = camera;
 			_scene = scene;
 			
-			_cameraUp = keyBindings.Register(new("fc_camera_up", Key.Space));
-			_cameraDown = keyBindings.Register(new("fc_camera_down", Key.ShiftLeft));
-			_cameraForward = keyBindings.Register(new("fc_camera_forward", Key.W));
-			_cameraBackward = keyBindings.Register(new("fc_camera_backward", Key.S));
-			_cameraLeft = keyBindings.Register(new("fc_camera_left", Key.A));
-			_cameraRight = keyBindings.Register(new("fc_camera_right", Key.D));
+			_cameraUp = scene.KeyBindings.Register(new("fc_camera_up", Key.Space));
+			_cameraDown = scene.KeyBindings.Register(new("fc_camera_down", Key.ShiftLeft));
+			_cameraForward = scene.KeyBindings.Register(new("fc_camera_forward", Key.W));
+			_cameraBackward = scene.KeyBindings.Register(new("fc_camera_backward", Key.S));
+			_cameraLeft = scene.KeyBindings.Register(new("fc_camera_left", Key.A));
+			_cameraRight = scene.KeyBindings.Register(new("fc_camera_right", Key.D));
 			
 			scene.Window.GetMice()[0].MouseMove += (_, pos) => {
 				OnMouseMove(pos);

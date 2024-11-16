@@ -7,7 +7,6 @@ using Coelum.Phoenix;
 using Coelum.Phoenix.Camera;
 using Coelum.Phoenix.ECS.Component;
 using Coelum.Phoenix.ECS.Nodes;
-using Coelum.Phoenix.Input;
 using Coelum.Phoenix.Lighting;
 using Coelum.Phoenix.ModelLoading;
 using Coelum.Phoenix.UI;
@@ -21,7 +20,6 @@ namespace PhoenixPlayground.Scenes {
 	
 	public class LightingTest : PhoenixScene {
 		
-		private KeyBindings _keyBindings;
 		private FreeCamera _freeCamera;
 
 	#region Keybindings
@@ -45,20 +43,17 @@ namespace PhoenixPlayground.Scenes {
 		private bool _doGouraud = false;
 
 		public LightingTest() : base("light-test") {
-			_keyBindings = new(Id);
-			_freeCamera = new(_keyBindings);
+			_freeCamera = new(KeyBindings);
 
-			_phong = _keyBindings.Register(new("phong", Key.Number1));
-			_gouraud = _keyBindings.Register(new("gouraud", Key.Number2));
+			_phong = KeyBindings.Register(new("phong", Key.Number1));
+			_gouraud = KeyBindings.Register(new("gouraud", Key.Number2));
 
-			_lightXpos = _keyBindings.Register(new("x1", Key.U));
-			_lightXneg = _keyBindings.Register(new("x2", Key.J));
-			_lightYpos = _keyBindings.Register(new("y1", Key.I));
-			_lightYneg = _keyBindings.Register(new("y2", Key.K));
-			_lightZpos = _keyBindings.Register(new("z1", Key.O));
-			_lightZneg = _keyBindings.Register(new("z2", Key.L));
-			
-			this.SetupKeyBindings(_keyBindings);
+			_lightXpos = KeyBindings.Register(new("x1", Key.U));
+			_lightXneg = KeyBindings.Register(new("x2", Key.J));
+			_lightYpos = KeyBindings.Register(new("y1", Key.I));
+			_lightYneg = KeyBindings.Register(new("y2", Key.K));
+			_lightZpos = KeyBindings.Register(new("z1", Key.O));
+			_lightZneg = KeyBindings.Register(new("z2", Key.L));
 
 			ShaderOverlays = new[] {
 				Material.OVERLAYS,
@@ -229,16 +224,16 @@ namespace PhoenixPlayground.Scenes {
 			
 			UIOverlays.Add(debugOverlay);
 
-			// window.GetMice()[0].MouseMove += (_, pos) => {
-			// 	if(CurrentCamera is Camera3D c3d) _freeCamera.CameraMove(c3d, pos);
-			// };
+			window.GetMice()[0].MouseMove += (_, pos) => {
+				if(PrimaryCamera is Camera3D c3d) _freeCamera.CameraMove(c3d, pos);
+			};
 		}
 
 		public override void OnUpdate(float delta) {
 			base.OnUpdate(delta);
 
 			var mouse = Window.GetMice()[0];
-			//if(CurrentCamera is Camera3D c3d) _freeCamera.Update(c3d, ref mouse, delta);
+			if(PrimaryCamera is Camera3D c3d) _freeCamera.Update(c3d, ref mouse, delta);
 
 			if(_phong.Pressed) {
 				Playground.AppLogger.Information("Switching to Phong shading");
@@ -258,7 +253,7 @@ namespace PhoenixPlayground.Scenes {
 			if(_lightZpos.Down) _controlledLight.GetComponent<Transform, Transform3D>().Rotation.Z += change;
 			if(_lightZneg.Down) _controlledLight.GetComponent<Transform, Transform3D>().Rotation.Z -= change;
 			
-			_keyBindings.Update(new SilkKeyboard(Window.Input.Keyboards[0]));
+			UpdateKeyBindings();
 
 			PrimaryShader.Bind();
 			if(_doGouraud) {

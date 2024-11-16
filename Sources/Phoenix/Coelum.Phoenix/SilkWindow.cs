@@ -57,7 +57,7 @@ namespace Coelum.Phoenix {
 				Gl.Viewport(SilkImpl.FramebufferSize);
 
 				Framebuffer = new(this);
-				
+
 				Input = SilkImpl.CreateInput();
 				
 				SilkImpl.IsVisible = true;
@@ -114,6 +114,13 @@ namespace Coelum.Phoenix {
 			SilkImpl.Close();
 			SilkImpl.Dispose();
 		}
+
+	#region Input additions
+		public IReadOnlyList<IKeyboard>? GetKeyboards() => Input.Keyboards;
+		public IReadOnlyList<IMouse>? GetMice() => Input.Mice;
+		public IReadOnlyList<IGamepad>? GetGamepads() => Input.Gamepads;
+		public IReadOnlyList<IJoystick>? GetJoysticks() => Input.Joysticks;
+	#endregion
 
 		public static SilkWindow Create(WindowOptions? options = null,
 		                            bool optimalDefaults = true,

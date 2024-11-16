@@ -7,7 +7,6 @@ using Coelum.Phoenix.ECS.System;
 using Coelum.Phoenix.Editor.Camera;
 using Coelum.Phoenix.Editor.UI;
 using Coelum.Phoenix.Editor.UI.Prompts;
-using Coelum.Phoenix.Input;
 using Coelum.Phoenix.UI;
 using Hexa.NET.ImGui;
 
@@ -32,13 +31,10 @@ namespace Coelum.Phoenix.Editor {
 		public OutputScene OutputView { get; private set; }
 	#endregion
 		
-		public KeyBindings KeyBindings { get; }
 		public CameraBase? Camera => EditorView.FreeCamera?.Camera;
 
 		public EditorScene() : base("editor_main") {
-			KeyBindings = new(Id);
 			EditorApplication.KeyBindings = new(KeyBindings);
-			this.SetupKeyBindings(KeyBindings);
 
 			EditorView = new("editor_view");
 			OutputView = new("editor_output", false);
@@ -100,6 +96,9 @@ namespace Coelum.Phoenix.Editor {
 			var uiSystem = EditorApplication.TargetScene.QuerySystem<UISystem>();
 			if(uiSystem != null) uiSystem.Enabled = false;
 			
+			// disable keybindings on the target scene
+			EditorApplication.TargetScene.KeyBindings.Enabled = false;
+			
 			EditorView.OnLoad((WindowBase) window);
 			OutputView.OnLoad((WindowBase) window);
 			
@@ -127,7 +126,7 @@ namespace Coelum.Phoenix.Editor {
 			EditorView.OnUpdate(delta);
 			OutputView.OnUpdate(delta);
 			
-			this.UpdateKeyBindings(KeyBindings);
+			UpdateKeyBindings();
 		}
 
 		public override void OnRender(float delta) {
