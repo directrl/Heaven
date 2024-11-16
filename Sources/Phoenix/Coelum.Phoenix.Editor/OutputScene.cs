@@ -37,7 +37,7 @@ namespace Coelum.Phoenix.Editor {
 					Name = "EditorCamera"
 				};
 				
-				FreeCamera = new((Camera3D) camera, this, KeyBindings);
+				FreeCamera = new((Camera3D) camera, this);
 			}
 
 			if(camera != null) {
