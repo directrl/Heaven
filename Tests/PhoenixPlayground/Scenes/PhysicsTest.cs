@@ -12,9 +12,11 @@ using Coelum.Phoenix.Input;
 using Coelum.Phoenix.Lighting;
 using Coelum.Phoenix.Physics;
 using Coelum.Phoenix.Physics.Callbacks;
+using Coelum.Phoenix.Physics.ECS.Components;
 using Coelum.Phoenix.Physics.ECS.Systems;
 using Coelum.Phoenix.UI;
 using PhoenixPlayground.Nodes.Physics;
+using Silk.NET.Input;
 
 namespace PhoenixPlayground.Scenes {
 	
@@ -24,14 +26,30 @@ namespace PhoenixPlayground.Scenes {
 		
 		private KeyBindings _keyBindings;
 		private FreeCamera _freeCamera;
+		
 		private Camera3D _camera;
+		private Player _player;
 		
 		private Simulation _simulation;
 		private ThreadDispatcher _simulationDispatcher;
+
+	#region Key bindings
+		private KeyBinding _playerForward;
+		private KeyBinding _playerBackward;
+		private KeyBinding _playerLeft;
+		private KeyBinding _playerRight;
+		private KeyBinding _playerJump;
+	#endregion
 		
 		public PhysicsTest() : base("physics") {
 			_keyBindings = new(Id);
 			_freeCamera = new(_keyBindings);
+
+			_playerForward = _keyBindings.Register(new("pf", Key.W));
+			_playerBackward = _keyBindings.Register(new("pb", Key.S));
+			_playerLeft = _keyBindings.Register(new("pl", Key.A));
+			_playerRight = _keyBindings.Register(new("pr", Key.D));
+			_playerJump = _keyBindings.Register(new("pj", Key.Space));
 			
 			this.SetupKeyBindings(_keyBindings);
 			
@@ -49,14 +67,21 @@ namespace PhoenixPlayground.Scenes {
 		public override void OnLoad(SilkWindow window) {
 			base.OnLoad(window);
 			
+			ClearColor = Color.DimGray;
+			
 			//AddSystem("FixedUpdate", new PhysicsObjectCreateSystem(_simulation));
 			AddSystem("FixedUpdate", new PhysicsBodyUpdateSystem(_simulation));
 			AddSystem("FixedUpdate", new PhysicsUpdateSystem(_simulation, _simulationDispatcher));
 			AddSystem("RenderPost", new DebugPhysicsRenderSystem(PrimaryShader));
 
-			_camera = Add(new PerspectiveCamera() {
+			_player = Add(new Player(_simulation));
+			_player.GetComponent<Transform3D>().Scale = new(0.5f, 0.5f, 0.5f);
+			
+			_camera = _player.Add(new PerspectiveCamera() {
 				FOV = 60
 			});
+			_camera.GetComponent<Transform3D>().Position = new(-5, 5, -5);
+			
 			Add(new Viewport(_camera, window.Framebuffer));
 			
 			/*Add(new SceneEnvironment() {
@@ -67,7 +92,7 @@ namespace PhoenixPlayground.Scenes {
 			plane.GetComponent<Transform3D>().Position = new(0, -5, 0);
 			plane.GetComponent<Transform3D>().Scale = new(10, 1, 10);
 			var model = plane.GetComponent<ModelRenderable>().Model;
-			model.Materials[0].Albedo = Color.Brown.ToVector4();
+			model.Materials[0].Albedo = Color.Crimson.ToVector4();
 			
 			AddSystem("FixedUpdate", new("resize plane", (_, delta) => {
 				var t3d = plane.GetComponent<Transform3D>();
@@ -77,10 +102,13 @@ namespace PhoenixPlayground.Scenes {
 				
 				t3d.Scale.X = (float) Math.Sin(window.SilkImpl.Time) * mult + minSize;
 				t3d.Scale.Z = (float) Math.Sin(window.SilkImpl.Time) * mult + minSize;
+
+				plane.ComputeShape();
 			}));
 
 			int fumoCounter = 0;
 			int fumoTimer = 0;
+			
 			AddSystem("FixedUpdate", new("fumo spawner", (_, delta) => {
 				fumoTimer++;
 
@@ -123,15 +151,39 @@ namespace PhoenixPlayground.Scenes {
 			base.OnUpdate(delta);
 
 			var mouse = Window!.GetMice()[0];
-			_freeCamera.Update(_camera, ref mouse, delta);
+			_freeCamera.Update(_camera, ref mouse, delta, noMove: true);
+
+			_player.GetBody(out var playerBody);
+
+			float playerSpeed = 10 * delta;
+			float playerJumpStrength = 8;
+			
+			if(_playerForward.Down) {
+				playerBody.Velocity.Linear.Z += playerSpeed;
+				playerBody.Awake = true;
+			}
+
+			if(_playerBackward.Down) {
+				playerBody.Velocity.Linear.Z -= playerSpeed;
+				playerBody.Awake = true;
+			}
+
+			if(_playerLeft.Down) {
+				playerBody.Velocity.Linear.X -= playerSpeed;
+				playerBody.Awake = true;
+			}
+
+			if(_playerRight.Down) {
+				playerBody.Velocity.Linear.X += playerSpeed;
+				playerBody.Awake = true;
+			}
+
+			if(_playerJump.Pressed) {
+				playerBody.Velocity.Linear.Y += playerJumpStrength;
+				playerBody.Awake = true;
+			}
 			
 			this.UpdateKeyBindings(_keyBindings);
-		}
-
-		public override void OnFixedUpdate(float delta) {
-			base.OnFixedUpdate(delta);
-			
-			//_simulation.Timestep(delta, _simulationDispatcher);
 		}
 	}
 }

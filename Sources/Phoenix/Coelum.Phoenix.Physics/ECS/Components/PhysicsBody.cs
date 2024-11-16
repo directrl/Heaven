@@ -9,6 +9,8 @@ namespace Coelum.Phoenix.Physics.ECS.Components {
 		public Node? Owner { get; set; }
 		
 		public Simulation Simulation { get; set; }
+		public Func<Shape> ComputeShape { get; }
+		
 		public bool DoUpdates { get; set; } = true;
 		
 		[Obsolete] // TODO Obsolete
@@ -16,8 +18,16 @@ namespace Coelum.Phoenix.Physics.ECS.Components {
 		
 		public PhysicsBody() { }
 		
-		public PhysicsBody(Simulation simulation) {
+		public PhysicsBody(Simulation simulation, Func<Shape> shape) {
 			Simulation = simulation;
+			ComputeShape = shape;
+		}
+
+		public struct Shape {
+
+			public TypedIndex Index;
+			public float Mass;
+			public BodyInertia Inertia;
 		}
 	}
 }

@@ -12,6 +12,7 @@ namespace Coelum.Phoenix.ECS.Component {
 		public Vector3 Position = new(0, 0, 0);
 		public Vector3 Rotation = new(0, 0, 0);
 		public Vector3 Scale = new(1, 1, 1);
+		public Vector3 Offset = Vector3.Zero;
 
 		public float Yaw {
 			get => Rotation.Y.ToDegrees();

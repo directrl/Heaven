@@ -4,29 +4,35 @@ using BepuPhysics.Collidables;
 using Coelum.ECS;
 using Coelum.LanguageExtensions;
 using Coelum.Phoenix.ECS.Component;
+using Coelum.Phoenix.ModelLoading;
 using Coelum.Phoenix.OpenGL;
+using Coelum.Resources;
+using Serilog;
 using Silk.NET.OpenGL;
 
 using static Coelum.Phoenix.OpenGL.GlobalOpenGL;
 
 namespace Coelum.Phoenix.Physics {
 	
-	public static class DebugShapeStore {
+	public static class DebugShapeRenderer {
 		
 	#if DEBUG
-		public static Dictionary<Node, IShape> Shapes = new();
-		public static List<(Transform3D t3d, Model model)> Models = new();
+		private static Dictionary<Node, (Transform3D t3d, Model model, Vector3 scale)> _models = new();
 		
 		public static Color OutlineColor { get; set; } = Color.OrangeRed;
+		public static bool WireframeOnly { get; set; } = true;
 
 		public static void Add(Node node, IShape shape) {
-			Shapes[node] = shape;
+			if(_models.ContainsKey(node)) {
+				Remove(node);
+			}
 
 			if(!node.TryGetComponent<Transform3D>(out var t3d)) {
 				return;
 			}
 
 			Model? model = null;
+			var scale = Vector3.One;
 
 			switch(shape) {
 				case Box box:
@@ -62,26 +68,48 @@ namespace Coelum.Phoenix.Physics {
 						}
 					};
 					break;
+				case Sphere sphere:
+					model = ModelLoader.Load(Module.RESOURCES[ResourceType.MODEL, "sphere.glb"]);
+					if(model is not null) model.Materials[0].Albedo = OutlineColor.ToVector4();
+					
+					scale = new(sphere.Radius, sphere.Radius, sphere.Radius);
+					break;
+				case Cylinder cylinder:
+					model = ModelLoader.Load(Module.RESOURCES[ResourceType.MODEL, "cylinder.glb"]);
+					if(model is not null) model.Materials[0].Albedo = OutlineColor.ToVector4();
+					
+					scale = new(cylinder.Radius, cylinder.HalfLength, cylinder.Radius);
+					break;
+				default:
+					Log.Warning($"[DebugShapeRenderer] No model for shape type {shape.GetType()}");
+					break;
 			}
 			
-			if(model is not null) Models.Add((t3d, model));
+			if(model is not null) _models[node] = (t3d, model, scale);
+		}
+
+		public static void Remove(Node node) {
+			_models.Remove(node);
 		}
 		
 		public static void Clear() {
-			Shapes.Clear();
-			Models.Clear();
+			_models.Clear();
 		}
 
 		public static void Render(ShaderProgram shader) {
-			Gl.PolygonMode(TriangleFace.FrontAndBack, PolygonMode.Line);
+			if(WireframeOnly) Gl.PolygonMode(TriangleFace.FrontAndBack, PolygonMode.Line);
+
+			_models = _models
+			          .Where(kv => kv.Key.Alive)
+			          .ToDictionary(kv => kv.Key, kv => kv.Value);
 			
-			foreach(var (t3d, model) in Models) {
+			foreach(var (_, (t3d, model, scale)) in _models) {
 				var matrix = new Matrix4x4();
 				
 				matrix.ComposeFromComponents(
 					t3d.GlobalPosition,
 					t3d.GlobalRotation,
-					Vector3.One
+					scale
 				);
 				
 				shader.SetUniform("model", matrix);

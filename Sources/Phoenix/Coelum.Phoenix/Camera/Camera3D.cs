@@ -74,7 +74,7 @@ namespace Coelum.Phoenix.Camera {
 
 		internal override void RecalculateViewMatrix() {
 			var t3d = GetComponent<Transform, Transform3D>();
-			
+
 			ViewMatrix = Matrix4x4.CreateLookAt(
 				t3d.GlobalPosition,
 				t3d.GlobalPosition + _front,

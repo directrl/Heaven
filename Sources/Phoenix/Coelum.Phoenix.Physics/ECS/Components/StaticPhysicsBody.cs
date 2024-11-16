@@ -5,15 +5,10 @@ using Coelum.ECS;
 namespace Coelum.Phoenix.Physics.ECS.Components {
 	
 	public class StaticPhysicsBody : PhysicsBody {
-
-		public Func<TypedIndex> Shape { get; }
 		
 		public StaticPhysicsBody() { }
 
-		public StaticPhysicsBody(Simulation simulation, Func<TypedIndex> shape)
-			: base(simulation) {
-
-			Shape = shape;
-		}
+		public StaticPhysicsBody(Simulation simulation, Func<Shape> shape)
+			: base(simulation, shape) { }
 	}
 }

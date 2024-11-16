@@ -1,3 +1,4 @@
+using System.Numerics;
 using Coelum.ECS;
 using Coelum.Phoenix.ECS.Component;
 using Coelum.Phoenix.Lighting;

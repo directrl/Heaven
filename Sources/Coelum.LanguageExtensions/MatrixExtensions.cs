@@ -49,7 +49,10 @@ namespace Coelum.LanguageExtensions {
 		public static void ComposeFromComponents(ref this Matrix4x4 matrix,
 		                                         Vector3 translation,
 		                                         Vector3 rotation,
-												 Vector3 scale) {
+												 Vector3 scale,
+		                                         Vector3? offset = null) {
+
+			offset ??= Vector3.Zero;
 
 			// rotation
 			var rotationX = Matrix4x4.CreateFromAxisAngle(Vector3.UnitX, rotation.X);
@@ -57,7 +60,8 @@ namespace Coelum.LanguageExtensions {
 			var rotationZ = Matrix4x4.CreateFromAxisAngle(Vector3.UnitZ, rotation.Z);
 
 			//matrix = rotationX * rotationY * rotationZ;
-			matrix = Matrix4x4.CreateScale(scale)
+			matrix = Matrix4x4.CreateTranslation(offset.Value)
+				* Matrix4x4.CreateScale(scale)
 				* (rotationX * rotationY * rotationZ)
 				* Matrix4x4.CreateTranslation(translation);
 		}

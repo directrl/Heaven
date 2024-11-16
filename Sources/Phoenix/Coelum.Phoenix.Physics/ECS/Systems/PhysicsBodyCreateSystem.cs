@@ -30,7 +30,7 @@ namespace Coelum.Phoenix.Physics.ECS.Systems {
 						    var desc = new StaticDescription(
 							    t3d.GlobalPosition,
 							    t3d.QGlobalRotation,
-							    o.Shape.Invoke()
+							    o.ComputeShape().Index
 							);
 						    
 						    Log.Verbose($"[{GetType().Name}] Adding static object to simulation");

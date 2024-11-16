@@ -15,7 +15,7 @@ namespace Coelum.Phoenix.Physics.ECS.Systems {
 
 		private void ActionImpl(NodeRoot root, float delta) {
 		#if DEBUG
-			DebugShapeStore.Render(Shader);
+			DebugShapeRenderer.Render(Shader);
 		#endif
 		}
 	}

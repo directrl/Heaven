@@ -70,7 +70,8 @@ namespace Coelum.ECS {
 				
 				_componentNodeMap[type].Add(node);
 			}
-			
+
+			node.Alive = true;
 			Log.Verbose($"[ECS] Added new node {node}");
 			return node;
 		}
@@ -103,6 +104,8 @@ namespace Coelum.ECS {
 		}
 
 		public void Remove(Node node) {
+			node.Alive = false;
+			
 			_nodes.Remove(node.Id);
 			_pathNodeMap.Remove(node.Path);
 

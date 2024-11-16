@@ -9,9 +9,6 @@ namespace Coelum.Phoenix.Physics {
 	
 	public static class SceneExtensions {
 
-		internal static BufferPool? _physicsBufferPool;
-		//private static ThreadDispatcher? _threadDispatcher;
-
 		public static (Simulation, ThreadDispatcher) CreatePhysicsSimulation
 			<TNarrowPhaseCallbacks, TPoseIntegratorCallbacks>(this SceneBase scene, 
 			                                                  INarrowPhaseCallbacks? narrowCallbacks = null, 
@@ -21,7 +18,7 @@ namespace Coelum.Phoenix.Physics {
 			where TNarrowPhaseCallbacks : struct, INarrowPhaseCallbacks
 			where TPoseIntegratorCallbacks : struct, IPoseIntegratorCallbacks {
 			
-			_physicsBufferPool ??= new();
+			PhysicsGlobals.BufferPool ??= new();
 			//_threadDispatcher = new((int) Math.Ceiling(Environment.ProcessorCount / 2d));
 			
 			narrowCallbacks ??= new DefaultNarrowPhase();
@@ -30,7 +27,7 @@ namespace Coelum.Phoenix.Physics {
 			
 			return (
 				Simulation.Create(
-					_physicsBufferPool,
+					PhysicsGlobals.BufferPool,
 					(TNarrowPhaseCallbacks) narrowCallbacks,
 					(TPoseIntegratorCallbacks) poseCallbacks,
 					solveDescription.Value,

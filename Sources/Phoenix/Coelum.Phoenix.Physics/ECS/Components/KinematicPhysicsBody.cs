@@ -5,15 +5,9 @@ namespace Coelum.Phoenix.Physics.ECS.Components {
 	
 	public class KinematicPhysicsBody : PhysicsBody {
 		
-		public Func<TypedIndex> Shape { get; }
-		public bool Convex { get; }
-		
 		public KinematicPhysicsBody() { }
 
-		public KinematicPhysicsBody(Simulation simulation, Func<TypedIndex> shape)
-			: base(simulation) {
-
-			Shape = shape;
-		}
+		public KinematicPhysicsBody(Simulation simulation, Func<Shape> shape)
+			: base(simulation, shape) { }
 	}
 }
