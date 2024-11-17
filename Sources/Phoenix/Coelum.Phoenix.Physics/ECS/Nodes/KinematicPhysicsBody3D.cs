@@ -8,9 +8,11 @@ namespace Coelum.Phoenix.Physics.ECS.Nodes {
 		public override Simulation? Simulation {
 			get => GetPhysicsComponent().Simulation;
 			set {
-				if(value is not null) {
-					AddComponent<PhysicsBody>(new DynamicPhysicsBody(value, ComputeShape));
+				if(TryGetComponent<PhysicsBody>(out var body) && body.Simulation is not null) {
+					body.Simulation.GetStore()?.RemoveBody(body);
 				}
+				
+				AddComponent<PhysicsBody>(new KinematicPhysicsBody(value, ComputeShape));
 			}
 		}
 

@@ -7,7 +7,7 @@ namespace Coelum.Phoenix.Physics.ECS.Components {
 		
 		public DynamicPhysicsBody() { }
 
-		public DynamicPhysicsBody(Simulation simulation, Func<Shape> shape)
+		public DynamicPhysicsBody(Simulation? simulation, Func<Shape> shape)
 			: base(simulation, shape) { }
 	}
 }

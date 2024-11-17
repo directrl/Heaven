@@ -10,7 +10,7 @@ namespace Coelum.Phoenix.Physics {
 	
 	public static class SceneExtensions {
 
-		public static (Simulation, ThreadDispatcher) CreatePhysicsSimulation
+		public static (Simulation Simulation, ThreadDispatcher Dispatcher) CreatePhysicsSimulation
 			<TNarrowPhaseCallbacks, TPoseIntegratorCallbacks>(this SceneBase scene, 
 			                                                  INarrowPhaseCallbacks? narrowCallbacks = null, 
 			                                                  IPoseIntegratorCallbacks? poseCallbacks = null, 
@@ -19,7 +19,7 @@ namespace Coelum.Phoenix.Physics {
 			where TNarrowPhaseCallbacks : struct, INarrowPhaseCallbacks
 			where TPoseIntegratorCallbacks : struct, IPoseIntegratorCallbacks {
 			
-			PhysicsGlobals.BufferPool ??= new();
+			SimulationManager.BufferPool ??= new();
 			//_threadDispatcher = new((int) Math.Ceiling(Environment.ProcessorCount / 2d));
 			
 			narrowCallbacks ??= new DefaultNarrowPhase();
@@ -27,23 +27,24 @@ namespace Coelum.Phoenix.Physics {
 			solveDescription ??= new(8, 1);
 
 			var simulation = Simulation.Create(
-				PhysicsGlobals.BufferPool,
+				SimulationManager.BufferPool,
 				(TNarrowPhaseCallbacks) narrowCallbacks,
 				(TPoseIntegratorCallbacks) poseCallbacks,
 				solveDescription.Value,
 				timestepper
 			);
 
-			SimulationExtensions._simulations[++SimulationExtensions._lastSimulationId]
-				= simulation;
+			var dispatcher = new ThreadDispatcher((int) Math.Ceiling(Environment.ProcessorCount / 2d));
 			
 			// initialize additional node property importers/exporters
 			typeof(PropertyExporters).TypeInitializer?.Invoke(null, null);
 			typeof(PropertyImporters).TypeInitializer?.Invoke(null, null);
 			
+			_ = SimulationManager.AddSimulation(scene, simulation, dispatcher);
+			
 			return (
 				simulation,
-				new ThreadDispatcher((int) Math.Ceiling(Environment.ProcessorCount / 2d))
+				dispatcher
 			);
 		}
 	}

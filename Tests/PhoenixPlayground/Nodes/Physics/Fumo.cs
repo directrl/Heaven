@@ -19,7 +19,7 @@ namespace PhoenixPlayground.Nodes.Physics {
 		private static readonly Model _FUMO =
 			ModelLoader.Load(Heaven.AppResources[ResourceType.MODEL, "okuu_fumo.glb"]);
 		
-		public Fumo() : this(SimulationExtensions.GetSimulationById(1)) { }
+		public Fumo() : this(null) { }
 		
 		public Fumo(Simulation? simulation) : base(simulation) {
 			AddComponent<Renderable>(new ModelRenderable(_FUMO));

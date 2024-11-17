@@ -25,19 +25,19 @@ namespace Coelum.Phoenix.Physics {
 			return SetShape(node.GetComponent<PhysicsBody>(), shape);
 		}
 
-		public TypedIndex SetShape<TShape>(PhysicsBody o, TShape shape)
+		public TypedIndex SetShape<TShape>(PhysicsBody body, TShape shape)
 			where TShape : unmanaged, IShape {
 
 		#if DEBUG
-			DebugShapeRenderer.Add(o.Owner, shape);
+			DebugShapeRenderer.Add(body.Owner, shape);
 		#endif
 
-			if(Shapes.TryGetValue(o, out var prevShape)) {
-				Simulation.Shapes.RemoveAndDispose(prevShape, PhysicsGlobals.BufferPool);
+			if(Shapes.TryGetValue(body, out var prevShape)) {
+				Simulation.Shapes.RemoveAndDispose(prevShape, Simulation.BufferPool);
 			}
 
 			var ti = Simulation.Shapes.Add(shape);
-			Shapes[o] = ti;
+			Shapes[body] = ti;
 			return ti;
 		}
 	}

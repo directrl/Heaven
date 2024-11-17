@@ -106,13 +106,13 @@ namespace Coelum.Phoenix.Editor.UI {
 						void DrawPropertyEditor(Type type, string pName, object? pValue, Action<object> setValue) {
 							ImGui.PushID(pName);
 							{
-								var pType = pValue.GetType().GetCommonTypeForNodeUse(useDecimal: false);
+								var pType = type.GetCommonTypeForNodeUse(useDecimal: false);
 								
 								if(_PROPERTY_EDITORS.TryGetValue(pType, out var action)) {
 									var newValue = action.Invoke(type, pName, pValue);
-									if(newValue != null) setValue.Invoke(newValue);
+									if(newValue is not null) setValue.Invoke(newValue);
 								} else {
-									ImGui.Text($"{pName}: {pValue}");
+									ImGui.Text($"{pName}: {pValue ?? "null"}");
 								}
 							}
 							ImGui.PopID();

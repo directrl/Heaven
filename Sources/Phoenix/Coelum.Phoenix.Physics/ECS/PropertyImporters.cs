@@ -1,5 +1,6 @@
 using BepuPhysics;
 using Coelum.ECS.Serialization;
+using Serilog;
 
 namespace Coelum.Phoenix.Physics.ECS {
 	
@@ -7,14 +8,14 @@ namespace Coelum.Phoenix.Physics.ECS {
 
 		static PropertyImporters() {
 			NodeImporter.PROPERTY_IMPORTERS[typeof(Simulation)] = json => {
-				var id = json.GetValue<uint>();
-				var simulation = SimulationExtensions.GetSimulationById(id);
+				var id = json.GetValue<int>();
 
-				if(simulation is null) {
-					throw new ArgumentNullException($"Could not find simulation with id {id}");
+				if(!SimulationManager.GetById(id, out var e)) {
+					Log.Error($"Could not find simulation with id {id}");
+					return null;
 				}
 
-				return simulation;
+				return e.Simulation;
 			};
 		}
 	}

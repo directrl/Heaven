@@ -64,8 +64,6 @@ namespace Coelum.ECS.Serialization {
 				}
 
 				if(node.Components.TryGetValue(backingComponentType, out var component)) {
-					//component = component.Deserialize(componentJson.Value);
-					
 					ImportFields(component.GetType(), component, componentJson.Value);
 					ImportProperties(component.GetType(), component, componentJson.Value);
 					
@@ -79,8 +77,7 @@ namespace Coelum.ECS.Serialization {
 					}
 
 					component = (INodeComponent) ctor.Invoke(null);
-					//component = component.Deserialize(componentJson.Value);
-
+					
 					ImportFields(component.GetType(), component, componentJson.Value);
 					ImportProperties(component.GetType(), component, componentJson.Value);
 					

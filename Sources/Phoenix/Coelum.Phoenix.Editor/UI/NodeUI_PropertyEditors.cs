@@ -1,16 +1,20 @@
 using System.Drawing;
 using System.Numerics;
 using System.Reflection;
+using BepuPhysics;
 using Coelum.ECS;
 using Coelum.LanguageExtensions;
 using Coelum.Phoenix.Camera;
 using Coelum.Phoenix.ModelLoading;
+using Coelum.Phoenix.Physics;
 using Coelum.Resources;
 using Hexa.NET.ImGui;
 
 namespace Coelum.Phoenix.Editor.UI {
 	
 	public unsafe partial class NodeUI {
+
+		private static bool _simulationPicker = false;
 
 		public static float DragWidth { get; set; } = 100;
 		public static float DragSpeed { get; set; } = 0.25f;
@@ -147,6 +151,44 @@ namespace Coelum.Phoenix.Editor.UI {
 				}
 
 				return value;
+			} },
+			{ typeof(Simulation), (type, property, o) => {
+				var value = (Simulation?) o;
+				int id = -1;
+
+				if(value is not null) {
+					SimulationManager.GetId(value, out id);
+				}
+
+				if(ImGui.Button($"{property}: {id}")) {
+					_simulationPicker = !_simulationPicker;
+				}
+
+				if(_simulationPicker) {
+					for(int i = 1; i < int.MaxValue; i++) {
+						if(!SimulationManager.GetById(i, out var v)) {
+							break;
+						}
+
+						if(ImGui.Button(i.ToString())) {
+							value = v.Simulation;
+							_simulationPicker = false;
+							break;
+						}
+					}
+				}
+
+				// if(SimulationManager.GetById(id, out var e)) {
+				// 	value = e.Simulation;
+				// } else {
+				// 	value = null;
+				// }
+
+				if(SimulationManager.GetId(value, out var id1) && id != id1) {
+					return value;
+				}
+
+				return null;
 			} }
 		};
 	}

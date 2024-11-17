@@ -7,7 +7,7 @@ namespace Coelum.Phoenix.Physics.ECS {
 
 		static PropertyExporters() {
 			NodeExporter.PROPERTY_EXPORTERS[typeof(Simulation)] = (name, value, writer) => {
-				writer.WriteNumber(name, SimulationExtensions.GetSimulationId((Simulation) value).Value);
+				writer.WriteNumber(name, ((Simulation) value).GetId() ?? -1);
 			};
 		}
 	}

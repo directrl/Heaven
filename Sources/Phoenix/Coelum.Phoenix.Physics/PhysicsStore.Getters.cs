@@ -34,6 +34,14 @@ namespace Coelum.Phoenix.Physics {
 
 			return GetStatic(body, out reference);
 		}
+
+		public void RemoveStatic(StaticPhysicsBody body) {
+			if(!GetStaticHandle(body, out var handle)) return;
+			if(!Shapes.TryGetValue(body, out var shapeIndex)) return;
+			
+			Simulation.Statics.Remove(handle);
+			Simulation.Shapes.RemoveAndDispose(shapeIndex, SimulationManager.BufferPool);
+		}
 	#endregion
 		
 	#region Active bodies
@@ -56,12 +64,26 @@ namespace Coelum.Phoenix.Physics {
 			reference = default;
 			return false;
 		}
+		
+		internal void RemoveBody(PhysicsBody body) {
+			if(!GetBodyHandle(body, out var handle)) return;
+			if(!Shapes.TryGetValue(body, out var shapeIndex)) return;
+			
+			Simulation.Bodies.Remove(handle);
+			Simulation.Shapes.RemoveAndDispose(shapeIndex, SimulationManager.BufferPool);
+		}
 	#endregion
 
 		public bool GetBodyHandle(DynamicPhysicsBody body, out BodyHandle handle)
 			=> GetBodyHandle((PhysicsBody) body, out handle);
 		
 		public bool GetBody(DynamicPhysicsBody body, out BodyReference reference)
+			=> GetBody((PhysicsBody) body, out reference);
+		
+		public bool GetBodyHandle(KinematicPhysicsBody body, out BodyHandle handle)
+			=> GetBodyHandle((PhysicsBody) body, out handle);
+		
+		public bool GetBody(KinematicPhysicsBody body, out BodyReference reference)
 			=> GetBody((PhysicsBody) body, out reference);
 
 		public bool GetBody(Node node, out BodyReference reference) {
@@ -74,6 +96,12 @@ namespace Coelum.Phoenix.Physics {
 			var body = node.GetComponent<PhysicsBody>();
 			return GetBody(body, out reference);
 		}
+
+		public void RemoveBody(DynamicPhysicsBody body)
+			=> RemoveBody((PhysicsBody) body);
+		
+		public void RemoveBody(KinematicPhysicsBody body)
+			=> RemoveBody((PhysicsBody) body);
 	#endregion
 
 

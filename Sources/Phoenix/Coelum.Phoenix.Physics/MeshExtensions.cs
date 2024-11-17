@@ -1,4 +1,5 @@
 using System.Numerics;
+using BepuPhysics;
 using BepuPhysics.Collidables;
 using BepuUtilities.Memory;
 using Coelum.LanguageExtensions;
@@ -15,8 +16,8 @@ namespace Coelum.Phoenix.Physics {
 				throw new ArgumentException("Physics meshes can be computed only for triangle meshes");
 			}
 			
-			PhysicsGlobals.BufferPool.Take<Triangle>(mesh.Indices.Length / (3 * resolution),
-			                                         out var triangles);
+			SimulationManager.BufferPool.Take<Triangle>(mesh.Indices.Length / (3 * resolution), 
+			                                            out var triangles);
 
 			int ti = 0;
 			for(int i = 0; i < mesh.Indices.Length; i += 3 * resolution) {
@@ -34,7 +35,7 @@ namespace Coelum.Phoenix.Physics {
 				ti++;
 			}
 
-			return new(triangles, Vector3.One, PhysicsGlobals.BufferPool);
+			return new(triangles, Vector3.One, SimulationManager.BufferPool);
 		}
 	}
 }

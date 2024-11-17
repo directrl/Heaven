@@ -8,7 +8,7 @@ namespace Coelum.Phoenix.Physics.ECS.Components {
 		
 		public StaticPhysicsBody() { }
 
-		public StaticPhysicsBody(Simulation simulation, Func<Shape> shape)
+		public StaticPhysicsBody(Simulation? simulation, Func<Shape> shape)
 			: base(simulation, shape) { }
 	}
 }
