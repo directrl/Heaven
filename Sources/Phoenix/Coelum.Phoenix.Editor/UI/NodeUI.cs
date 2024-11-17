@@ -36,7 +36,8 @@ namespace Coelum.Phoenix.Editor.UI {
 							if(ImGui.Selectable(node.Name, SelectedNode == node)) {
 								SelectedNode = node;
 							}
-							
+
+						#region Node reparenting
 							if(ImGui.BeginDragDropSource()) {
 								ImGui.SetDragDropPayload("NODE_DND", &node, (uint) sizeof(Node));
 								ImGui.Text(node.Name);
@@ -54,6 +55,7 @@ namespace Coelum.Phoenix.Editor.UI {
 								
 								ImGui.EndDragDropTarget();
 							}
+						#endregion
 						}
 						ImGui.PopID();
 					
@@ -120,6 +122,8 @@ namespace Coelum.Phoenix.Editor.UI {
 					#endregion
 
 					#region Node editors
+						var nodeProperties = new List<string>();
+						
 						DrawPropertyEditor(typeof(string), "Name", SelectedNode.Name,
 						                   v => SelectedNode.Name = (string) v);
 						
@@ -129,6 +133,8 @@ namespace Coelum.Phoenix.Editor.UI {
 							var fValue = field.GetValue(SelectedNode);
 							DrawPropertyEditor(field.FieldType, field.Name, fValue,
 							                   v => field.SetValue(SelectedNode, v));
+							
+							nodeProperties.Add(field.Name);
 						}
 
 						foreach(var property in SelectedNode.GetType().GetProperties()) {
@@ -137,6 +143,8 @@ namespace Coelum.Phoenix.Editor.UI {
 							var pValue = property.GetValue(SelectedNode);
 							DrawPropertyEditor(property.PropertyType, property.Name, pValue,
 							                   v => property.SetValue(SelectedNode, v));
+							
+							nodeProperties.Add(property.Name);
 						}
 					#endregion
 						
@@ -154,7 +162,8 @@ namespace Coelum.Phoenix.Editor.UI {
 							
 							if(ImGui.TreeNode(cType.Name)) {
 								foreach(var field in cType.GetFields()) {
-									if(field.IsInitOnly) continue;
+									if(!field.IsForPublicNodeUse()) continue;
+									if(nodeProperties.Contains(field.Name)) continue;
 									
 									var fValue = field.GetValue(component);
 									DrawPropertyEditor(field.FieldType, field.Name, fValue,
@@ -163,6 +172,7 @@ namespace Coelum.Phoenix.Editor.UI {
 
 								foreach(var property in cType.GetProperties()) {
 									if(!property.IsForPublicNodeUse()) continue;
+									if(nodeProperties.Contains(property.Name)) continue;
 
 									var pValue = property.GetValue(component);
 									DrawPropertyEditor(property.PropertyType, property.Name, pValue,
