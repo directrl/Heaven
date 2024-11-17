@@ -1,15 +1,21 @@
 using BepuPhysics;
-using Coelum.Phoenix.ECS.Nodes;
 using Coelum.Phoenix.Physics.ECS.Components;
 
 namespace Coelum.Phoenix.Physics.ECS.Nodes {
 	
 	public abstract class DynamicPhysicsBody3D : PhysicsBody3D {
-
-		public DynamicPhysicsBody3D(Simulation? simulation) : base(simulation) {
-			if(simulation is not null) {
-				AddComponent<PhysicsBody>(new DynamicPhysicsBody(simulation, ComputeShape));
+		
+		public override Simulation? Simulation {
+			get => GetPhysicsComponent().Simulation;
+			set {
+				if(value is not null) {
+					AddComponent<PhysicsBody>(new DynamicPhysicsBody(value, ComputeShape));
+				}
 			}
+		}
+
+		public DynamicPhysicsBody3D(Simulation? simulation) {
+			Simulation = simulation;
 		}
 		
 		public bool GetBody(out BodyReference reference) {

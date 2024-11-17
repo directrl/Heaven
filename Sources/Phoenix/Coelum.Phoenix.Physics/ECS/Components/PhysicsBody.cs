@@ -8,17 +8,23 @@ namespace Coelum.Phoenix.Physics.ECS.Components {
 
 		public Node? Owner { get; set; }
 		
-		public Simulation Simulation { get; set; }
+		public Simulation? Simulation { get; set; }
 		public Func<Shape> ComputeShape { get; }
+
+		private bool _doUpdates = true;
+		public bool DoUpdates {
+			get => _doUpdates;
+			set {
+				if(!_doUpdates && value) Dirty = true;
+				_doUpdates = value;
+			}
+		}
 		
-		public bool DoUpdates { get; set; } = true;
-		
-		[Obsolete] // TODO Obsolete
-		public bool Created { get; internal set; }
+		public bool Dirty { get; set; }
 		
 		public PhysicsBody() { }
 		
-		public PhysicsBody(Simulation simulation, Func<Shape> shape) {
+		public PhysicsBody(Simulation? simulation, Func<Shape> shape) {
 			Simulation = simulation;
 			ComputeShape = shape;
 		}

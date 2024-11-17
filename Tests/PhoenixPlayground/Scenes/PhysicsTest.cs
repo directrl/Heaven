@@ -98,7 +98,7 @@ namespace PhoenixPlayground.Scenes {
 				t3d.Scale.X = (float) Math.Sin(window.SilkImpl.Time) * mult + minSize;
 				t3d.Scale.Z = (float) Math.Sin(window.SilkImpl.Time) * mult + minSize;
 
-				plane.ComputeShape();
+				plane.GetPhysicsComponent().Dirty = true;
 			}));
 
 			int fumoCounter = 0;

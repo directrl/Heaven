@@ -4,6 +4,7 @@ using BepuUtilities;
 using BepuUtilities.Memory;
 using Coelum.Common.Graphics;
 using Coelum.Phoenix.Physics.Callbacks;
+using Coelum.Phoenix.Physics.ECS;
 
 namespace Coelum.Phoenix.Physics {
 	
@@ -24,15 +25,24 @@ namespace Coelum.Phoenix.Physics {
 			narrowCallbacks ??= new DefaultNarrowPhase();
 			poseCallbacks ??= new DefaultPoseIntegrator();
 			solveDescription ??= new(8, 1);
+
+			var simulation = Simulation.Create(
+				PhysicsGlobals.BufferPool,
+				(TNarrowPhaseCallbacks) narrowCallbacks,
+				(TPoseIntegratorCallbacks) poseCallbacks,
+				solveDescription.Value,
+				timestepper
+			);
+
+			SimulationExtensions._simulations[++SimulationExtensions._lastSimulationId]
+				= simulation;
+			
+			// initialize additional node property importers/exporters
+			typeof(PropertyExporters).TypeInitializer?.Invoke(null, null);
+			typeof(PropertyImporters).TypeInitializer?.Invoke(null, null);
 			
 			return (
-				Simulation.Create(
-					PhysicsGlobals.BufferPool,
-					(TNarrowPhaseCallbacks) narrowCallbacks,
-					(TPoseIntegratorCallbacks) poseCallbacks,
-					solveDescription.Value,
-					timestepper
-				),
+				simulation,
 				new ThreadDispatcher((int) Math.Ceiling(Environment.ProcessorCount / 2d))
 			);
 		}

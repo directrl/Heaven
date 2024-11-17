@@ -4,6 +4,7 @@ using Coelum.Debug;
 using Coelum.ECS;
 using Coelum.ECS.Extensions;
 using Coelum.Phoenix.Camera;
+using Coelum.Phoenix.Physics.ECS.Components;
 using Coelum.Phoenix.UI;
 using Hexa.NET.ImGui;
 using Serilog;
@@ -12,16 +13,10 @@ namespace Coelum.Phoenix.Editor.UI {
 	
 	// TODO tree view collapse
 	public partial class NodeUI : ImGuiUI {
-
-		private Node? _selectedNode;
-		public Node? SelectedNode {
-			get => _selectedNode;
-			set {
-				_selectedNode = value;
-			}
-		}
-
+		
 		private bool _openNodeChooser = false;
+
+		public Node? SelectedNode { get; set; }
 		
 		public NodeUI(PhoenixScene scene) : base(scene) { }
 
@@ -148,7 +143,11 @@ namespace Coelum.Phoenix.Editor.UI {
 						ImGui.SeparatorText("Components");
 
 					#region Component editors
+						var drawnComponents = new List<INodeComponent>();
+						
 						foreach(var (_, component) in SelectedNode.Components) {
+							if(drawnComponents.Contains(component)) continue;
+							
 							var cType = component.GetType();
 							
 							ImGui.SetNextItemOpen(true, ImGuiCond.FirstUseEver);
@@ -170,6 +169,7 @@ namespace Coelum.Phoenix.Editor.UI {
 									                   v => property.SetValue(component, v));
 								}
 								
+								drawnComponents.Add(component);
 								ImGui.TreePop();
 							}
 						}

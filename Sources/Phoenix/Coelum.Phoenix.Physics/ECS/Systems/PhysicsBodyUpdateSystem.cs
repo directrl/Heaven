@@ -27,6 +27,8 @@ namespace Coelum.Phoenix.Physics.ECS.Systems {
 				    if(!p.DoUpdates) return;
 				    if(t is not Transform3D t3d) return;
 
+				    if(p.Simulation is null) return;
+
 				    // TODO move to extension method or Transform3D itself
 				    void UpdateTransform(Vector3 position, Quaternion orientation) {
 					    var newMatrix = Matrix4x4.CreateFromQuaternion(orientation)
@@ -52,7 +54,7 @@ namespace Coelum.Phoenix.Physics.ECS.Systems {
 
 				    switch(p) {
 					    case StaticPhysicsBody body:
-						    if(!PhysicsStore.GetStaticHandle(body, out var staticHandle)) {
+						    if(body.Dirty || !PhysicsStore.GetStaticHandle(body, out var staticHandle)) {
 							    var desc = new StaticDescription(
 								    t3d.GlobalPosition,
 								    t3d.QGlobalRotation,
@@ -60,6 +62,7 @@ namespace Coelum.Phoenix.Physics.ECS.Systems {
 							    );
 							    
 							    PhysicsStore.SetStatic(body, desc);
+							    body.Dirty = false;
 						    } else {
 							    Simulation.Statics.GetDescription(staticHandle, out var desc);
 							    UpdateTransform(desc.Pose.Position, desc.Pose.Orientation);
@@ -67,7 +70,7 @@ namespace Coelum.Phoenix.Physics.ECS.Systems {
 						    
 						    break;
 					    case DynamicPhysicsBody body:
-						    if(!PhysicsStore.GetBodyHandle(body, out var dynamicHandle)) {
+						    if(body.Dirty || !PhysicsStore.GetBodyHandle(body, out var dynamicHandle)) {
 							    var shape = body.ComputeShape();
 
 							    var desc = BodyDescription.CreateDynamic(
@@ -78,6 +81,7 @@ namespace Coelum.Phoenix.Physics.ECS.Systems {
 							    );
 							    
 							    PhysicsStore.SetBody(body, desc);
+							    body.Dirty = false;
 						    } else {
 							    Simulation.Bodies.GetDescription(dynamicHandle, out var desc);
 							    UpdateTransform(desc.Pose.Position, desc.Pose.Orientation);
@@ -85,7 +89,7 @@ namespace Coelum.Phoenix.Physics.ECS.Systems {
 						    
 						    break;
 					    case KinematicPhysicsBody body:
-						    if(!PhysicsStore.GetBodyHandle(body, out var kinematicHandle)) {
+						    if(body.Dirty || !PhysicsStore.GetBodyHandle(body, out var kinematicHandle)) {
 							    var desc = BodyDescription.CreateKinematic(
 								    (t3d.GlobalPosition, t3d.QGlobalRotation),
 								    body.ComputeShape().Index,
@@ -93,6 +97,7 @@ namespace Coelum.Phoenix.Physics.ECS.Systems {
 							    );
 							    
 							    PhysicsStore.SetBody(body, desc);
+							    body.Dirty = false;
 						    } else {
 							    Simulation.Bodies.GetDescription(kinematicHandle, out var desc);
 							    UpdateTransform(desc.Pose.Position, desc.Pose.Orientation);

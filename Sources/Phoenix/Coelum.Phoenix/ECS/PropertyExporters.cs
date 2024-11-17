@@ -10,6 +10,7 @@ namespace Coelum.Phoenix.ECS {
 				{
 					writer.WriteString("model", ((Model) value).Name);
 					
+					// TODO only export materials if they differ from model
 					writer.WriteStartArray("materials");
 					foreach(var material in ((Model) value).Materials) {
 						material.Serialize(null, writer);

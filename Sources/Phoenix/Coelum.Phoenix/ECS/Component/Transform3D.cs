@@ -96,23 +96,5 @@ namespace Coelum.Phoenix.ECS.Component {
 			if(rotation.HasValue) Rotation = rotation.Value;
 			if(scale.HasValue) Scale = scale.Value;
 		}
-		
-		public void SetLocalFromGlobal(Vector3? position = null,
-		                               Vector3? rotation = null,
-									   Vector3? scale = null) {
-
-			position ??= GlobalPosition;
-			rotation ??= GlobalRotation;
-			scale ??= GlobalScale;
-
-			var newMatrix = new Matrix4x4();
-
-			if(Owner.Parent != null
-			   && Owner.Parent.TryGetComponent<Transform3D>(out var pt)) {
-				Matrix4x4.Invert(pt.GlobalMatrix, out var parentGlobalMatrix);
-				
-				
-			}
-		}
 	}
 }

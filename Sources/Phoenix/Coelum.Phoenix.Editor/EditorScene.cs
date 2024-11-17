@@ -7,6 +7,8 @@ using Coelum.Phoenix.ECS.System;
 using Coelum.Phoenix.Editor.Camera;
 using Coelum.Phoenix.Editor.UI;
 using Coelum.Phoenix.Editor.UI.Prompts;
+using Coelum.Phoenix.Physics.ECS.Components;
+using Coelum.Phoenix.Physics.ECS.Nodes;
 using Coelum.Phoenix.UI;
 using Hexa.NET.ImGui;
 
@@ -127,6 +129,14 @@ namespace Coelum.Phoenix.Editor {
 			OutputView.OnUpdate(delta);
 			
 			UpdateKeyBindings();
+		}
+
+		public override void OnFixedUpdate(float delta) {
+			base.OnFixedUpdate(delta);
+
+			if(MainUI.TargetSceneUpdate) {
+				EditorApplication.TargetScene.OnFixedUpdate(delta);
+			}
 		}
 
 		public override void OnRender(float delta) {

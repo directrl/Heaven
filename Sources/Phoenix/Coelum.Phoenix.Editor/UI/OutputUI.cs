@@ -2,6 +2,7 @@ using System.Numerics;
 using Coelum.LanguageExtensions;
 using Coelum.Phoenix.Camera;
 using Coelum.Phoenix.ECS.Component;
+using Coelum.Phoenix.Physics.ECS.Components;
 using Coelum.Phoenix.UI;
 using Hexa.NET.ImGui;
 using Hexa.NET.ImGuizmo;
@@ -91,6 +92,12 @@ namespace Coelum.Phoenix.Editor.UI {
 						_noMove = ImGuizmo.IsOver();
 
 						if(ImGuizmo.IsUsing()) {
+							bool hasPhysicsBody = false;
+							if(sn.TryGetComponent<PhysicsBody>(out var physicsBody)) {
+								hasPhysicsBody = true;
+								physicsBody.DoUpdates = false;
+							}
+							
 							var newNodeMatrix = new Matrix4x4();
 
 							if(sn.Parent != null &&
@@ -132,6 +139,10 @@ namespace Coelum.Phoenix.Editor.UI {
 								case ImGuizmoOperation.Scale:
 									t3d.Scale = scale;
 									break;
+							}
+
+							if(hasPhysicsBody) {
+								physicsBody.DoUpdates = true;
 							}
 						}
 					}

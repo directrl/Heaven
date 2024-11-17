@@ -9,6 +9,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\Coelum.Core\Coelum.Core.csproj" />
+      <ProjectReference Include="..\Coelum.Phoenix.Physics\Coelum.Phoenix.Physics.csproj" />
       <ProjectReference Include="..\Coelum.Phoenix\Coelum.Phoenix.csproj" />
     </ItemGroup>
 

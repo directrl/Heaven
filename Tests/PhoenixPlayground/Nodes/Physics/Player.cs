@@ -13,6 +13,8 @@ using Coelum.Resources;
 namespace PhoenixPlayground.Nodes.Physics {
 	
 	public class Player : DynamicPhysicsBody3D {
+		
+		public Player() : this(null) { }
 
 		public Player(Simulation? simulation) : base(simulation) {
 			var model = ModelLoader.Load(Heaven.AppResources[ResourceType.MODEL, "player.glb"]);
