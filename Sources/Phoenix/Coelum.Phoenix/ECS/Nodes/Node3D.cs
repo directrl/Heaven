@@ -1,5 +1,5 @@
 using Coelum.ECS;
-using Coelum.Phoenix.ECS.Component;
+using Coelum.Phoenix.ECS.Components;
 
 namespace Coelum.Phoenix.ECS.Nodes {
 	

@@ -1,7 +1,7 @@
 using Coelum.ECS;
 using Coelum.Phoenix.OpenGL;
 
-namespace Coelum.Phoenix.ECS.Component {
+namespace Coelum.Phoenix.ECS.Components {
 	
 	public interface Renderable : INodeComponent {
 		

@@ -1,7 +1,7 @@
 using System.Numerics;
 using Coelum.Phoenix.Camera;
 using Coelum.Common.Input;
-using Coelum.Phoenix.ECS.Component;
+using Coelum.Phoenix.ECS.Components;
 using Silk.NET.Input;
 
 namespace PhoenixPlayground {

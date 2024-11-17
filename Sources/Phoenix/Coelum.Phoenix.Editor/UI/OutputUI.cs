@@ -1,7 +1,7 @@
 using System.Numerics;
 using Coelum.LanguageExtensions;
 using Coelum.Phoenix.Camera;
-using Coelum.Phoenix.ECS.Component;
+using Coelum.Phoenix.ECS.Components;
 using Coelum.Phoenix.Physics;
 using Coelum.Phoenix.Physics.ECS.Components;
 using Coelum.Phoenix.Physics.ECS.Nodes;

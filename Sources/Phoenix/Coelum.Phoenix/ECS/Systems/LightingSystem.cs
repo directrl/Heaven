@@ -1,10 +1,9 @@
 using Coelum.ECS;
-using Coelum.LanguageExtensions;
-using Coelum.Phoenix.ECS.Component;
+using Coelum.Phoenix.ECS.Components;
 using Coelum.Phoenix.OpenGL;
 using Coelum.Phoenix.OpenGL.UBO;
 
-namespace Coelum.Phoenix.ECS.System {
+namespace Coelum.Phoenix.ECS.Systems {
 	
 	public class LightingSystem : EcsSystem {
 		

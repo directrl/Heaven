@@ -1,10 +1,6 @@
 using System.Numerics;
-using System.Text.Json;
-using System.Text.Json.Nodes;
-using Coelum.ECS;
-using Coelum.LanguageExtensions.Serialization;
 
-namespace Coelum.Phoenix.ECS.Component {
+namespace Coelum.Phoenix.ECS.Components {
 	
 	public class Transform2D : Transform {
 		

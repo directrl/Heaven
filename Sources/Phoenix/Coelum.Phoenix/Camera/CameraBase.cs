@@ -1,6 +1,6 @@
 using System.Numerics;
 using Coelum.ECS;
-using Coelum.Phoenix.ECS.Component;
+using Coelum.Phoenix.ECS.Components;
 using Coelum.Phoenix.OpenGL.UBO;
 
 namespace Coelum.Phoenix.Camera {

@@ -1,10 +1,8 @@
 using System.Drawing;
 using Coelum.ECS;
-using Coelum.LanguageExtensions;
-using Coelum.Phoenix.OpenGL;
 using Coelum.Phoenix.OpenGL.UBO;
 
-namespace Coelum.Phoenix.ECS.Component {
+namespace Coelum.Phoenix.ECS.Components {
 	
 	public interface Light : INodeComponent {
 		

@@ -1,14 +1,10 @@
 using System.Drawing;
 using System.Numerics;
-using System.Text.Json;
-using System.Text.Json.Nodes;
 using Coelum.ECS;
 using Coelum.LanguageExtensions;
-using Coelum.LanguageExtensions.Serialization;
-using Coelum.Phoenix.OpenGL;
 using Coelum.Phoenix.OpenGL.UBO;
 
-namespace Coelum.Phoenix.ECS.Component {
+namespace Coelum.Phoenix.ECS.Components {
 	
 	public class DirectionalLight : Light {
 

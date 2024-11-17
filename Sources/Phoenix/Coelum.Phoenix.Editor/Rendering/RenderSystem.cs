@@ -1,6 +1,6 @@
 using Coelum.ECS;
-using Coelum.Phoenix.ECS.Component;
-using Coelum.Phoenix.ECS.System;
+using Coelum.Phoenix.ECS.Components;
+using Coelum.Phoenix.ECS.Systems;
 using Coelum.Phoenix.OpenGL;
 
 namespace Coelum.Phoenix.Editor.Rendering {

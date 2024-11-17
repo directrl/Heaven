@@ -2,7 +2,7 @@ using System.Numerics;
 using BepuPhysics;
 using Coelum.ECS;
 using Coelum.LanguageExtensions;
-using Coelum.Phoenix.ECS.Component;
+using Coelum.Phoenix.ECS.Components;
 using Coelum.Phoenix.Physics.ECS.Components;
 using Hexa.NET.ImGuizmo;
 using Serilog;

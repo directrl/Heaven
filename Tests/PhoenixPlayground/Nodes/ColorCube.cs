@@ -2,7 +2,7 @@ using System.Drawing;
 using Coelum.ECS;
 using Coelum.LanguageExtensions;
 using Coelum.Phoenix;
-using Coelum.Phoenix.ECS.Component;
+using Coelum.Phoenix.ECS.Components;
 using Silk.NET.OpenGL;
 using Node = Coelum.ECS.Node;
 

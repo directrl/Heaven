@@ -2,7 +2,7 @@ using Coelum.ECS;
 using Coelum.Phoenix.UI;
 using Serilog;
 
-namespace Coelum.Phoenix.ECS.System {
+namespace Coelum.Phoenix.ECS.Systems {
 	
 	public class UISystem : EcsSystem {
 

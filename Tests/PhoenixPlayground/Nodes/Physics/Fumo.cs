@@ -3,7 +3,7 @@ using BepuPhysics.Collidables;
 using BepuUtilities.Memory;
 using Coelum.Core;
 using Coelum.Phoenix;
-using Coelum.Phoenix.ECS.Component;
+using Coelum.Phoenix.ECS.Components;
 using Coelum.Phoenix.ECS.Nodes;
 using Coelum.Phoenix.ModelLoading;
 using Coelum.Phoenix.Physics;

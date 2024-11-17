@@ -5,7 +5,7 @@ using Coelum.Phoenix.Texture;
 using Coelum.Common.Input;
 using Coelum.LanguageExtensions;
 using Coelum.ECS;
-using Coelum.Phoenix.ECS.Component;
+using Coelum.Phoenix.ECS.Components;
 using Coelum.Phoenix.UI;
 using ImGuiNET;
 using PhoenixPlayground.Nodes;

@@ -201,7 +201,6 @@
     <Folder Include="..\..\..\Resources\Coeli\Resources\Textures\">
       <Link>Resources\Textures</Link>
     </Folder>
-    <Folder Include="Input\" />
   </ItemGroup>
 
 </Project>

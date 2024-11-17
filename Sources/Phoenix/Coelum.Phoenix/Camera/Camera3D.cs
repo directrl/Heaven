@@ -1,7 +1,7 @@
 using System.Numerics;
 using Coelum.ECS;
 using Coelum.LanguageExtensions;
-using Coelum.Phoenix.ECS.Component;
+using Coelum.Phoenix.ECS.Components;
 using Coelum.Phoenix.ModelLoading;
 using Coelum.Phoenix.OpenGL;
 using Coelum.Resources;

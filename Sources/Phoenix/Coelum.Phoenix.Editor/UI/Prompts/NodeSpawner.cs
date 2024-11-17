@@ -2,7 +2,7 @@ using System.Numerics;
 using Coelum.ECS;
 using Coelum.ECS.Prefab;
 using Coelum.Phoenix.Camera;
-using Coelum.Phoenix.ECS.Component;
+using Coelum.Phoenix.ECS.Components;
 using Coelum.Phoenix.UI;
 using Hexa.NET.ImGui;
 

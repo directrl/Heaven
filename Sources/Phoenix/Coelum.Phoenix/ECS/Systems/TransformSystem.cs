@@ -1,9 +1,9 @@
 using System.Numerics;
 using Coelum.ECS;
 using Coelum.LanguageExtensions;
-using Coelum.Phoenix.ECS.Component;
+using Coelum.Phoenix.ECS.Components;
 
-namespace Coelum.Phoenix.ECS.System {
+namespace Coelum.Phoenix.ECS.Systems {
 	
 	public class TransformSystem : EcsSystem {
 

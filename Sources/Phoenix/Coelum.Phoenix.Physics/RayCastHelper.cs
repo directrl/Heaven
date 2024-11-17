@@ -5,7 +5,7 @@ using BepuPhysics.Trees;
 using BepuUtilities.Memory;
 using Coelum.Debug;
 using Coelum.Phoenix.Camera;
-using Coelum.Phoenix.ECS.Component;
+using Coelum.Phoenix.ECS.Components;
 using Coelum.Phoenix.Physics.ECS.Nodes;
 
 namespace Coelum.Phoenix.Physics {

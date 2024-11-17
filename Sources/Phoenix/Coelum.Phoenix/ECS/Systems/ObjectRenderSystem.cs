@@ -1,10 +1,8 @@
-using System.Numerics;
 using Coelum.ECS;
-using Coelum.Phoenix.ECS.Component;
-using Coelum.Phoenix.Lighting;
+using Coelum.Phoenix.ECS.Components;
 using Coelum.Phoenix.OpenGL;
 
-namespace Coelum.Phoenix.ECS.System {
+namespace Coelum.Phoenix.ECS.Systems {
 	
 	public class ObjectRenderSystem : EcsSystem {
 

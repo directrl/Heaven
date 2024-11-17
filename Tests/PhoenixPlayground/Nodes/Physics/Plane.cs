@@ -3,7 +3,7 @@ using System.Numerics;
 using BepuPhysics;
 using BepuPhysics.Collidables;
 using Coelum.LanguageExtensions;
-using Coelum.Phoenix.ECS.Component;
+using Coelum.Phoenix.ECS.Components;
 using Coelum.Phoenix.ECS.Nodes;
 using Coelum.Phoenix.Physics;
 using Coelum.Phoenix.Physics.ECS.Components;

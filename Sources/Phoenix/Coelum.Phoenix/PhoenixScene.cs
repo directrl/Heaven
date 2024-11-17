@@ -5,7 +5,7 @@ using Coelum.Debug;
 using Coelum.Phoenix.Camera;
 using Coelum.Phoenix.ECS;
 using Coelum.Phoenix.ECS.Nodes;
-using Coelum.Phoenix.ECS.System;
+using Coelum.Phoenix.ECS.Systems;
 using Coelum.Phoenix.Lighting;
 using Coelum.Phoenix.OpenGL;
 using Coelum.Phoenix.OpenGL.UBO;

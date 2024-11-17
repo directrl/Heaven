@@ -1,9 +1,7 @@
-using System.Text.Json;
-using System.Text.Json.Nodes;
 using Coelum.ECS;
 using Coelum.Phoenix.OpenGL;
 
-namespace Coelum.Phoenix.ECS.Component {
+namespace Coelum.Phoenix.ECS.Components {
 	
 	public class ModelRenderable : Renderable {
 

@@ -1,12 +1,8 @@
 using System.Numerics;
-using System.Text.Json;
-using System.Text.Json.Nodes;
-using Coelum.ECS;
 using Coelum.LanguageExtensions;
-using Coelum.LanguageExtensions.Serialization;
 using Hexa.NET.ImGuizmo;
 
-namespace Coelum.Phoenix.ECS.Component {
+namespace Coelum.Phoenix.ECS.Components {
 	
 	public class Transform3D : Transform {
 	

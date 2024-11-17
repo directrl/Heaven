@@ -2,7 +2,7 @@ using Coelum.ECS;
 using Coelum.Phoenix.OpenGL;
 using Coelum.Phoenix.OpenGL.UBO;
 
-namespace Coelum.Phoenix.ECS.System {
+namespace Coelum.Phoenix.ECS.Systems {
 	
 	public class ViewportRenderSystem : EcsSystem {
 		

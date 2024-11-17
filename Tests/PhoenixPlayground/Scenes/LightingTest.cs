@@ -5,7 +5,7 @@ using Coelum.ECS;
 using Coelum.LanguageExtensions;
 using Coelum.Phoenix;
 using Coelum.Phoenix.Camera;
-using Coelum.Phoenix.ECS.Component;
+using Coelum.Phoenix.ECS.Components;
 using Coelum.Phoenix.ECS.Nodes;
 using Coelum.Phoenix.Lighting;
 using Coelum.Phoenix.ModelLoading;
