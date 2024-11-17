@@ -37,7 +37,7 @@ namespace Coelum.Phoenix.Physics.ECS.Systems {
 							    var desc = new StaticDescription(
 								    t3d.GlobalPosition,
 								    t3d.QGlobalRotation,
-								    body.ComputeShape().Index
+								    body.CreateData().Index
 							    );
 							    
 							    PhysicsStore.SetStatic(body, desc);
@@ -48,9 +48,9 @@ namespace Coelum.Phoenix.Physics.ECS.Systems {
 						    }
 						    
 						    break;
-					    case DynamicPhysicsBody body:
+					    case ActivePhysicsBody body:
 						    if(body.Dirty || !PhysicsStore.GetBodyHandle(body, out var dynamicHandle)) {
-							    var shape = body.ComputeShape();
+							    var shape = body.CreateData();
 
 							    var desc = BodyDescription.CreateDynamic(
 								    (t3d.GlobalPosition, t3d.QGlobalRotation),
@@ -63,22 +63,6 @@ namespace Coelum.Phoenix.Physics.ECS.Systems {
 							    body.Dirty = false;
 						    } else {
 							    Simulation.Bodies.GetDescription(dynamicHandle, out var desc);
-							    t3d.UpdateFromComponents(desc.Pose.Position, desc.Pose.Orientation, t3d.Scale);
-						    }
-						    
-						    break;
-					    case KinematicPhysicsBody body:
-						    if(body.Dirty || !PhysicsStore.GetBodyHandle(body, out var kinematicHandle)) {
-							    var desc = BodyDescription.CreateKinematic(
-								    (t3d.GlobalPosition, t3d.QGlobalRotation),
-								    body.ComputeShape().Index,
-								    0.01f
-							    );
-							    
-							    PhysicsStore.SetBody(body, desc);
-							    body.Dirty = false;
-						    } else {
-							    Simulation.Bodies.GetDescription(kinematicHandle, out var desc);
 							    t3d.UpdateFromComponents(desc.Pose.Position, desc.Pose.Orientation, t3d.Scale);
 						    }
 						    

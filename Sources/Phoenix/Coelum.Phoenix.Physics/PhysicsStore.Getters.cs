@@ -45,8 +45,7 @@ namespace Coelum.Phoenix.Physics {
 	#endregion
 		
 	#region Active bodies
-	#region Internals
-		internal bool GetBodyHandle(PhysicsBody body, out BodyHandle handle) {
+		public bool GetBodyHandle(ActivePhysicsBody body, out BodyHandle handle) {
 			if(BodyHandles.TryGetValue(body, out handle)) {
 				return true;
 			}
@@ -55,7 +54,7 @@ namespace Coelum.Phoenix.Physics {
 			return false;
 		}
 		
-		internal bool GetBody(PhysicsBody body, out BodyReference reference) {
+		public bool GetBody(ActivePhysicsBody body, out BodyReference reference) {
 			if(GetBodyHandle(body, out var handle)) {
 				reference = Simulation.Bodies[handle];
 				return true;
@@ -65,45 +64,24 @@ namespace Coelum.Phoenix.Physics {
 			return false;
 		}
 		
-		internal void RemoveBody(PhysicsBody body) {
+		public void RemoveBody(ActivePhysicsBody body) {
 			if(!GetBodyHandle(body, out var handle)) return;
 			if(!Shapes.TryGetValue(body, out var shapeIndex)) return;
 			
 			Simulation.Bodies.Remove(handle);
 			Simulation.Shapes.RemoveAndDispose(shapeIndex, SimulationManager.BufferPool);
 		}
-	#endregion
-
-		public bool GetBodyHandle(DynamicPhysicsBody body, out BodyHandle handle)
-			=> GetBodyHandle((PhysicsBody) body, out handle);
-		
-		public bool GetBody(DynamicPhysicsBody body, out BodyReference reference)
-			=> GetBody((PhysicsBody) body, out reference);
-		
-		public bool GetBodyHandle(KinematicPhysicsBody body, out BodyHandle handle)
-			=> GetBodyHandle((PhysicsBody) body, out handle);
-		
-		public bool GetBody(KinematicPhysicsBody body, out BodyReference reference)
-			=> GetBody((PhysicsBody) body, out reference);
 
 		public bool GetBody(Node node, out BodyReference reference) {
-			if(!node.HasComponent<DynamicPhysicsBody>()
-			   && !node.HasComponent<KinematicPhysicsBody>()) {
+			if(!node.HasComponent<ActivePhysicsBody>()) {
 				reference = default;
 				return false;
 			}
 
-			var body = node.GetComponent<PhysicsBody>();
+			var body = node.GetComponent<ActivePhysicsBody>();
 			return GetBody(body, out reference);
 		}
-
-		public void RemoveBody(DynamicPhysicsBody body)
-			=> RemoveBody((PhysicsBody) body);
-		
-		public void RemoveBody(KinematicPhysicsBody body)
-			=> RemoveBody((PhysicsBody) body);
 	#endregion
-
 
 	}
 }

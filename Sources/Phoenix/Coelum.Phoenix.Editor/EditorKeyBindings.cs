@@ -15,6 +15,8 @@ namespace Coelum.Phoenix.Editor {
 		public KeyBinding OperationRotate { get; }
 		public KeyBinding OperationScale { get; }
 		
+		public KeyBinding ModeToggle { get; }
+		
 		public KeyBinding SpawnNode { get; }
 
 		public EditorKeyBindings(KeyBindings keyBindings) {
@@ -26,6 +28,8 @@ namespace Coelum.Phoenix.Editor {
 			OperationRotate = keyBindings.Register(new("g_op_rotate", Key.ControlLeft, Key.R));
 			OperationScale = keyBindings.Register(new("g_op_scale", Key.ControlLeft, Key.V));
 
+			ModeToggle = keyBindings.Register(new("g_mode", Key.ControlLeft, Key.ShiftLeft, Key.G));
+			
 			SpawnNode = keyBindings.Register(new("node_spawn_new", Key.ShiftLeft, Key.A));
 		}
 
@@ -44,6 +48,13 @@ namespace Coelum.Phoenix.Editor {
 				scene.EditorViewUI.GizmoOperation = ImGuizmoOperation.Rotate;
 			} else if(OperationScale.Pressed) {
 				scene.EditorViewUI.GizmoOperation = ImGuizmoOperation.Scale;
+			}
+
+			if(ModeToggle.Pressed) {
+				scene.EditorViewUI.GizmoMode =
+					scene.EditorViewUI.GizmoMode == ImGuizmoMode.Local
+						? ImGuizmoMode.World
+						: ImGuizmoMode.Local;
 			}
 
 			if(SpawnNode.Pressed) {

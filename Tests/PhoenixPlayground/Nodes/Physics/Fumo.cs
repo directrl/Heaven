@@ -14,7 +14,7 @@ using Mesh = BepuPhysics.Collidables.Mesh;
 
 namespace PhoenixPlayground.Nodes.Physics {
 	
-	public class Fumo : DynamicPhysicsBody3D {
+	public class Fumo : ActiveBody3D {
 
 		private static readonly Model _FUMO =
 			ModelLoader.Load(Heaven.AppResources[ResourceType.MODEL, "okuu_fumo.glb"]);
@@ -26,7 +26,7 @@ namespace PhoenixPlayground.Nodes.Physics {
 			GetComponent<Transform3D>().Offset = new(0, -0.25f, 0);
 		}
 
-		public override PhysicsBody.Shape ComputeShape() {
+		public override PhysicsBody.Data CreateBody() {
 			// var shape = new Box(
 			// 	GetComponent<Transform3D>().GlobalScale.X,
 			// 	GetComponent<Transform3D>().GlobalScale.Y,

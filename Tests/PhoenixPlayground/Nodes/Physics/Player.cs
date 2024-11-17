@@ -12,7 +12,7 @@ using Coelum.Resources;
 
 namespace PhoenixPlayground.Nodes.Physics {
 	
-	public class Player : DynamicPhysicsBody3D {
+	public class Player : ActiveBody3D {
 		
 		public Player() : this(null) { }
 
@@ -23,7 +23,7 @@ namespace PhoenixPlayground.Nodes.Physics {
 			AddComponent<Renderable>(new ModelRenderable(model));
 		}
 
-		public override PhysicsBody.Shape ComputeShape() {
+		public override PhysicsBody.Data CreateBody() {
 			var t3d = GetComponent<Transform3D>();
 
 			var shape = new Cylinder(t3d.GlobalScale.X, t3d.GlobalScale.Y * 3f);

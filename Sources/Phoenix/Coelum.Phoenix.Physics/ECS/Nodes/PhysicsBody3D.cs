@@ -10,7 +10,7 @@ namespace Coelum.Phoenix.Physics.ECS.Nodes {
 
 		public abstract Simulation? Simulation { get; set; }
 		
-		public abstract PhysicsBody.Shape ComputeShape();
+		public abstract PhysicsBody.Data CreateBody();
 		
 		public PhysicsBody GetPhysicsComponent() => GetComponent<PhysicsBody>();
 	}

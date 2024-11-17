@@ -27,6 +27,18 @@ namespace Coelum.Phoenix.Editor.UI {
 				_gizmoOperation = value;
 			}
 		}
+		
+		private ImGuizmoMode _gizmoMode = ImGuizmoMode.World;
+		public ImGuizmoMode GizmoMode {
+			get {
+				if(!_output._editor) throw new NotSupportedException();
+				return _gizmoMode;
+			}
+			set {
+				if(!_output._editor) throw new NotSupportedException();
+				_gizmoMode = value;
+			}
+		}
 
 		public OutputUI(PhoenixScene scene, OutputScene output) : base(scene) {
 			_output = output;
@@ -80,12 +92,9 @@ namespace Coelum.Phoenix.Editor.UI {
 
 						// undo offset to render gizmo at correct origin
 						nodeGlobalMatrix = Matrix4x4.CreateTranslation(-t3d.Offset) * nodeGlobalMatrix;
-						// nodeGlobalMatrix.M41 -= t3d.Offset.X;
-						// nodeGlobalMatrix.M42 -= t3d.Offset.Y;
-						// nodeGlobalMatrix.M43 -= t3d.Offset.Z;
 						
 						ImGuizmo.Manipulate(&cameraView.M11, &cameraProjection.M11,
-						                    GizmoOperation, ImGuizmoMode.Local,
+						                    GizmoOperation, GizmoMode,
 						                    &nodeGlobalMatrix.M11);
 						
 						// TODO

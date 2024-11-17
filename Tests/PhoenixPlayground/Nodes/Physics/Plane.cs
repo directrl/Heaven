@@ -11,7 +11,7 @@ using Coelum.Phoenix.Physics.ECS.Nodes;
 
 namespace PhoenixPlayground.Nodes.Physics {
 	
-	public class Plane : StaticPhysicsBody3D {
+	public class Plane : StaticBody3D {
 
 		public Plane() : this(null) { }
 
@@ -19,7 +19,7 @@ namespace PhoenixPlayground.Nodes.Physics {
 			AddComponent<Renderable>(new ModelRenderable(new(ColorCube.DEFAULT_MODEL)));
 		}
 
-		public override PhysicsBody.Shape ComputeShape() {
+		public override PhysicsBody.Data CreateBody() {
 			var shape = new Box(
 				GetComponent<Transform3D>().GlobalScale.X,
 				GetComponent<Transform3D>().GlobalScale.Y,

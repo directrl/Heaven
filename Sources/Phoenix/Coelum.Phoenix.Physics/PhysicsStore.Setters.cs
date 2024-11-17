@@ -16,8 +16,7 @@ namespace Coelum.Phoenix.Physics {
 	#endregion
 
 	#region Active bodies
-	#region Internals
-		internal void SetBody(PhysicsBody body, BodyDescription desc) {
+		public void SetBody(ActivePhysicsBody body, BodyDescription desc) {
 			if(BodyHandles.TryGetValue(body, out var prevHandle)) {
 				Simulation.Bodies.Remove(prevHandle);
 			}
@@ -25,13 +24,6 @@ namespace Coelum.Phoenix.Physics {
 			BodyHandles[body] = Simulation.Bodies.Add(desc);
 		}
 	#endregion
-
-		public void SetBody(DynamicPhysicsBody body, BodyDescription desc)
-			=> SetBody((PhysicsBody) body, desc);
 		
-		public void SetBody(KinematicPhysicsBody body, BodyDescription desc)
-			=> SetBody((PhysicsBody) body, desc);
-	#endregion
-
 	}
 }

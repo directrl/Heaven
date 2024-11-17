@@ -9,7 +9,7 @@ namespace Coelum.Phoenix.Physics.ECS.Components {
 		public Node? Owner { get; set; }
 		
 		public Simulation? Simulation { get; set; }
-		public Func<Shape> ComputeShape { get; }
+		public Func<Data> CreateData { get; }
 
 		private bool _doUpdates = true;
 		public bool DoUpdates {
@@ -24,12 +24,12 @@ namespace Coelum.Phoenix.Physics.ECS.Components {
 		
 		public PhysicsBody() { }
 		
-		public PhysicsBody(Simulation? simulation, Func<Shape> shape) {
+		public PhysicsBody(Simulation? simulation, Func<Data> shape) {
 			Simulation = simulation;
-			ComputeShape = shape;
+			CreateData = shape;
 		}
 
-		public struct Shape {
+		public struct Data {
 
 			public TypedIndex Index;
 			public float Mass;
