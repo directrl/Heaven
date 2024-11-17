@@ -20,7 +20,6 @@ namespace Coelum.Phoenix.Physics {
 			where TPoseIntegratorCallbacks : struct, IPoseIntegratorCallbacks {
 			
 			SimulationManager.BufferPool ??= new();
-			//_threadDispatcher = new((int) Math.Ceiling(Environment.ProcessorCount / 2d));
 			
 			narrowCallbacks ??= new DefaultNarrowPhase();
 			poseCallbacks ??= new DefaultPoseIntegrator();

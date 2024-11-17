@@ -6,11 +6,11 @@ namespace Coelum.Phoenix.Editor.Scenes {
 	public class EmptyScene : PhoenixScene {
 
 		public EmptyScene() : base("empty") {
-			ShaderOverlays = new[] {
+			ShaderOverlays.AddRange(new[] {
 				Material.OVERLAYS,
 				SceneEnvironment.OVERLAYS,
 				PhongShading.OVERLAYS
-			};
+			});
 		}
 	}
 }

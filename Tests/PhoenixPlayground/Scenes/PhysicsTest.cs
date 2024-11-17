@@ -51,11 +51,11 @@ namespace PhoenixPlayground.Scenes {
 			_playerRight = KeyBindings.Register(new("pr", Key.D));
 			_playerJump = KeyBindings.Register(new("pj", Key.Space));
 			
-			ShaderOverlays = new[] {
+			ShaderOverlays.AddRange(new[] {
 				Material.OVERLAYS,
 				//SceneEnvironment.OVERLAYS,
 				//PhongShading.OVERLAYS
-			};
+			});
 			
 			(var s, var d) = this.CreatePhysicsSimulation<DefaultNarrowPhase, DefaultPoseIntegrator>();
 			_simulation = s;

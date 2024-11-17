@@ -55,12 +55,12 @@ namespace PhoenixPlayground.Scenes {
 			_lightZpos = KeyBindings.Register(new("z1", Key.O));
 			_lightZneg = KeyBindings.Register(new("z2", Key.L));
 
-			ShaderOverlays = new[] {
+			ShaderOverlays.AddRange(new[] {
 				Material.OVERLAYS,
 				SceneEnvironment.OVERLAYS,
 				PhongShading.OVERLAYS,
 				GouraudShading.OVERLAYS
-			};
+			});
 
 			_testCubeMove = new("cube move", (root, delta) => {
 				root.Query<Transform, Light>()

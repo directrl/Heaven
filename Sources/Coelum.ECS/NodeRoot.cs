@@ -30,6 +30,26 @@ namespace Coelum.ECS {
 			Log.Debug($"[ECS] New system registered for phase {phase}");
 		}
 
+		public void RemoveSystem(EcsSystem system) {
+			RunLater(() => {
+				foreach(var systems in _systems.Values) {
+					if(systems.Contains(system)) {
+						systems.RemoveAll(s => s == system);
+					}
+				}
+			});
+		}
+
+		public void ReplaceSystem(EcsSystem what, EcsSystem with) {
+			RunLater(() => {
+				foreach(var systems in _systems.Values) {
+					for(int i = 0; i < systems.Count; i++) {
+						if(systems[i] == what) systems[i] = with;
+					}
+				}
+			});
+		}
+
 		public void Process(string phase, float delta) {
 			if(!_systems.ContainsKey(phase)) return;
 			foreach(var system in _systems[phase]) {

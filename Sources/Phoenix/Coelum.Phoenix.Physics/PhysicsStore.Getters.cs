@@ -1,6 +1,7 @@
 using BepuPhysics;
 using Coelum.ECS;
 using Coelum.Phoenix.Physics.ECS.Components;
+using Coelum.Phoenix.Physics.ECS.Nodes;
 
 namespace Coelum.Phoenix.Physics {
 	
@@ -83,5 +84,30 @@ namespace Coelum.Phoenix.Physics {
 		}
 	#endregion
 
+		public bool GetPhysicsNode(StaticHandle handle, out StaticBody3D? node) {
+			var result = StaticHandles
+				.FirstOrDefault(kv => kv.Value == handle).Key;
+
+			if(result is null) {
+				node = default;
+				return false;
+			}
+
+			node = (StaticBody3D?) result.Owner;
+			return true;
+		}
+		
+		public bool GetPhysicsNode(BodyHandle handle, out ActiveBody3D? node) {
+			var result = BodyHandles
+			             .FirstOrDefault(kv => kv.Value == handle).Key;
+
+			if(result is null) {
+				node = default;
+				return false;
+			}
+
+			node = (ActiveBody3D?) result.Owner;
+			return true;
+		}
 	}
 }

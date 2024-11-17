@@ -222,10 +222,9 @@ namespace Coelum.Phoenix.OpenGL {
 				} else {
 					throw new PlatformException($"Could not find the uniform location for [{name}]");
 				}
-			} else {
-				_uniformLocations[name] = location;
 			}
 
+			_uniformLocations[name] = location;
 			return location;
 		}
 		

@@ -20,8 +20,8 @@ namespace Coelum.Phoenix {
 
 		public Color ClearColor { get; protected set; } = Color.Black;
 		public ShaderProgram PrimaryShader { get; protected set; }
-		
-		public ShaderOverlay[][]? ShaderOverlays { get; protected set; }
+
+		public List<ShaderOverlay[]> ShaderOverlays { get; protected set; } = new();
 		public List<OverlayUI> UIOverlays { get; protected set; } = new();
 
 		public new SilkWindow? Window
@@ -75,10 +75,8 @@ namespace Coelum.Phoenix {
 				    Module.RESOURCES[ResourceType.SHADER, "scene.vert"])
 			);
 
-			if(ShaderOverlays != null) {
-				foreach(var o in ShaderOverlays) {
-					PrimaryShader.AddOverlays(o);
-				}
+			foreach(var o in ShaderOverlays) {
+				PrimaryShader.AddOverlays(o);
 			}
 
 		#region Input

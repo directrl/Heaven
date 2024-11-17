@@ -13,8 +13,6 @@ namespace Coelum.Phoenix.Editor.UI {
 	
 	// TODO tree view collapse
 	public partial class NodeUI : ImGuiUI {
-		
-		private bool _openNodeChooser = false;
 
 		public Node? SelectedNode { get; set; }
 		
@@ -71,7 +69,9 @@ namespace Coelum.Phoenix.Editor.UI {
 				#region Null (root) reparent
 					ImGui.PushID("##root");
 					{
-						ImGui.BulletText("Root");
+						if(ImGui.Selectable("+ Root", SelectedNode == null)) {
+							SelectedNode = null;
+						}
 						
 						if(ImGui.BeginDragDropTarget()) {
 							ImGuiPayloadPtr payload;
@@ -191,15 +191,6 @@ namespace Coelum.Phoenix.Editor.UI {
 				ImGui.EndChild();
 			}
 			ImGui.End();
-
-			if(_openNodeChooser) {
-				ImGui.OpenPopup("Node chooser");
-				_openNodeChooser = false;
-			}
-
-			if(ImGui.BeginPopupModal("Node chooser", ImGuiWindowFlags.AlwaysAutoResize)) {
-				ImGui.EndPopup();
-			}
 		}
 	}
 }

@@ -1,0 +1,1 @@
+uniform bool u_raycast_hit;

@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using System.Collections.ObjectModel;
 using BepuPhysics;
 using BepuUtilities;
 using BepuUtilities.Memory;
@@ -15,6 +16,10 @@ namespace Coelum.Phoenix.Physics {
 		private static int _lastId = 0;
 		
 		public static BufferPool? BufferPool { get; internal set; }
+
+		public static IReadOnlyDictionary<int, (Simulation, ThreadDispatcher)> Simulations {
+			get => new ReadOnlyDictionary<int, (Simulation, ThreadDispatcher)>(_SIMULATIONS);
+		}
 
 		public static int AddSimulation(SceneBase scene, Simulation simulation, ThreadDispatcher dispatcher) {
 			if(!_SIMULATIONS.TryAdd(++_lastId, (simulation, dispatcher))) {

@@ -54,9 +54,9 @@ namespace PhoenixPlayground.Scenes {
 			_playerRot3 = KeyBindings.Register(new("prot3", Key.N));
 		#endregion
 
-			ShaderOverlays = new[] {
+			ShaderOverlays.AddRange(new[] {
 				Material.OVERLAYS
-			};
+			});
 
 			_moveStressTest = new("move test", (root, delta) => {
 				root.Query<Transform>()

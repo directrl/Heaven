@@ -21,7 +21,7 @@ namespace Coelum.Phoenix.OpenGL {
 				if(string.IsNullOrWhiteSpace(line)) continue;
 				
 				newCode += Include(shader, line.Trim(), resources);
-				newCode += Overlay(shader, line.Trim(), resources);
+				newCode += Overlay(shader, line.Trim());
 			}
 			
 			shader.Code = newCode;
@@ -104,7 +104,7 @@ namespace Coelum.Phoenix.OpenGL {
 			return result;
 		}
 
-		private static string Overlay(Shader shader, string line, ResourceManager resources) {
+		private static string Overlay(Shader shader, string line) {
 			const string tokenHeader = "//$overlay_headers";
 			const string tokenCall = "//$overlay_call";
 
@@ -117,12 +117,15 @@ namespace Coelum.Phoenix.OpenGL {
 			switch(args[0]) {
 				case tokenHeader:
 					foreach(var overlay in shader._overlays) {
-						if(overlay.HasHeader) {
+						if(overlay.HasCall) {
 							result += $"uniform bool u_overlay_{overlay.Name};\n";
+						}
+						
+						if(overlay.HasHeader) {
 							result += Include(
 								shader,
 								$"//$include {overlay.Path}.header.{overlay.GetExtension()}",
-								resources
+								overlay.ResourceManager
 							);
 							result += "\n";
 							
@@ -139,7 +142,7 @@ namespace Coelum.Phoenix.OpenGL {
 							result += Include(
 								shader,
 								$"//$include {overlay.Path}.call.{overlay.GetExtension()}",
-								resources
+								overlay.ResourceManager
 							);
 							result += "}\n";
 							

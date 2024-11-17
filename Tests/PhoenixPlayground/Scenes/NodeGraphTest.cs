@@ -34,9 +34,9 @@ namespace PhoenixPlayground.Scenes {
 			_camera1Bind = KeyBindings.Register(new("camera1", Key.Number1));
 			_camera2Bind = KeyBindings.Register(new("camera2", Key.Number2));
 			
-			ShaderOverlays = new[] {
+			ShaderOverlays.AddRange(new[] {
 				Material.OVERLAYS
-			};
+			});
 		}
 
 		public override void OnLoad(SilkWindow window) {
