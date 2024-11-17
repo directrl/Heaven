@@ -8,10 +8,12 @@ namespace Coelum.ECS {
 		
 		private static readonly Random _RANDOM = new();
 		
-		public ulong Id { get; internal set; }
-
 		public virtual bool Hidden { get; set; } = false;
 		public virtual bool Export { get; set; } = true;
+		
+		public ulong Id { get; internal set; }
+
+		public bool Alive { get; internal set; } = false;
 
 		internal string _name = new string(Enumerable.Repeat("abcdefghijklmnopqrstuvwxyz", 8)
 		                                            .Select(s => s[_RANDOM.Next(s.Length)])
@@ -63,6 +65,11 @@ namespace Coelum.ECS {
 		public Node[] Children { init => _defaultChildren = value; }
 		
 		public Dictionary<Type, INodeComponent> Components { get; protected set; } = new();
+
+		public TNode Add<TNode>(TNode node) where TNode : Node {
+			Add(new Node[] { node });
+			return node;
+		}
 		
 		public void Add(params Node[] nodes) {
 			if(Root is null) {

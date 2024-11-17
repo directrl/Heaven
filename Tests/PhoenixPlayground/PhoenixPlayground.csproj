@@ -12,6 +12,7 @@
     <ProjectReference Include="..\..\Sources\Coelum.Core\Coelum.Core.csproj" />
     <ProjectReference Include="..\..\Sources\Coelum.ECS\Coelum.ECS.csproj" />
     <ProjectReference Include="..\..\Sources\Phoenix\Coelum.Phoenix.Editor\Coelum.Phoenix.Editor.csproj" />
+    <ProjectReference Include="..\..\Sources\Phoenix\Coelum.Phoenix.Physics\Coelum.Phoenix.Physics.csproj" />
     <ProjectReference Include="..\..\Sources\Phoenix\Coelum.Phoenix\Coelum.Phoenix.csproj" />
   </ItemGroup>
   

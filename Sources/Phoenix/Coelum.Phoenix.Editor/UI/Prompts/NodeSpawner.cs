@@ -35,7 +35,7 @@ namespace Coelum.Phoenix.Editor.UI.Prompts {
 			if(ImGui.BeginPopupModal(Name, ImGuiWindowFlags.AlwaysAutoResize)) {
 			#region Helper methods
 				// nomination for worst snippet of code written in the 20th century
-				void DrawPrefabManager(PrefabManager? pm, NodeManager? nm) {
+				void DrawManager(PrefabManager? pm, NodeManager? nm) {
 					int i = 0;
 
 					void ForeachInner(string name, Node node) {
@@ -76,12 +76,12 @@ namespace Coelum.Phoenix.Editor.UI.Prompts {
 				ImGui.BeginTabBar("node list");
 				{
 					if(ImGui.BeginTabItem("Prefabs")) {
-						DrawPrefabManager(PrefabManager, null);
+						DrawManager(PrefabManager, null);
 						ImGui.EndTabItem();
 					}
 				
 					if(ImGui.BeginTabItem("Nodes")) {
-						DrawPrefabManager(null, NodeManager);
+						DrawManager(null, NodeManager);
 						ImGui.EndTabItem();
 					}
 				}

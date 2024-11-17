@@ -5,7 +5,7 @@ using Coelum.Phoenix.OpenGL;
 
 namespace Coelum.Phoenix.ECS.Component {
 	
-	public class ModelRenderable : INodeComponent, Renderable {
+	public class ModelRenderable : Renderable {
 
 		public Node? Owner { get; set; }
 		public Model Model { get; set; }

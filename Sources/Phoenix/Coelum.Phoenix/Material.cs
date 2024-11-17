@@ -15,7 +15,7 @@ using ShadingModel = Silk.NET.OpenGL.ShadingModel;
 
 namespace Coelum.Phoenix {
 	
-	public struct Material : ISerializable<Material> {
+	public class Material : ISerializable<Material> {
 		
 		public enum TextureType {
 			
@@ -41,12 +41,11 @@ namespace Coelum.Phoenix {
 		public float Shininess = 0.3f;
 		public float Reflectivity = 0.5f;
 
-		public List<(TextureType Type, Texture2D Texture)> Textures { get; init; } = new() {
-			(TextureType.Diffuse, Texture2D.DefaultTexture)
-		};
+		public List<(TextureType Type, Texture2D Texture)> Textures { get; init; } = new();
 		
 		public Material() { }
 
+		// TODO convert to UBO?
 		public void Load(ShaderProgram shader) {
 			shader.SetUniform("material.albedo", Albedo);
 			shader.SetUniform("material.ambient_color", AmbientColor);
@@ -56,7 +55,18 @@ namespace Coelum.Phoenix {
 			shader.SetUniform("material.shininess", Shininess);
 			shader.SetUniform("material.reflectivity", Reflectivity);
 			
+			shader.SetUniform("material.has_textures", Textures.Count > 0);
+			
 			int textureUnit = 0;
+
+			if(Textures.Count == 0) {
+				// for(int i = 0; i < 10; i++) {
+				// 	Gl.ActiveTexture(TextureUnit.Texture0 + i);
+				// 	Gl.BindTexture(TextureTarget.Texture2D, 0);
+				// }
+				
+				Gl.BindTexture(TextureTarget.Texture2D, 0);
+			}
 			
 			foreach(var (type, texture) in Textures) {
 				if(type == TextureType.Unknown) continue;

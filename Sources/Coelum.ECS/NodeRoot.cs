@@ -30,6 +30,26 @@ namespace Coelum.ECS {
 			Log.Debug($"[ECS] New system registered for phase {phase}");
 		}
 
+		public void RemoveSystem(EcsSystem system) {
+			RunLater(() => {
+				foreach(var systems in _systems.Values) {
+					if(systems.Contains(system)) {
+						systems.RemoveAll(s => s == system);
+					}
+				}
+			});
+		}
+
+		public void ReplaceSystem(EcsSystem what, EcsSystem with) {
+			RunLater(() => {
+				foreach(var systems in _systems.Values) {
+					for(int i = 0; i < systems.Count; i++) {
+						if(systems[i] == what) systems[i] = with;
+					}
+				}
+			});
+		}
+
 		public void Process(string phase, float delta) {
 			if(!_systems.ContainsKey(phase)) return;
 			foreach(var system in _systems[phase]) {
@@ -47,7 +67,7 @@ namespace Coelum.ECS {
 			_futureActions.Add(action);
 		}
 		
-		public void Add(Node node) {
+		public TNode Add<TNode>(TNode node) where TNode : Node {
 			node.Id = ++_lastId;
 			node.Root = this;
 
@@ -70,8 +90,10 @@ namespace Coelum.ECS {
 				
 				_componentNodeMap[type].Add(node);
 			}
-			
+
+			node.Alive = true;
 			Log.Verbose($"[ECS] Added new node {node}");
+			return node;
 		}
 
 		internal void Remap(Node node, string newPath) {
@@ -102,6 +124,8 @@ namespace Coelum.ECS {
 		}
 
 		public void Remove(Node node) {
+			node.Alive = false;
+			
 			_nodes.Remove(node.Id);
 			_pathNodeMap.Remove(node.Path);
 

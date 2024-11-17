@@ -2,9 +2,13 @@ using System.Numerics;
 using Coelum.LanguageExtensions;
 using Coelum.Phoenix.Camera;
 using Coelum.Phoenix.ECS.Component;
+using Coelum.Phoenix.Physics;
+using Coelum.Phoenix.Physics.ECS.Components;
+using Coelum.Phoenix.Physics.ECS.Nodes;
 using Coelum.Phoenix.UI;
 using Hexa.NET.ImGui;
 using Hexa.NET.ImGuizmo;
+using Silk.NET.Input;
 using Silk.NET.Maths;
 
 namespace Coelum.Phoenix.Editor.UI {
@@ -26,16 +30,46 @@ namespace Coelum.Phoenix.Editor.UI {
 				_gizmoOperation = value;
 			}
 		}
+		
+		private ImGuizmoMode _gizmoMode = ImGuizmoMode.World;
+		public ImGuizmoMode GizmoMode {
+			get {
+				if(!_output._editor) throw new NotSupportedException();
+				return _gizmoMode;
+			}
+			set {
+				if(!_output._editor) throw new NotSupportedException();
+				_gizmoMode = value;
+			}
+		}
+
+		private SingleHitHandler _rayCast = new();
+		public SingleHitHandler RayCast {
+			get {
+				if(!_output._editor) throw new NotSupportedException();
+				return _rayCast;
+			}
+			set {
+				if(!_output._editor) throw new NotSupportedException();
+				_rayCast = value;
+			}
+		}
 
 		public OutputUI(PhoenixScene scene, OutputScene output) : base(scene) {
 			_output = output;
+
+			/*if(_output._editor) {
+				scene.Window!.GetMice()[0].Click += (mouse, button, pos) => {
+					if(button != MouseButton.Left) return;
+				
+					if(RayCast.Result.Hit) {
+						EditorApplication.MainScene.NodeUI.SelectedNode = RayCast.Result.PhysicsNode;
+					}
+				};
+			}*/
 		}
 
 		public unsafe override void Render(float delta) {
-			if(_output._editor) {
-				
-			}
-			
 			ImGui.Begin(_output.Id, _noMove ? ImGuiWindowFlags.NoMove : ImGuiWindowFlags.None);
 			{
 			#region Framebuffer render
@@ -55,8 +89,32 @@ namespace Coelum.Phoenix.Editor.UI {
 
 			#region Gizmos
 				if(_output._editor) {
-					var sn = EditorApplication.MainScene.NodeUI.SelectedNode;
 					var fc = EditorApplication.MainScene.EditorView.FreeCamera;
+
+				#region Selection raycast
+					if(!fc!.Active && EditorApplication.KeyBindings.NodePicker.Down) {
+						foreach(var (id, e) in SimulationManager.Simulations) {
+							var simulation = e.Item1;
+
+							var mousePos = EditorApplication.MainScene.Window!.Input.Mice[0].Position;
+							mousePos.X -= ImGui.GetWindowPos().X;
+							mousePos.Y -= ImGui.GetWindowPos().Y;
+						
+							RayCast = simulation
+								.RayCast<SingleHitHandler>(fc.Camera, EditorApplication.MainScene.EditorView.OutputViewport, mousePos);
+
+							if(RayCast.Result.Hit) break;
+						}
+						
+						if(RayCast.Result.Hit) {
+							EditorApplication.MainScene.NodeUI.SelectedNode = RayCast.Result.PhysicsNode;
+						}
+					} else {
+						RayCast = new();
+					}
+				#endregion
+					
+					var sn = EditorApplication.MainScene.NodeUI.SelectedNode;
 				
 					if(sn != null && fc != null
 					   && sn.TryGetComponent<Transform, Transform3D>(out var t3d)) {
@@ -76,9 +134,12 @@ namespace Coelum.Phoenix.Editor.UI {
 						var cameraView = fc.Camera.ViewMatrix;
 						var cameraProjection = fc.Camera.ProjectionMatrix;
 						var nodeGlobalMatrix = t3d.GlobalMatrix;
+
+						// undo offset to render gizmo at correct origin
+						nodeGlobalMatrix = Matrix4x4.CreateTranslation(-t3d.Offset) * nodeGlobalMatrix;
 						
 						ImGuizmo.Manipulate(&cameraView.M11, &cameraProjection.M11,
-						                    GizmoOperation, ImGuizmoMode.Local,
+						                    GizmoOperation, GizmoMode,
 						                    &nodeGlobalMatrix.M11);
 						
 						// TODO
@@ -91,7 +152,13 @@ namespace Coelum.Phoenix.Editor.UI {
 						_noMove = ImGuizmo.IsOver();
 
 						if(ImGuizmo.IsUsing()) {
-							var newNodeMatrix = new Matrix4x4();
+							bool hasPhysicsBody = false;
+							if(sn.TryGetComponent<PhysicsBody>(out var physicsBody)) {
+								hasPhysicsBody = true;
+								physicsBody.DoUpdates = false;
+							}
+
+							var newNodeMatrix = nodeGlobalMatrix;
 
 							if(sn.Parent != null &&
 							   sn.Parent.TryGetComponent<Transform, Transform3D>(out var pt)) {
@@ -103,8 +170,6 @@ namespace Coelum.Phoenix.Editor.UI {
 									GizmoOperation == ImGuizmoOperation.Translate
 									? parentGlobalMatrix + nodeGlobalMatrix
 									: parentGlobalMatrix * nodeGlobalMatrix;
-							} else {
-								newNodeMatrix = nodeGlobalMatrix;
 							}
 							
 							var translationMatrix = new Matrix4x4();
@@ -132,6 +197,10 @@ namespace Coelum.Phoenix.Editor.UI {
 								case ImGuizmoOperation.Scale:
 									t3d.Scale = scale;
 									break;
+							}
+
+							if(hasPhysicsBody) {
+								physicsBody.DoUpdates = true;
 							}
 						}
 					}

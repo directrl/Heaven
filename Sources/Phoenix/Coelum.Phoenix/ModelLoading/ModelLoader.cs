@@ -22,14 +22,14 @@ namespace Coelum.Phoenix.ModelLoading {
 			Meshes = new() {
 				new(PrimitiveType.Triangles,
 				    new Vertex[] {
-					    new(new(-0.5f, 0.5f, 0.5f), new(), new()),
-					    new(new(-0.5f, -0.5f, 0.5f), new(), new()),
-					    new(new(0.5f, -0.5f, 0.5f), new(), new()),
-					    new(new(0.5f, 0.5f, 0.5f), new(), new()),
-					    new(new(-0.5f, 0.5f, -0.5f), new(), new()),
-					    new(new(0.5f, 0.5f, -0.5f), new(), new()),
-					    new(new(-0.5f, -0.5f, -0.5f), new(), new()),
-					    new(new(0.5f, -0.5f, -0.5f), new(), new()),
+					    new(new(-0.5f, 0.5f, 0.5f)),
+					    new(new(-0.5f, -0.5f, 0.5f)),
+					    new(new(0.5f, -0.5f, 0.5f)),
+					    new(new(0.5f, 0.5f, 0.5f)),
+					    new(new(-0.5f, 0.5f, -0.5f)),
+					    new(new(0.5f, 0.5f, -0.5f)),
+					    new(new(-0.5f, -0.5f, -0.5f)),
+					    new(new(0.5f, -0.5f, -0.5f)),
 				    },
 				    new uint[] {
 					    // Front face
@@ -217,7 +217,7 @@ namespace Coelum.Phoenix.ModelLoading {
 			if(texCount == 0) {
 				Log.Warning($"[MODEL LOADER: {model.Name}] Material has no textures");
 				
-				material.Textures.Add((Material.TextureType.Diffuse, Texture2D.DefaultTexture));
+				//material.Textures.Add((Material.TextureType.Diffuse, Texture2D.DefaultTexture));
 				return;
 			}
 			

@@ -3,6 +3,7 @@ using Coelum.Debug;
 using Coelum.Common.Graphics;
 using Coelum.Phoenix.GLFW;
 using Coelum.Phoenix.OpenGL;
+using Serilog;
 using Silk.NET.Core;
 using Silk.NET.Core.Contexts;
 using Silk.NET.GLFW;

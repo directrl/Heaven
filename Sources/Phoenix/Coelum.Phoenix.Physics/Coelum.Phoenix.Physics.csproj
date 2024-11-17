@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="BepuPhysics" Version="2.4.0" />
+      <PackageReference Include="Hexa.NET.ImGuizmo" Version="2.2.0" />
+    </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="..\..\..\Resources\Coelum.Phoenix.Physics\**\*"/>
+  </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Coelum.Phoenix\Coelum.Phoenix.csproj" />
+    </ItemGroup>
+
+</Project>

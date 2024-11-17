@@ -5,14 +5,16 @@ using Coelum.Phoenix.Camera;
 using Coelum.Phoenix.ECS.Component;
 using Coelum.Phoenix.ECS.System;
 using Coelum.Phoenix.Editor.Camera;
+using Coelum.Phoenix.Editor.Rendering;
 using Coelum.Phoenix.Editor.UI;
 using Coelum.Phoenix.Editor.UI.Prompts;
+using Coelum.Phoenix.Physics.ECS.Components;
+using Coelum.Phoenix.Physics.ECS.Nodes;
 using Coelum.Phoenix.UI;
 using Hexa.NET.ImGui;
 
 namespace Coelum.Phoenix.Editor {
 	
-	// TODO node picking with raycasting (bepuphysics?)
 	public class EditorScene : PhoenixScene {
 
 		private bool _initialSceneUpdate = true;
@@ -80,6 +82,8 @@ namespace Coelum.Phoenix.Editor {
 			}
 		#endregion
 			
+			EditorApplication.TargetScene.ShaderOverlays.Add(RayCastHighlight.OVERLAYS);
+			
 			// TODO this is quite messy with two different OnLoad methods
 			EditorApplication.TargetScene.OnLoad((WindowBase) window);
 			
@@ -94,7 +98,17 @@ namespace Coelum.Phoenix.Editor {
 			
 			// disable any UI on the target scene
 			var uiSystem = EditorApplication.TargetScene.QuerySystem<UISystem>();
-			if(uiSystem != null) uiSystem.Enabled = false;
+			if(uiSystem is not null) uiSystem.Enabled = false;
+			
+			// enable our own render system
+			var renderSystem = EditorApplication.TargetScene.QuerySystem<ObjectRenderSystem>();
+			// TODO systems should describe their own phase (with an optional override in AddSystem)
+			if(renderSystem is not null) {
+				EditorApplication.TargetScene.ReplaceSystem(
+					renderSystem,
+					new RenderSystem(EditorApplication.TargetScene.PrimaryShader)
+				);
+			}
 			
 			// disable keybindings on the target scene
 			EditorApplication.TargetScene.KeyBindings.Enabled = false;
@@ -127,6 +141,14 @@ namespace Coelum.Phoenix.Editor {
 			OutputView.OnUpdate(delta);
 			
 			UpdateKeyBindings();
+		}
+
+		public override void OnFixedUpdate(float delta) {
+			base.OnFixedUpdate(delta);
+
+			if(MainUI.TargetSceneUpdate) {
+				EditorApplication.TargetScene.OnFixedUpdate(delta);
+			}
 		}
 
 		public override void OnRender(float delta) {

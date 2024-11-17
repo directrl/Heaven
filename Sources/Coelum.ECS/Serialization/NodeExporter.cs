@@ -18,7 +18,7 @@ namespace Coelum.ECS.Serialization {
 		
 		public static void Export(this Node node, Utf8JsonWriter writer) {
 			if(!node.Export) {
-				Log.Debug($"Skipping exporting of node [{node}] due to Export flag set to false");
+				Log.Information($"Skipping exporting of node [{node}] due to Export flag set to false");
 				return;
 			}
 			
@@ -72,8 +72,11 @@ namespace Coelum.ECS.Serialization {
 			// components
 			writer.WriteStartObject("components");
 			{
+				var exportedComponents = new List<INodeComponent>();
+				
 				foreach(var (type, component) in node.Components) {
-					//component.Serialize(type.ToString(), writer);
+					if(exportedComponents.Contains(component)) continue;
+					
 					writer.WriteStartObject(component.GetType().ToString());
 					{
 						writer.WriteString("backing_type", type.ToString());
@@ -89,6 +92,8 @@ namespace Coelum.ECS.Serialization {
 						writer.WriteEndObject();
 					}
 					writer.WriteEndObject();
+					
+					exportedComponents.Add(component);
 				}
 			}
 			writer.WriteEndObject();

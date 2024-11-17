@@ -1,7 +1,5 @@
 //$include Structures.light.glsl
 
-uniform bool u_current_light;
-
 layout(std140) uniform Lights {
 	int u_directional_light_count;
 	int u_point_light_count;

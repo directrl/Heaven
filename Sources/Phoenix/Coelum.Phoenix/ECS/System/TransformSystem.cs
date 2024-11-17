@@ -34,7 +34,8 @@ namespace Coelum.Phoenix.ECS.System {
 						    matrix.ComposeFromComponents(
 							    t3d.Position,
 							    t3d.Rotation,
-							    t3d.Scale
+							    t3d.Scale,
+							    t3d.Offset
 						    );
 
 						    t3d.LocalMatrix = matrix;

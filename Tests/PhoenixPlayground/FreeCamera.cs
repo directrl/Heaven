@@ -14,6 +14,8 @@ namespace PhoenixPlayground {
 		private Vector2 _lastMousePosition;
 		private bool _cursorToggle = false;
 		
+		private KeyBindings _keyBindings;
+		
 		private KeyBinding _cursorToggleKeyBinding;
 		
 		private KeyBinding _cameraUp;
@@ -24,6 +26,8 @@ namespace PhoenixPlayground {
 		private KeyBinding _cameraRight;
 
 		public FreeCamera(KeyBindings keyBindings) {
+			_keyBindings = keyBindings;
+			
 			_cursorToggleKeyBinding = keyBindings.Register(new("cursor_toggle", Key.G));
 			
 			_cameraUp = keyBindings.Register(new("camera_up", Key.Space));
@@ -34,7 +38,9 @@ namespace PhoenixPlayground {
 			_cameraRight = keyBindings.Register(new("camera_right", Key.D));
 		}
 
-		public void Update(Camera3D camera, ref IMouse mouse, float delta) {
+		public void Update(Camera3D camera, ref IMouse mouse, float delta, bool noMove = false) {
+			if(!_keyBindings.Enabled) return;
+			
 			if(_cursorToggleKeyBinding.Pressed) {
 				_cursorToggle = !_cursorToggle;
 				if(!_cursorToggle) _lastMousePosition = default;
@@ -43,6 +49,8 @@ namespace PhoenixPlayground {
 			mouse.Cursor.CursorMode = _cursorToggle
 				? CursorMode.Disabled
 				: CursorMode.Normal;
+
+			if(noMove) return;
 
 			if(_cameraUp.Down) {
 				camera.GetComponent<Transform, Transform3D>().Position += new Vector3(0, CAMERA_SPEED * delta, 0);

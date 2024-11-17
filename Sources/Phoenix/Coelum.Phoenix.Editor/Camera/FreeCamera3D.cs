@@ -23,6 +23,7 @@ namespace Coelum.Phoenix.Editor.Camera {
 	#endregion
 		
 		private Vector2 _lastCursorPosition;
+		private bool _prevState = true;
 		private bool _cursorEnabled = true;
 		private bool _cursorRecovery = false;
 
@@ -56,12 +57,32 @@ namespace Coelum.Phoenix.Editor.Camera {
 			
 			if(EditorApplication.KeyBindings.FreeCameraEngage.Pressed) {
 				_cursorEnabled = !_cursorEnabled;
+				_prevState = _cursorEnabled;
 				
 				_scene.Window!.GetMice()[0].Cursor.CursorMode =
 					_cursorEnabled 
 						? CursorMode.Normal 
 						: CursorMode.Disabled;
 
+				if(!_cursorEnabled) _cursorRecovery = true;
+			}
+
+			if(EditorApplication.KeyBindings.FreeCameraDisengage.Pressed) {
+				_prevState = _cursorEnabled;
+			}
+
+			if(EditorApplication.KeyBindings.FreeCameraDisengage.Down) {
+				_cursorEnabled = true;
+				_scene.Window!.GetMice()[0].Cursor.CursorMode = CursorMode.Normal;
+			} else if(_cursorEnabled) {
+				_cursorEnabled = _prevState;
+				_prevState = _cursorEnabled;
+				
+				_scene.Window!.GetMice()[0].Cursor.CursorMode =
+					_cursorEnabled 
+						? CursorMode.Normal 
+						: CursorMode.Disabled;
+				
 				if(!_cursorEnabled) _cursorRecovery = true;
 			}
 

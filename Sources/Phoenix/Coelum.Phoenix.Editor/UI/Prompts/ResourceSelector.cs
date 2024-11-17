@@ -26,7 +26,7 @@ namespace Coelum.Phoenix.Editor.UI.Prompts {
 			ImGui.SetNextWindowPos(
 				new(Scene.Window.Framebuffer.Size.X / 1.5f, Scene.Window.Framebuffer.Size.Y / 1.5f),
 				ImGuiCond.FirstUseEver,
-				new(0.75f, 0.75f) // TODO why does neither (0.5f, 0.5f) nor (0.75f, 0.75f) center properly?
+				new(0.5f, 0.5f) // TODO why does neither (0.5f, 0.5f) nor (0.75f, 0.75f) center properly?
 			);
 			
 			if(ImGui.BeginPopupModal(Name)) {

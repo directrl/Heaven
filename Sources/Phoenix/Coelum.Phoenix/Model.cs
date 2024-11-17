@@ -1,3 +1,4 @@
+using System.Numerics;
 using Coelum.Debug;
 using Coelum.Phoenix.OpenGL;
 using Coelum.Resources;
@@ -24,7 +25,12 @@ namespace Coelum.Phoenix {
 			}
 		}
 
-		public Model(string name) {
+		public Model(string? name) {
+			if(name is null) {
+				Name = "";
+				return;
+			}
+			
 			Name = name;
 
 			if(!ModelRegistry.TryGet(Name, out _)) {
