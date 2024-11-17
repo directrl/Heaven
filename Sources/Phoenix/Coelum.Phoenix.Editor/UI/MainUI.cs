@@ -3,6 +3,7 @@ using Coelum.Debug;
 using Coelum.ECS.Serialization;
 using Coelum.Phoenix.Camera;
 using Coelum.Phoenix.ECS.System;
+using Coelum.Phoenix.Physics;
 using Coelum.Phoenix.UI;
 using Hexa.NET.ImGui;
 using NativeFileDialog.Extended;
@@ -29,6 +30,11 @@ namespace Coelum.Phoenix.Editor.UI {
 
 						if(!string.IsNullOrWhiteSpace(filePath)) {
 							using(var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read)) {
+								foreach(var simulation in SimulationManager
+									        .GetSimulationsByScene(EditorApplication.TargetScene)) {
+									
+									simulation.GetStore()?.Clear();
+								}
 								EditorApplication.TargetScene.Import(stream);
 							}
 						

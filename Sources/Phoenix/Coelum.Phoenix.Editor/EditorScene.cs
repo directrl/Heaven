@@ -15,7 +15,6 @@ using Hexa.NET.ImGui;
 
 namespace Coelum.Phoenix.Editor {
 	
-	// TODO node picking with raycasting (bepuphysics?)
 	public class EditorScene : PhoenixScene {
 
 		private bool _initialSceneUpdate = true;

@@ -29,8 +29,6 @@ namespace Coelum.Phoenix.Physics.ECS.Systems {
 
 				    if(p.Simulation is null) return;
 
-				    // TODO move to extension method or Transform3D itself
-
 				    switch(p) {
 					    case StaticPhysicsBody body:
 						    if(body.Dirty || !PhysicsStore.GetStaticHandle(body, out var staticHandle)) {

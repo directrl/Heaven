@@ -40,5 +40,24 @@ namespace Coelum.Phoenix.Physics {
 			Shapes[body] = ti;
 			return ti;
 		}
+
+		public void Clear() {
+		#if DEBUG
+			DebugShapeRenderer.Clear();
+		#endif
+			
+			StaticHandles.Clear();
+			BodyHandles.Clear();
+			Shapes.Clear();
+			
+			Simulation.Bodies.Clear();
+			Simulation.Bodies.Resize(1);
+			
+			Simulation.Statics.Clear();
+			Simulation.Statics.Resize(1);
+			
+			Simulation.Shapes.Clear();
+			Simulation.Shapes.ResizeBatches(1);
+		}
 	}
 }

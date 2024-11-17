@@ -57,8 +57,10 @@ namespace Coelum.Phoenix.Editor {
 						: ImGuizmoMode.Local;
 			}
 
-			if(SpawnNode.Pressed) {
-				scene.NodeSpawner.Prompt(scene.NodeUI.SelectedNode);
+			if(!EditorApplication.MainScene.EditorView.FreeCamera?.Active ?? false) {
+				if(SpawnNode.Pressed) {
+					scene.NodeSpawner.Prompt(scene.NodeUI.SelectedNode);
+				}
 			}
 		}
 	}
