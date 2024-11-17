@@ -77,6 +77,12 @@ namespace Coelum.Phoenix.Editor.UI {
 						var cameraView = fc.Camera.ViewMatrix;
 						var cameraProjection = fc.Camera.ProjectionMatrix;
 						var nodeGlobalMatrix = t3d.GlobalMatrix;
+
+						// undo offset to render gizmo at correct origin
+						nodeGlobalMatrix = Matrix4x4.CreateTranslation(-t3d.Offset) * nodeGlobalMatrix;
+						// nodeGlobalMatrix.M41 -= t3d.Offset.X;
+						// nodeGlobalMatrix.M42 -= t3d.Offset.Y;
+						// nodeGlobalMatrix.M43 -= t3d.Offset.Z;
 						
 						ImGuizmo.Manipulate(&cameraView.M11, &cameraProjection.M11,
 						                    GizmoOperation, ImGuizmoMode.Local,
@@ -97,8 +103,8 @@ namespace Coelum.Phoenix.Editor.UI {
 								hasPhysicsBody = true;
 								physicsBody.DoUpdates = false;
 							}
-							
-							var newNodeMatrix = new Matrix4x4();
+
+							var newNodeMatrix = nodeGlobalMatrix;
 
 							if(sn.Parent != null &&
 							   sn.Parent.TryGetComponent<Transform, Transform3D>(out var pt)) {
@@ -110,8 +116,6 @@ namespace Coelum.Phoenix.Editor.UI {
 									GizmoOperation == ImGuizmoOperation.Translate
 									? parentGlobalMatrix + nodeGlobalMatrix
 									: parentGlobalMatrix * nodeGlobalMatrix;
-							} else {
-								newNodeMatrix = nodeGlobalMatrix;
 							}
 							
 							var translationMatrix = new Matrix4x4();

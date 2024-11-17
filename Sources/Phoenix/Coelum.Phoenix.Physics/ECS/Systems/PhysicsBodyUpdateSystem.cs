@@ -30,27 +30,6 @@ namespace Coelum.Phoenix.Physics.ECS.Systems {
 				    if(p.Simulation is null) return;
 
 				    // TODO move to extension method or Transform3D itself
-				    void UpdateTransform(Vector3 position, Quaternion orientation) {
-					    var newMatrix = Matrix4x4.CreateFromQuaternion(orientation)
-						    * Matrix4x4.CreateTranslation(position);
-
-					    var translationMatrix = new Matrix4x4();
-					    var rotationMatrix = new Matrix4x4();
-					    var scaleMatrix = new Matrix4x4();
-					    
-					    ImGuizmo.DecomposeMatrixToComponents(
-						    ref newMatrix,
-						    ref translationMatrix,
-						    ref rotationMatrix,
-						    ref scaleMatrix
-						);
-					    
-					    var translation = new Vector3(translationMatrix.M11, translationMatrix.M12, translationMatrix.M13);
-					    var rotation = new Vector3(rotationMatrix.M11.ToRadians(), rotationMatrix.M12.ToRadians(), rotationMatrix.M13.ToRadians());
-
-					    t3d.Position = translation;
-					    t3d.Rotation = rotation;
-				    }
 
 				    switch(p) {
 					    case StaticPhysicsBody body:
@@ -65,7 +44,7 @@ namespace Coelum.Phoenix.Physics.ECS.Systems {
 							    body.Dirty = false;
 						    } else {
 							    Simulation.Statics.GetDescription(staticHandle, out var desc);
-							    UpdateTransform(desc.Pose.Position, desc.Pose.Orientation);
+							    t3d.UpdateFromComponents(desc.Pose.Position, desc.Pose.Orientation, t3d.Scale);
 						    }
 						    
 						    break;
@@ -84,7 +63,7 @@ namespace Coelum.Phoenix.Physics.ECS.Systems {
 							    body.Dirty = false;
 						    } else {
 							    Simulation.Bodies.GetDescription(dynamicHandle, out var desc);
-							    UpdateTransform(desc.Pose.Position, desc.Pose.Orientation);
+							    t3d.UpdateFromComponents(desc.Pose.Position, desc.Pose.Orientation, t3d.Scale);
 						    }
 						    
 						    break;
@@ -100,7 +79,7 @@ namespace Coelum.Phoenix.Physics.ECS.Systems {
 							    body.Dirty = false;
 						    } else {
 							    Simulation.Bodies.GetDescription(kinematicHandle, out var desc);
-							    UpdateTransform(desc.Pose.Position, desc.Pose.Orientation);
+							    t3d.UpdateFromComponents(desc.Pose.Position, desc.Pose.Orientation, t3d.Scale);
 						    }
 						    
 						    break;

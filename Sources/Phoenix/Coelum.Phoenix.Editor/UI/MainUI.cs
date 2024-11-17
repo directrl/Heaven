@@ -9,6 +9,7 @@ using NativeFileDialog.Extended;
 
 namespace Coelum.Phoenix.Editor.UI {
 	
+	// TODO option to run the scene as a regular scene in a new window
 	public class MainUI : ImGuiUI {
 		
 		public bool TargetSceneUpdate = false;

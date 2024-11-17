@@ -24,8 +24,8 @@ namespace Coelum.Phoenix.Camera {
 
 				t3d.Yaw = value;
 				
-				_direction.X = MathF.Cos(t3d.Rotation.Y) * MathF.Cos(t3d.Rotation.Z);
-				_direction.Z = MathF.Sin(t3d.Rotation.Y) * MathF.Cos(t3d.Rotation.Z);
+				_direction.X = MathF.Cos(t3d.Rotation.Y) * MathF.Cos(t3d.Rotation.X);
+				_direction.Z = MathF.Sin(t3d.Rotation.Y) * MathF.Cos(t3d.Rotation.X);
 				_front = Vector3.Normalize(_direction);
 			}
 		}
@@ -37,9 +37,9 @@ namespace Coelum.Phoenix.Camera {
 
 				t3d.Pitch = value;
 				
-				_direction.X = MathF.Cos(t3d.Rotation.Y) * MathF.Cos(t3d.Rotation.Z);
-				_direction.Y = MathF.Sin(t3d.Rotation.Z);
-				_direction.Z = MathF.Sin(t3d.Rotation.Y) * MathF.Cos(t3d.Rotation.Z);
+				_direction.X = MathF.Cos(t3d.Rotation.Y) * MathF.Cos(t3d.Rotation.X);
+				_direction.Y = MathF.Sin(t3d.Rotation.X);
+				_direction.Z = MathF.Sin(t3d.Rotation.Y) * MathF.Cos(t3d.Rotation.X);
 				_front = Vector3.Normalize(_direction);
 			}
 		}

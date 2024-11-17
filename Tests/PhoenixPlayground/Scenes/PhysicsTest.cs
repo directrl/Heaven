@@ -2,6 +2,7 @@ using System.Drawing;
 using BepuPhysics;
 using BepuUtilities;
 using Coelum.Common.Input;
+using Coelum.Core;
 using Coelum.ECS;
 using Coelum.LanguageExtensions;
 using Coelum.Phoenix;
@@ -9,11 +10,13 @@ using Coelum.Phoenix.Camera;
 using Coelum.Phoenix.ECS.Component;
 using Coelum.Phoenix.ECS.Nodes;
 using Coelum.Phoenix.Lighting;
+using Coelum.Phoenix.ModelLoading;
 using Coelum.Phoenix.Physics;
 using Coelum.Phoenix.Physics.Callbacks;
 using Coelum.Phoenix.Physics.ECS.Components;
 using Coelum.Phoenix.Physics.ECS.Systems;
 using Coelum.Phoenix.UI;
+using Coelum.Resources;
 using PhoenixPlayground.Nodes.Physics;
 using Silk.NET.Input;
 
@@ -63,6 +66,7 @@ namespace PhoenixPlayground.Scenes {
 			base.OnLoad(window);
 			
 			ClearColor = Color.DimGray;
+			ModelLoader.Load(Heaven.AppResources[ResourceType.MODEL, "crt.glb"]);
 			
 			//AddSystem("FixedUpdate", new PhysicsObjectCreateSystem(_simulation));
 			AddSystem("FixedUpdate", new PhysicsBodyUpdateSystem(_simulation));
