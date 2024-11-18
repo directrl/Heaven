@@ -132,19 +132,24 @@ namespace Coelum.Phoenix.UI {
 							}
 						}
 
-						float timeUs = (float) system.ExecutionTime.TotalSeconds * 1_000_000;
+						float timeUs = (float) system.ExecutionTime.TotalMilliseconds * 1_000;
 						debugData.Times[ECS_SYSTEM_TIME_RESOLUTION - 1] = timeUs;
-
+						
 						_ecsSystems[system] = debugData;
-						      
+						
 						ImGui.SeparatorText($"{system.Name}: {(system.Enabled ? "On" : "Off")}");
 						ImGui.SameLine();
 						ImGui.Checkbox($"{phase}/{system.Name}", ref system.Enabled);
 
-						ImGui.PlotHistogram($"{timeUs:F2}us",
+						string label
+							= system is QuerySystem qs1
+								? $"{timeUs:F2}us ({(qs1.SingleExecutionTime.TotalMilliseconds * 1_000):F2}us/Q - {qs1.QueryMatches}Q)"
+								: $"{timeUs:F2}us";
+						
+						ImGui.PlotHistogram(label,
 						                    ref _ecsSystems[system].Times[0], ECS_SYSTEM_TIME_RESOLUTION, 0, 
 						                    "", 0, debugData.MaxTime, new Vector2(500, 50));
-						      
+						
 						if(!system.Enabled) {
 							for(int i = 0; i <= 2; i++) {
 								int step = (int) Math.Pow(10, i);

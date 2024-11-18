@@ -23,8 +23,8 @@ namespace Coelum.ECS {
 		
 		protected virtual Action<NodeRoot, float> Action { get; init; }
 		
-		public virtual string Name { get; }
-		public virtual SystemPhase Phase { get; }
+		public virtual string Name { get; protected init; }
+		public virtual SystemPhase Phase { get; protected init; }
 
 		public bool Enabled = true;
 		public TimeSpan ExecutionTime { get; protected set; }
@@ -54,36 +54,58 @@ namespace Coelum.ECS {
 
 			ExecutionTime = Timer.Elapsed;
 		}
+		
+		public virtual void Reset() { }
 
 		public void Step(int count = 1) {
 			StepCount = count;
 		}
 	}
 
-	public class ChildQuerySystem : EcsSystem {
+	public abstract class QuerySystem : EcsSystem {
+		
+		protected Stopwatch SingleTimer { get; } = new();
+		public TimeSpan SingleExecutionTime { get; protected set; }
+		public int QueryMatches { get; protected set; }
 
+		public override void Invoke(NodeRoot root, float delta) {
+			throw new NotSupportedException();
+		}
+		
+		public override void Reset() {
+			base.Reset();
+			
+			Timer.Reset();
+			ExecutionTime = TimeSpan.Zero;
+			QueryMatches = 0;
+		}
+	}
+
+	public class ChildQuerySystem : QuerySystem {
+		
 		protected virtual IChildQuery Query { get; init; }
 
 		protected ChildQuerySystem() { }
 		
-		public ChildQuerySystem(string name, SystemPhase phase, IChildQuery query) : base(name, phase) {
+		public ChildQuerySystem(string name, SystemPhase phase, IChildQuery query) {
+			Name = name;
+			Phase = phase;
 			Query = query;
-		}
-
-		public override void Invoke(NodeRoot root, float delta) {
-			throw new NotSupportedException();
 		}
 
 		public void Invoke(NodeRoot root, Node child) {
 			if(!Enabled && StepCount <= 0) return;
 			
-			Timer.Restart();
-			Query.Call(root, child);
+			Timer.Start();
+			SingleTimer.Restart();
+			if(Query.Call(root, child)) QueryMatches++;
 			Timer.Stop();
+			SingleTimer.Stop();
 
 			if(StepCount > 0) StepCount--;
 
 			ExecutionTime = Timer.Elapsed;
+			SingleExecutionTime = SingleTimer.Elapsed;
 		}
 	}
 }

@@ -12,10 +12,11 @@ namespace Coelum.ECS.Queries {
 			Action = action;
 		}
 		
-		public void Call(NodeRoot root, Node node) {
-			if(node.TryGetComponent<TComponent>(out var t)) {
-				Action.Invoke(t);
-			}
+		public bool Call(NodeRoot root, Node node) {
+			if(!node.TryGetComponent<TComponent>(out var t)) return false;
+			
+			Action.Invoke(t);
+			return true;
 		}
 
 		public void Reset(NodeRoot root) { }
@@ -34,11 +35,12 @@ namespace Coelum.ECS.Queries {
 			Action = action;
 		}
 		
-		public void Call(NodeRoot root, Node node) {
-			if(!node.TryGetComponent<TComponent1>(out var t1)) return;
-			if(!node.TryGetComponent<TComponent2>(out var t2)) return;
+		public bool Call(NodeRoot root, Node node) {
+			if(!node.TryGetComponent<TComponent1>(out var t1)) return false;
+			if(!node.TryGetComponent<TComponent2>(out var t2)) return false;
 			
 			Action.Invoke(t1, t2);
+			return true;
 		}
 
 		public void Reset(NodeRoot root) { }
@@ -58,12 +60,13 @@ namespace Coelum.ECS.Queries {
 			Action = action;
 		}
 		
-		public void Call(NodeRoot root, Node node) {
-			if(!node.TryGetComponent<TComponent1>(out var t1)) return;
-			if(!node.TryGetComponent<TComponent2>(out var t2)) return;
-			if(!node.TryGetComponent<TComponent3>(out var t3)) return;
+		public bool Call(NodeRoot root, Node node) {
+			if(!node.TryGetComponent<TComponent1>(out var t1)) return false;
+			if(!node.TryGetComponent<TComponent2>(out var t2)) return false;
+			if(!node.TryGetComponent<TComponent3>(out var t3)) return false;
 
 			Action.Invoke(t1, t2, t3);
+			return true;
 		}
 
 		public void Reset(NodeRoot root) { }

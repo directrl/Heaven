@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Coelum.Debug;
 using Coelum.ECS.Tags;
 using Coelum.LanguageExtensions.Serialization;
@@ -54,18 +55,32 @@ namespace Coelum.ECS {
 			_phaseDeltaTimes[phase] = delta;
 
 		#region Child queries
+			var reset = new List<EcsSystem>();
+			
+			var sw = Stopwatch.StartNew();
+			
 			foreach(var node in _nodes.Values) {
 				if(_childQueries.ContainsKey(phase)) {
 					foreach(var query in _childQueries[phase]) {
 						query.Call(this, node);
 					}
 				}
-
+				
 				if(_childQuerySystems.ContainsKey(phase)) {
 					foreach(var system in _childQuerySystems[phase]) {
+						if(!reset.Contains(system)) {
+							system.Reset();
+							reset.Add(system);
+						}
+						
 						system.Invoke(this, node);
 					}
 				}
+			}
+			
+			if(phase == SystemPhase.RENDER_POST) {
+				sw.Stop();
+				Console.WriteLine(sw.Elapsed.TotalMilliseconds * 1_000);
 			}
 		#endregion
 

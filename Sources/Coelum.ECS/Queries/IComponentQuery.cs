@@ -2,7 +2,7 @@ namespace Coelum.ECS.Queries {
 	
 	public interface IComponentQuery : IQuery {
 
-		void IQuery.Call(NodeRoot root) { }
-		public void Call(NodeRoot root, INodeComponent component);
+		bool IQuery.Call(NodeRoot root) => false;
+		public bool Call(NodeRoot root, INodeComponent component);
 	}
 }

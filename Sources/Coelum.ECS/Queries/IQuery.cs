@@ -5,7 +5,7 @@ namespace Coelum.ECS.Queries {
 		public bool Parallel { get; set; }
 		public SystemPhase Phase { get; set; }
 
-		public void Call(NodeRoot root);
+		public bool Call(NodeRoot root);
 		public void Reset(NodeRoot root);
 	}
 }
