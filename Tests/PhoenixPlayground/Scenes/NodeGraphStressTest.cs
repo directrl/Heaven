@@ -125,7 +125,7 @@ namespace PhoenixPlayground.Scenes {
 				Add(rootChild);
 			}
 			
-			AddSystem(SystemPhase.UPDATE_PRE, _moveStressTest);
+			AddSystem(_moveStressTest);
 
 			var debugOverlay = new DebugOverlay(this);
 			debugOverlay.AdditionalInfo += (delta) => {

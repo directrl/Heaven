@@ -185,7 +185,7 @@ namespace PhoenixPlayground.Scenes {
 				Add(light4);
 			}
 			
-			AddSystem(SystemPhase.UPDATE_PRE, _testCubeMove); // TODO phases should be enums or smth
+			AddSystem(_testCubeMove); // TODO phases should be enums or smth
 			//AddSystem("UpdatePre", _testCubeRotate);
 			
 			AddQuery(new ComponentQuery<TestCubeRotate, Transform>(SystemPhase.UPDATE_PRE, (_, _, t) => {

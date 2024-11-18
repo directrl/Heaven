@@ -22,61 +22,6 @@ namespace Coelum.ECS {
 			module.Load(this);
 		}
 
-		[Obsolete] // TODO Obsolete
-		public void AddSystem(SystemPhase phase, EcsSystem system) {
-			/*if(!_systems.ContainsKey(phase)) _systems[phase] = new();
-			_systems[phase].Add(system);
-			
-			Log.Debug($"[ECS] New system registered for phase {phase}");*/
-			AddSystem(system);
-		}
-
-		public void RemoveSystem(Type system) {
-			RunLater(() => {
-			#region Regular systems
-				foreach(var systems in _systems.Values) {
-					systems.RemoveAll(s => s.GetType() == system);
-				}
-			#endregion
-
-			#region Child query systems
-				foreach(var systems in _childQuerySystems.Values) {
-					systems.RemoveAll(s => s.GetType() == system);
-				}
-				
-				foreach(var systems in _childQuerySystemsP.Values) {
-					systems.RemoveAll(s => s.GetType() == system);
-				}
-			#endregion
-			});
-		}
-
-		public void ReplaceSystem(Type what, EcsSystem with) {
-			RunLater(() => {
-			#region Regular systems
-				foreach(var systems in _systems.Values) {
-					for(int i = 0; i < systems.Count; i++) {
-						if(systems[i].GetType() == what) systems[i] = with;
-					}
-				}
-			#endregion
-
-			#region Child query systems
-				foreach(var systems in _childQuerySystems.Values) {
-					for(int i = 0; i < systems.Count; i++) {
-						if(systems[i].GetType() == what) systems[i] = (ChildQuerySystem) with;
-					}
-				}
-				
-				foreach(var systems in _childQuerySystemsP.Values) {
-					for(int i = 0; i < systems.Count; i++) {
-						if(systems[i].GetType() == what) systems[i] = (ChildQuerySystem) with;
-					}
-				}
-			#endregion
-			});
-		}
-
 		public void Process(SystemPhase phase, float delta) {
 			_phaseDeltaTimes[phase] = delta;
 

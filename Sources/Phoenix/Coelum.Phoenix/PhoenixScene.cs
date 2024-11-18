@@ -100,14 +100,14 @@ namespace Coelum.Phoenix {
 			
 			OnLoad((SilkWindow) window);
 			
-			AddSystem(SystemPhase.RENDER_PRE, new TransformSystem());
-			AddSystem(SystemPhase.RENDER_POST, new ObjectRenderSystem(PrimaryShader));
-			AddSystem(SystemPhase.RENDER_POST, new UISystem());
-			AddSystem(SystemPhase.RENDER, new ViewportRenderSystem(PrimaryShader, DoRender));
+			AddSystem(new TransformSystem());
+			AddSystem(new ObjectRenderSystem(PrimaryShader));
+			AddSystem(new UISystem());
+			AddSystem(new ViewportRenderSystem(PrimaryShader, DoRender));
 			
 			if(PrimaryShader.HasOverlays(PhongShading.OVERLAYS)
 			   || PrimaryShader.HasOverlays(GouraudShading.OVERLAYS)) {
-				AddSystem(SystemPhase.RENDER_PRE, new LightingSystem(PrimaryShader));
+				AddSystem(new LightingSystem(PrimaryShader));
 			}
 
 			var pWindow = (SilkWindow) window;

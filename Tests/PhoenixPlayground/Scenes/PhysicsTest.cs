@@ -69,9 +69,9 @@ namespace PhoenixPlayground.Scenes {
 			ModelLoader.Load(Heaven.AppResources[ResourceType.MODEL, "crt.glb"]);
 			
 			//AddSystem("FixedUpdate", new PhysicsObjectCreateSystem(_simulation));
-			AddSystem(SystemPhase.FIXED_UPDATE, new PhysicsBodyUpdateSystem(_simulation));
-			AddSystem(SystemPhase.FIXED_UPDATE, new PhysicsUpdateSystem(_simulation, _simulationDispatcher));
-			AddSystem(SystemPhase.RENDER_POST, new DebugPhysicsRenderSystem(PrimaryShader));
+			AddSystem(new PhysicsBodyUpdateSystem(_simulation));
+			AddSystem(new PhysicsUpdateSystem(_simulation, _simulationDispatcher));
+			AddSystem(new DebugPhysicsRenderSystem(PrimaryShader));
 
 			_player = Add(new Player(_simulation));
 			_player.GetComponent<Transform3D>().Scale = new(0.5f, 0.5f, 0.5f);
@@ -93,7 +93,7 @@ namespace PhoenixPlayground.Scenes {
 			var model = plane.GetComponent<ModelRenderable>().Model;
 			model.Materials[0].Albedo = Color.Crimson.ToVector4();
 			
-			AddSystem(SystemPhase.FIXED_UPDATE, new("resize plane", SystemPhase.FIXED_UPDATE, (_, delta) => {
+			AddSystem(new("resize plane", SystemPhase.FIXED_UPDATE, (_, delta) => {
 				var t3d = plane.GetComponent<Transform3D>();
 
 				const int minSize = 10;
@@ -108,7 +108,7 @@ namespace PhoenixPlayground.Scenes {
 			int fumoCounter = 0;
 			int fumoTimer = 0;
 			
-			AddSystem(SystemPhase.FIXED_UPDATE, new("fumo spawner", SystemPhase.FIXED_UPDATE, (_, delta) => {
+			AddSystem(new("fumo spawner", SystemPhase.FIXED_UPDATE, (_, delta) => {
 				fumoTimer++;
 
 				const int range = 10;
