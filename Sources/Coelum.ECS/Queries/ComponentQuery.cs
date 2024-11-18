@@ -5,9 +5,10 @@ namespace Coelum.ECS.Queries {
 
 		public bool Parallel { get; set; } = false;
 		public SystemPhase Phase { get; set; }
-		public Action<TComponent> Action { get; set; }
+		public Action<NodeRoot, TComponent> Action { get; set; }
 
-		public ComponentQuery(SystemPhase phase, Action<TComponent> action) {
+		public ComponentQuery(SystemPhase phase,
+		                      Action<NodeRoot, TComponent> action) {
 			Phase = phase;
 			Action = action;
 		}
@@ -15,7 +16,7 @@ namespace Coelum.ECS.Queries {
 		public bool Call(NodeRoot root, Node node) {
 			if(!node.TryGetComponent<TComponent>(out var t)) return false;
 			
-			Action.Invoke(t);
+			Action.Invoke(root, t);
 			return true;
 		}
 
@@ -28,9 +29,10 @@ namespace Coelum.ECS.Queries {
 
 		public bool Parallel { get; set; } = false;
 		public SystemPhase Phase { get; set; }
-		public Action<TComponent1, TComponent2> Action { get; set; }
+		public Action<NodeRoot, TComponent1, TComponent2> Action { get; set; }
 		
-		public ComponentQuery(SystemPhase phase, Action<TComponent1, TComponent2> action) {
+		public ComponentQuery(SystemPhase phase,
+		                      Action<NodeRoot, TComponent1, TComponent2> action) {
 			Phase = phase;
 			Action = action;
 		}
@@ -39,7 +41,7 @@ namespace Coelum.ECS.Queries {
 			if(!node.TryGetComponent<TComponent1>(out var t1)) return false;
 			if(!node.TryGetComponent<TComponent2>(out var t2)) return false;
 			
-			Action.Invoke(t1, t2);
+			Action.Invoke(root, t1, t2);
 			return true;
 		}
 
@@ -53,9 +55,10 @@ namespace Coelum.ECS.Queries {
 		
 		public bool Parallel { get; set; } = false;
 		public SystemPhase Phase { get; set; }
-		public Action<TComponent1, TComponent2, TComponent3> Action { get; set; }
+		public Action<NodeRoot, TComponent1, TComponent2, TComponent3> Action { get; set; }
 		
-		public ComponentQuery(SystemPhase phase, Action<TComponent1, TComponent2, TComponent3> action) {
+		public ComponentQuery(SystemPhase phase,
+		                      Action<NodeRoot, TComponent1, TComponent2, TComponent3> action) {
 			Phase = phase;
 			Action = action;
 		}
@@ -65,7 +68,7 @@ namespace Coelum.ECS.Queries {
 			if(!node.TryGetComponent<TComponent2>(out var t2)) return false;
 			if(!node.TryGetComponent<TComponent3>(out var t3)) return false;
 
-			Action.Invoke(t1, t2, t3);
+			Action.Invoke(root, t1, t2, t3);
 			return true;
 		}
 

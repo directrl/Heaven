@@ -31,23 +31,49 @@ namespace Coelum.ECS {
 			AddSystem(system);
 		}
 
-		public void RemoveSystem(EcsSystem system) {
+		public void RemoveSystem(Type system) {
 			RunLater(() => {
+			#region Regular systems
 				foreach(var systems in _systems.Values) {
-					if(systems.Contains(system)) {
-						systems.RemoveAll(s => s == system);
-					}
+					systems.RemoveAll(s => s.GetType() == system);
 				}
+			#endregion
+
+			#region Child query systems
+				foreach(var systems in _childQuerySystems.Values) {
+					systems.RemoveAll(s => s.GetType() == system);
+				}
+				
+				foreach(var systems in _childQuerySystemsP.Values) {
+					systems.RemoveAll(s => s.GetType() == system);
+				}
+			#endregion
 			});
 		}
 
-		public void ReplaceSystem(EcsSystem what, EcsSystem with) {
+		public void ReplaceSystem(Type what, EcsSystem with) {
 			RunLater(() => {
+			#region Regular systems
 				foreach(var systems in _systems.Values) {
 					for(int i = 0; i < systems.Count; i++) {
-						if(systems[i] == what) systems[i] = with;
+						if(systems[i].GetType() == what) systems[i] = with;
 					}
 				}
+			#endregion
+
+			#region Child query systems
+				foreach(var systems in _childQuerySystems.Values) {
+					for(int i = 0; i < systems.Count; i++) {
+						if(systems[i].GetType() == what) systems[i] = (ChildQuerySystem) with;
+					}
+				}
+				
+				foreach(var systems in _childQuerySystemsP.Values) {
+					for(int i = 0; i < systems.Count; i++) {
+						if(systems[i].GetType() == what) systems[i] = (ChildQuerySystem) with;
+					}
+				}
+			#endregion
 			});
 		}
 

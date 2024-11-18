@@ -188,7 +188,7 @@ namespace PhoenixPlayground.Scenes {
 			AddSystem(SystemPhase.UPDATE_PRE, _testCubeMove); // TODO phases should be enums or smth
 			//AddSystem("UpdatePre", _testCubeRotate);
 			
-			AddQuery(new ComponentQuery<TestCubeRotate, Transform>(SystemPhase.UPDATE_PRE, (_, t) => {
+			AddQuery(new ComponentQuery<TestCubeRotate, Transform>(SystemPhase.UPDATE_PRE, (_, _, t) => {
 				if(t is not Transform3D t3d) return;
 					
 				float rot = (1/60f) * 0.6f;

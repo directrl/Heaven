@@ -14,7 +14,7 @@ namespace PhoenixPlayground {
 
 		public override void Setup(string[] args) {
 			var window = SilkWindow.Create(debug: true);
-			var scene = new NodeGraphStressTest();
+			var scene = new PhysicsTest();
 			window.Scene = scene;
 			
 			Windows.Add(window);

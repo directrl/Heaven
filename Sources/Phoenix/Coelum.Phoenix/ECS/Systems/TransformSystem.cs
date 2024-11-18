@@ -12,21 +12,12 @@ namespace Coelum.Phoenix.ECS.Systems {
 		public override SystemPhase Phase => SystemPhase.RENDER_POST;
 
 		public TransformSystem() {
-			Query = new ComponentQuery<Transform>(Phase, DoTheThing) {
+			Query = new ComponentQuery<Transform>(Phase, QueryAction) {
 				Parallel = true
 			};
 		}
 
-		private void ActionImpl(NodeRoot root, float delta) {
-			root.Query<Transform>()
-			    .Parallel(true)
-			    .Each((node, t) => {
-				    
-			    })
-			    .Execute();
-		}
-
-		private void DoTheThing(Transform t) {
+		private void QueryAction(NodeRoot root, Transform t) {
 			var node = t.Owner;
 			
 			switch(t) {

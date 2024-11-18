@@ -4,9 +4,13 @@ using Serilog;
 
 namespace Coelum.Phoenix.ECS.Systems {
 	
+	// TODO should UI elements/overlays be 2D nodes?
 	public class UISystem : EcsSystem {
 
-		public UISystem() : base("UI Render & Update", SystemPhase.RENDER_POST) {
+		public override string Name => "UI Render & Update";
+		public override SystemPhase Phase => SystemPhase.RENDER_POST;
+
+		public UISystem() {
 			Action = ActionImpl;
 		}
 

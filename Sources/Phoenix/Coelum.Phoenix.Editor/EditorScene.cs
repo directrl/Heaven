@@ -1,6 +1,7 @@
 using Coelum.Common.Graphics;
 using Coelum.Common.Input;
 using Coelum.Debug;
+using Coelum.ECS;
 using Coelum.Phoenix.Camera;
 using Coelum.Phoenix.ECS.Components;
 using Coelum.Phoenix.ECS.Systems;
@@ -101,14 +102,10 @@ namespace Coelum.Phoenix.Editor {
 			if(uiSystem is not null) uiSystem.Enabled = false;
 			
 			// enable our own render system
-			var renderSystem = EditorApplication.TargetScene.QuerySystem<ObjectRenderSystem>();
-			// TODO systems should describe their own phase (with an optional override in AddSystem)
-			if(renderSystem is not null) {
-				EditorApplication.TargetScene.ReplaceSystem(
-					renderSystem,
-					new RenderSystem(EditorApplication.TargetScene.PrimaryShader)
-				);
-			}
+			EditorApplication.TargetScene.ReplaceSystem(
+				typeof(ObjectRenderSystem),
+				new RenderSystem(EditorApplication.TargetScene.PrimaryShader)
+			);
 			
 			// disable keybindings on the target scene
 			EditorApplication.TargetScene.KeyBindings.Enabled = false;

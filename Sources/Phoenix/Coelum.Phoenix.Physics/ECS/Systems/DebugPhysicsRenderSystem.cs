@@ -7,8 +7,11 @@ namespace Coelum.Phoenix.Physics.ECS.Systems {
 	public class DebugPhysicsRenderSystem : EcsSystem {
 
 		public ShaderProgram Shader { get; set; }
-		
-		public DebugPhysicsRenderSystem(ShaderProgram shader) : base("Physics Debug Render", SystemPhase.RENDER_POST) {
+
+		public override string Name => "Physics Debug Render";
+		public override SystemPhase Phase => SystemPhase.RENDER_POST;
+
+		public DebugPhysicsRenderSystem(ShaderProgram shader) {
 			Shader = shader;
 			Action = ActionImpl;
 		}

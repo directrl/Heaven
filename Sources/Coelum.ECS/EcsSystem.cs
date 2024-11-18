@@ -24,18 +24,12 @@ namespace Coelum.ECS {
 		protected virtual Action<NodeRoot, float> Action { get; init; }
 		
 		public virtual string Name { get; protected init; }
-		public virtual SystemPhase Phase { get; protected init; }
+		public virtual SystemPhase Phase { get; init; }
 
 		public bool Enabled = true;
 		public TimeSpan ExecutionTime { get; protected set; }
 
 		protected EcsSystem() { }
-		
-		[Obsolete]
-		protected EcsSystem(string name, SystemPhase phase) {
-			Name = name;
-			Phase = phase;
-		}
 
 		public EcsSystem(string name, SystemPhase phase, Action<NodeRoot, float> action) {
 			Name = name;

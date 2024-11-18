@@ -1,48 +1,56 @@
 using Coelum.ECS;
+using Coelum.ECS.Queries;
 using Coelum.Phoenix.ECS.Components;
 using Coelum.Phoenix.OpenGL;
 using Coelum.Phoenix.OpenGL.UBO;
 
 namespace Coelum.Phoenix.ECS.Systems {
 	
-	public class LightingSystem : EcsSystem {
+	public class LightingSystem : ChildQuerySystem {
 		
-		private readonly ShaderProgram _shader;
 		private readonly Lights _ubo;
 
-		public LightingSystem(ShaderProgram shader) : base("Light Uniform Loader", SystemPhase.RENDER_PRE) {
-			_shader = shader;
+		private int _directionalIndex;
+		private int _pointIndex;
+		private int _spotIndex;
+		
+		public override string Name => "Light Uniform Loader";
+		public override SystemPhase Phase => SystemPhase.RENDER_PRE;
+
+		public LightingSystem(ShaderProgram shader) {
 			_ubo = shader.CreateBufferBinding<Lights>();
-			
-			Action = ActionImpl;
+
+			Query = new ComponentQuery<Light>(Phase, QueryAction);
 		}
 
-		private void ActionImpl(NodeRoot root, float delta) {
-			int directionalIndex = 0,
-			    pointIndex = 0,
-			    spotIndex = 0;
-			
-			root.Query<Transform, Light>()
-			    .Each((node, t, light) => {
-				    switch(light) {
-					    case DirectionalLight:
-						    light.Load(_ubo, directionalIndex++);
-						    break;
-					    case SpotLight:
-						    light.Load(_ubo, spotIndex++);
-						    break;
-					    case PointLight:
-						    light.Load(_ubo, pointIndex++);
-						    break;
-				    }
-			    })
-			    .Execute();
+		private void QueryAction(NodeRoot root, Light light) {
+			switch(light) {
+				case DirectionalLight:
+					light.Load(_ubo, _directionalIndex++);
+					break;
+				case SpotLight:
+					light.Load(_ubo, _spotIndex++);
+					break;
+				case PointLight:
+					light.Load(_ubo, _pointIndex++);
+					break;
+			}
+		}
 
-			_ubo.DirectionalLightCount = directionalIndex;
-			_ubo.PointLightCount = pointIndex;
-			_ubo.SpotLightCount = spotIndex;
+		// TODO Note: this isn't ideal because Reset() is gonna get called on the next frame
+		// which will introcude a single-frame delay
+		public override void Reset() {
+			base.Reset();
+			
+			_ubo.DirectionalLightCount = _directionalIndex;
+			_ubo.PointLightCount = _pointIndex;
+			_ubo.SpotLightCount = _spotIndex;
 			
 			_ubo.Upload();
+
+			_directionalIndex = 0;
+			_pointIndex = 0;
+			_spotIndex = 0;
 		}
 	}
 }
