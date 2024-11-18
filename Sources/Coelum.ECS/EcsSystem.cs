@@ -65,6 +65,7 @@ namespace Coelum.ECS {
 	public abstract class QuerySystem : EcsSystem {
 		
 		protected Stopwatch SingleTimer { get; } = new();
+		
 		public TimeSpan SingleExecutionTime { get; protected set; }
 		public int QueryMatches { get; protected set; }
 
@@ -83,7 +84,7 @@ namespace Coelum.ECS {
 
 	public class ChildQuerySystem : QuerySystem {
 		
-		protected virtual IChildQuery Query { get; init; }
+		public virtual IChildQuery Query { get; protected init; }
 
 		protected ChildQuerySystem() { }
 		

@@ -5,18 +5,17 @@ namespace Coelum.ECS {
 	public partial class NodeRoot {
 
 		private Dictionary<SystemPhase, List<EcsSystem>> _systems = new();
+		
 		private Dictionary<SystemPhase, List<ChildQuerySystem>> _childQuerySystems = new();
+		private Dictionary<SystemPhase, List<ChildQuerySystem>> _childQuerySystemsP = new();
 		
 		private readonly Dictionary<SystemPhase, float> _phaseDeltaTimes = new();
 		
 		public void AddSystem(EcsSystem system) {
 			switch(system) {
 				case ChildQuerySystem cqs:
-					if(!_childQuerySystems.ContainsKey(system.Phase)) {
-						_childQuerySystems[system.Phase] = new();
-					}
-					
-					_childQuerySystems[system.Phase].Add(cqs);
+					AddSpTP(ref _childQuerySystems, ref _childQuerySystemsP,
+					        system.Phase, cqs, cqs.Query.Parallel);
 					break;
 				default:
 					if(!_systems.ContainsKey(system.Phase)) {
@@ -33,39 +32,43 @@ namespace Coelum.ECS {
 		public IReadOnlyDictionary<SystemPhase, List<EcsSystem>> GetSystems() {
 			var systems = new Dictionary<SystemPhase, List<EcsSystem>>();
 
-			foreach(var (phase, systemList) in _systems) {
-				systems[phase] = new();
+			void GetFromDict<T>(Dictionary<SystemPhase, List<T>> dict)
+				where T : EcsSystem {
 				
-				foreach(var system in systemList) {
-					systems[phase].Add(system);
+				foreach(var (phase, systemList) in dict) {
+					if(!systems.ContainsKey(phase)) {
+						systems[phase] = new();
+					}
+				
+					foreach(var system in systemList) {
+						systems[phase].Add(system);
+					}
 				}
 			}
 			
-			foreach(var (phase, systemList) in _childQuerySystems) {
-				systems[phase] = new();
-				
-				foreach(var system in systemList) {
-					systems[phase].Add(system);
-				}
-			}
+			GetFromDict(_systems);
+			GetFromDict(_childQuerySystems);
+			GetFromDict(_childQuerySystemsP);
 
 			return systems;
 		}
 		
 		public IReadOnlyList<EcsSystem> GetSystems(SystemPhase phase) {
 			var systems = new List<EcsSystem>();
-
-			if(_systems.ContainsKey(phase)) {
-				foreach(var system in _systems[phase]) {
-					systems.Add(system);
+			
+			void GetFromDict<T>(Dictionary<SystemPhase, List<T>> dict)
+				where T : EcsSystem {
+				
+				if(dict.ContainsKey(phase)) {
+					foreach(var system in dict[phase]) {
+						systems.Add(system);
+					}
 				}
 			}
 
-			if(_childQuerySystems.ContainsKey(phase)) {
-				foreach(var system in _childQuerySystems[phase]) {
-					systems.Add(system);
-				}
-			}
+			GetFromDict(_systems);
+			GetFromDict(_childQuerySystems);
+			GetFromDict(_childQuerySystemsP);
 
 			return systems;
 		}

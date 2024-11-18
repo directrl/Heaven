@@ -97,6 +97,8 @@ namespace PhoenixPlayground.Scenes {
 			_camera.GetComponent<Transform, Transform3D>().Position = new(0, 0, -5);
 			_player.Add(_camera);
 			
+			Add(new Viewport(_camera, window.Framebuffer));
+			
 			{
 				var size = 24;
 				var rootChild = new TestNode() {

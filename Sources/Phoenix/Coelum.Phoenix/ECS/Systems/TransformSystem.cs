@@ -10,9 +10,11 @@ namespace Coelum.Phoenix.ECS.Systems {
 
 		public override string Name => "Object Transform";
 		public override SystemPhase Phase => SystemPhase.RENDER_POST;
-		
+
 		public TransformSystem() {
-			Query = new ComponentQuery<Transform>(Phase, DoTheThing);
+			Query = new ComponentQuery<Transform>(Phase, DoTheThing) {
+				Parallel = true
+			};
 		}
 
 		private void ActionImpl(NodeRoot root, float delta) {

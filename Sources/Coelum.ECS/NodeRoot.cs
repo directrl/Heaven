@@ -55,33 +55,59 @@ namespace Coelum.ECS {
 			_phaseDeltaTimes[phase] = delta;
 
 		#region Child queries
-			var reset = new List<EcsSystem>();
-			
-			var sw = Stopwatch.StartNew();
-			
-			foreach(var node in _nodes.Values) {
-				if(_childQueries.ContainsKey(phase)) {
-					foreach(var query in _childQueries[phase]) {
-						query.Call(this, node);
-					}
+		#region Regular
+			bool queriesPresent = _childQueries.ContainsKey(phase);
+			bool systemQueriesPresent = _childQuerySystems.ContainsKey(phase);
+
+			if(systemQueriesPresent) {
+				foreach(var system in _childQuerySystems[phase]) {
+					system.Reset();
 				}
-				
-				if(_childQuerySystems.ContainsKey(phase)) {
-					foreach(var system in _childQuerySystems[phase]) {
-						if(!reset.Contains(system)) {
-							system.Reset();
-							reset.Add(system);
+			}
+			
+			if(queriesPresent || systemQueriesPresent) {
+				foreach(var node in _nodes.Values) {
+					if(queriesPresent) {
+						foreach(var query in _childQueries[phase]) {
+							query.Call(this, node);
 						}
-						
-						system.Invoke(this, node);
+					}
+				
+					if(systemQueriesPresent) {
+						foreach(var system in _childQuerySystems[phase]) {
+							system.Invoke(this, node);
+						}
 					}
 				}
 			}
-			
-			if(phase == SystemPhase.RENDER_POST) {
-				sw.Stop();
-				Console.WriteLine(sw.Elapsed.TotalMilliseconds * 1_000);
+		#endregion
+
+		#region Parallel
+			queriesPresent = _childQueriesP.ContainsKey(phase);
+			systemQueriesPresent = _childQuerySystemsP.ContainsKey(phase);
+
+			if(systemQueriesPresent) {
+				foreach(var system in _childQuerySystemsP[phase]) {
+					system.Reset();
+				}
 			}
+
+			if(queriesPresent || systemQueriesPresent) {
+				Parallel.ForEach(_nodes.Values, node => {
+					if(queriesPresent) {
+						foreach(var query in _childQueriesP[phase]) {
+							query.Call(this, node);
+						}
+					}
+				
+					if(systemQueriesPresent) {
+						foreach(var system in _childQuerySystemsP[phase]) {
+							system.Invoke(this, node);
+						}
+					}
+				});
+			}
+		#endregion
 		#endregion
 
 		#region Regular systems
@@ -150,10 +176,11 @@ namespace Coelum.ECS {
 
 			RunLater(() => {
 				foreach(var (oldNodePath, newNodePath) in pathsToReplace) {
-					var node = _pathNodeMap[oldNodePath];
-					_pathNodeMap.Remove(oldNodePath);
-					_pathNodeMap[newNodePath] = node;
+					if(!_pathNodeMap.Remove(oldNodePath, out var node)) {
+						continue;
+					}
 
+					_pathNodeMap[newNodePath] = node;
 					node._path = newNodePath;
 				}
 			});
@@ -216,5 +243,25 @@ namespace Coelum.ECS {
 		public List<Node>? Get<TComponent>() where TComponent : INodeComponent {
 			return _componentNodeMap.GetValueOrDefault(typeof(TComponent));
 		}
+
+	#region Parallel add thing
+		private static void AddSpTP<T>(ref Dictionary<SystemPhase, List<T>> dict,
+		                        ref Dictionary<SystemPhase, List<T>> pDict,
+		                        SystemPhase sp, T t, bool p) {
+			if(p) {
+				if(!pDict.ContainsKey(sp)) {
+					pDict[sp] = new();
+				}
+				
+				pDict[sp].Add(t);
+			} else {
+				if(!dict.ContainsKey(sp)) {
+					dict[sp] = new();
+				}
+				
+				dict[sp].Add(t);
+			}
+		}
+	#endregion
 	}
 }
