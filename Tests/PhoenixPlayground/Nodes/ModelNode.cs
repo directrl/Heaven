@@ -18,10 +18,8 @@ namespace PhoenixPlayground.Nodes {
 		}
 
 		public ModelNode(Model model) {
-			Components = new() {
-				{ typeof(Renderable), new ModelRenderable(model) },
-				{ typeof(Transform), new Transform3D() }
-			};
+			AddComponent<Renderable>(new ModelRenderable(model));
+			AddComponent<Transform>(new Transform3D());
 		}
 	}
 }

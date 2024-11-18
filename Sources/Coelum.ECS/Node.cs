@@ -64,7 +64,7 @@ namespace Coelum.ECS {
 		internal Node[] _defaultChildren = Array.Empty<Node>();
 		public Node[] Children { init => _defaultChildren = value; }
 		
-		public Dictionary<Type, INodeComponent> Components { get; protected set; } = new();
+		public readonly Dictionary<Type, INodeComponent> Components = new();
 
 		public TNode Add<TNode>(TNode node) where TNode : Node {
 			Add(new Node[] { node });

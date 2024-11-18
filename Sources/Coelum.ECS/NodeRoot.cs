@@ -11,6 +11,7 @@ namespace Coelum.ECS {
 		private ulong _lastId = 0; // TODO better way
 
 		private Dictionary<ulong, Node> _nodes = new();
+		private Dictionary<ulong, Node> _singletonNodes = new();
 		private Dictionary<string, Node> _pathNodeMap = new();
 		private Dictionary<Type, List<Node>> _componentNodeMap = new();
 
@@ -64,7 +65,7 @@ namespace Coelum.ECS {
 			}
 
 			if(queriesPresent || systemQueriesPresent) {
-				Parallel.ForEach(_nodes.Values, new() {
+				Parallel.ForEach(_nodes.Values, new ParallelOptions() {
 					MaxDegreeOfParallelism = Environment.ProcessorCount / 2
 				}, node => {
 					if(queriesPresent) {
@@ -119,8 +120,12 @@ namespace Coelum.ECS {
 					_componentNodeMap[type] = new();
 				}
 
-				if(type == typeof(Singleton) && _componentNodeMap[type].Contains(node)) {
-					throw new InvalidOperationException("Cannot add more than one instance of a singleton node type");
+				if(type == typeof(Singleton)) {
+					if(_componentNodeMap[type].Contains(node)) {
+						throw new InvalidOperationException("Cannot add more than one instance of a singleton node type");
+					}
+
+					_singletonNodes[node.Id] = node;
 				}
 				
 				_componentNodeMap[type].Add(node);
@@ -164,9 +169,13 @@ namespace Coelum.ECS {
 			
 			_nodes.Remove(node.Id);
 			_pathNodeMap.Remove(node.Path);
-
+			
 			foreach(var type in node.Components.Keys) {
 				_componentNodeMap[type].Remove(node);
+
+				if(type == typeof(Singleton)) {
+					_singletonNodes.Remove(node.Id);
+				}
 			}
 			
 			node.Id = 0;

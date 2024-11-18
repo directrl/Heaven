@@ -13,13 +13,13 @@ namespace Coelum.ECS {
 			return component;
 		}
 
-		public void RemoveComponent<TComponent>() where TComponent : INodeComponent {
+		/*public void RemoveComponent<TComponent>() where TComponent : INodeComponent {
 			Components.Remove(typeof(TComponent));
 
 			Components = Components
 			             .Where(kv => kv.Value.GetType() != typeof(TComponent))
 			             .ToDictionary(kv => kv.Key, kv => kv.Value);
-		}
+		}*/
 
 		public TComponent GetComponent<TComponent>() where TComponent : INodeComponent {
 			return (TComponent) Components[typeof(TComponent)];

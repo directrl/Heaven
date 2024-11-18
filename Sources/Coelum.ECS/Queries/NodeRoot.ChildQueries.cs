@@ -13,7 +13,7 @@ namespace Coelum.ECS {
 		public TNode? GetSingleton<TNode>() where TNode : Node, new() {
 			Tests.Assert(new TNode().HasComponent<Singleton>(), "Given node is not a singleton!");
 
-			foreach(var node in _nodes.Values) {
+			foreach(var node in _singletonNodes.Values) {
 				if(node is TNode proper) return proper;
 			}
 

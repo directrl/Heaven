@@ -49,8 +49,7 @@ namespace Coelum.Phoenix.ECS.Systems {
 			}
 
 			var p = node?.Parent;
-			if(p != null && p.HasComponent<Transform>()) {
-				var pt = p.GetComponent<Transform>();
+			if(p != null && p.TryGetComponent<Transform>(out var pt)) {
 				t.GlobalMatrix = t.LocalMatrix * pt.GlobalMatrix;
 			} else {
 				t.GlobalMatrix = t.LocalMatrix;

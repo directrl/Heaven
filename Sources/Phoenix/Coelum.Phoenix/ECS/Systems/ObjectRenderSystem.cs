@@ -19,9 +19,9 @@ namespace Coelum.Phoenix.ECS.Systems {
 		}
 
 		private void QueryAction(NodeRoot root, Renderable renderable, Transform transform) {
-			var node = renderable.Owner;
+			var node = renderable.Owner!;
 			
-			_shader.SetUniform("current_light", node?.HasComponent<Light>() ?? false);
+			_shader.SetUniform("current_light", node.HasComponent<Light>());
 			_shader.SetUniform("model", transform.GlobalMatrix);
 			renderable.Render(_shader);
 		}
