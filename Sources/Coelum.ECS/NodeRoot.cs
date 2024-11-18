@@ -66,7 +66,10 @@ namespace Coelum.ECS {
 
 			if(queriesPresent || systemQueriesPresent) {
 				Parallel.ForEach(_nodes.Values, new ParallelOptions() {
-					MaxDegreeOfParallelism = Environment.ProcessorCount / 2
+					MaxDegreeOfParallelism =
+						Environment.ProcessorCount > 8
+						? Environment.ProcessorCount / 2
+						: Environment.ProcessorCount - 1
 				}, node => {
 					if(queriesPresent) {
 						foreach(var query in _childQueriesP[phase]) {
