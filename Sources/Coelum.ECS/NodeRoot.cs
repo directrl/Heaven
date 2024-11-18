@@ -13,8 +13,6 @@ namespace Coelum.ECS {
 		private Dictionary<string, Node> _pathNodeMap = new();
 		private Dictionary<Type, List<Node>> _componentNodeMap = new();
 
-		private Dictionary<string, List<EcsSystem>> _systems = new();
-
 		private List<Action> _futureActions = new();
 
 		public int ChildCount => _nodes.Count;
@@ -23,11 +21,13 @@ namespace Coelum.ECS {
 			module.Load(this);
 		}
 
-		public void AddSystem(string phase, EcsSystem system) {
-			if(!_systems.ContainsKey(phase)) _systems[phase] = new();
+		[Obsolete] // TODO Obsolete
+		public void AddSystem(SystemPhase phase, EcsSystem system) {
+			/*if(!_systems.ContainsKey(phase)) _systems[phase] = new();
 			_systems[phase].Add(system);
 			
-			Log.Debug($"[ECS] New system registered for phase {phase}");
+			Log.Debug($"[ECS] New system registered for phase {phase}");*/
+			AddSystem(system);
 		}
 
 		public void RemoveSystem(EcsSystem system) {
@@ -50,12 +50,33 @@ namespace Coelum.ECS {
 			});
 		}
 
-		public void Process(string phase, float delta) {
-			if(!_systems.ContainsKey(phase)) return;
-			foreach(var system in _systems[phase]) {
-				system.Invoke(this, delta);
+		public void Process(SystemPhase phase, float delta) {
+			_phaseDeltaTimes[phase] = delta;
+
+		#region Child queries
+			foreach(var node in _nodes.Values) {
+				if(_childQueries.ContainsKey(phase)) {
+					foreach(var query in _childQueries[phase]) {
+						query.Call(this, node);
+					}
+				}
+
+				if(_childQuerySystems.ContainsKey(phase)) {
+					foreach(var system in _childQuerySystems[phase]) {
+						system.Invoke(this, node);
+					}
+				}
 			}
-			
+		#endregion
+
+		#region Regular systems
+			if(_systems.TryGetValue(phase, out var systems)) {
+				foreach(var system in systems) {
+					system.Invoke(this, delta);
+				}
+			}
+		#endregion
+
 			var a = _futureActions.ToArray();
 			foreach(var action in a) {
 				action.Invoke();

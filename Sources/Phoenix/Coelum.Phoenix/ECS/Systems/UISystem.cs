@@ -6,7 +6,7 @@ namespace Coelum.Phoenix.ECS.Systems {
 	
 	public class UISystem : EcsSystem {
 
-		public UISystem() : base("UI Render & Update") {
+		public UISystem() : base("UI Render & Update", SystemPhase.RENDER_POST) {
 			Action = ActionImpl;
 		}
 

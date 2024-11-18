@@ -10,7 +10,7 @@ namespace Coelum.Phoenix.ECS.Systems {
 		private Action<float> _renderAction;
 		
 		public ViewportRenderSystem(ShaderProgram shader, Action<float> renderAction)
-			: base("Viewport Render") {
+			: base("Viewport Render", SystemPhase.RENDER) {
 
 			_ubo = shader.CreateBufferBinding<CameraMatrices>();
 			_renderAction = renderAction;

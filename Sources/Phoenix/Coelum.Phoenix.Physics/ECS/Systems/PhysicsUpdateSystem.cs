@@ -9,7 +9,7 @@ namespace Coelum.Phoenix.Physics.ECS.Systems {
 		public Simulation Simulation { get; set; }
 		public ThreadDispatcher ThreadDispatcher { get; set; }
 		
-		public PhysicsUpdateSystem(Simulation simulation, ThreadDispatcher dispatcher) : base("Physics Timestep") {
+		public PhysicsUpdateSystem(Simulation simulation, ThreadDispatcher dispatcher) : base("Physics Timestep", SystemPhase.FIXED_UPDATE) {
 			Simulation = simulation;
 			ThreadDispatcher = dispatcher;
 			

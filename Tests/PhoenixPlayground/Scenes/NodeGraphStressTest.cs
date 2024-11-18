@@ -58,7 +58,7 @@ namespace PhoenixPlayground.Scenes {
 				Material.OVERLAYS
 			});
 
-			_moveStressTest = new("move test", (root, delta) => {
+			_moveStressTest = new("move test", SystemPhase.UPDATE, (root, delta) => {
 				root.Query<Transform>()
 				    .Parallel(true)
 				    .Each((node, t) => {
@@ -123,7 +123,7 @@ namespace PhoenixPlayground.Scenes {
 				Add(rootChild);
 			}
 			
-			AddSystem("UpdatePre", _moveStressTest);
+			AddSystem(SystemPhase.UPDATE_PRE, _moveStressTest);
 
 			var debugOverlay = new DebugOverlay(this);
 			debugOverlay.AdditionalInfo += (delta) => {

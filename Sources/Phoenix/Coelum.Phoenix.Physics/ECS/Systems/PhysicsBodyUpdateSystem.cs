@@ -14,7 +14,7 @@ namespace Coelum.Phoenix.Physics.ECS.Systems {
 		public Simulation Simulation { get; }
 		public PhysicsStore PhysicsStore { get; }
 		
-		public PhysicsBodyUpdateSystem(Simulation simulation) : base("Physics Body Update") {
+		public PhysicsBodyUpdateSystem(Simulation simulation) : base("Physics Body Update", SystemPhase.FIXED_UPDATE) {
 			Simulation = simulation;
 			PhysicsStore = simulation.GetStore();
 			

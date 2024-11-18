@@ -8,7 +8,7 @@ namespace Coelum.Phoenix.ECS.Systems {
 
 		protected ShaderProgram _shader;
 
-		public ObjectRenderSystem(ShaderProgram shader) : base("Object Render") {
+		public ObjectRenderSystem(ShaderProgram shader) : base("Object Render", SystemPhase.RENDER_POST) {
 			_shader = shader;
 			Action = ActionImpl;
 		}

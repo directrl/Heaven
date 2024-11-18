@@ -10,7 +10,7 @@ namespace Coelum.Phoenix.ECS.Systems {
 		private readonly ShaderProgram _shader;
 		private readonly Lights _ubo;
 
-		public LightingSystem(ShaderProgram shader) : base("Light Uniform Loader") {
+		public LightingSystem(ShaderProgram shader) : base("Light Uniform Loader", SystemPhase.RENDER_PRE) {
 			_shader = shader;
 			_ubo = shader.CreateBufferBinding<Lights>();
 			
