@@ -88,12 +88,18 @@ namespace Coelum.ECS {
 			Query = query;
 		}
 
-		public void Invoke(NodeRoot root, Node child) {
-			if(!Enabled && StepCount <= 0) return;
+		public bool Invoke(NodeRoot root, Node child) {
+			if(!Enabled && StepCount <= 0) return false;
+			bool ret = false;
 			
 			Timer.Start();
 			SingleTimer.Restart();
-			if(Query.Call(root, child)) QueryMatches++;
+			
+			if(Query.Call(root, child)) {
+				QueryMatches++;
+				ret = true;
+			}
+			
 			Timer.Stop();
 			SingleTimer.Stop();
 
@@ -101,6 +107,8 @@ namespace Coelum.ECS {
 
 			ExecutionTime = Timer.Elapsed;
 			SingleExecutionTime = SingleTimer.Elapsed;
+
+			return ret;
 		}
 	}
 }
