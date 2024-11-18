@@ -64,13 +64,15 @@ namespace Coelum.ECS {
 			}
 
 			if(queriesPresent || systemQueriesPresent) {
-				Parallel.ForEach(_nodes.Values, node => {
+				Parallel.ForEach(_nodes.Values, new() {
+					MaxDegreeOfParallelism = Environment.ProcessorCount / 2
+				}, node => {
 					if(queriesPresent) {
 						foreach(var query in _childQueriesP[phase]) {
 							query.Call(this, node);
 						}
 					}
-				
+
 					if(systemQueriesPresent) {
 						foreach(var system in _childQuerySystemsP[phase]) {
 							system.Invoke(this, node);

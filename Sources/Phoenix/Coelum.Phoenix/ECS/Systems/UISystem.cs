@@ -16,7 +16,7 @@ namespace Coelum.Phoenix.ECS.Systems {
 
 		private void ActionImpl(NodeRoot root, float delta) {
 			if(root is not PhoenixScene scene) {
-				Log.Warning($"Root [{root.GetType().Name}] is not of type PhoenixScene! UI rendering is not possible");
+				Log.Error($"Root [{root.GetType().Name}] is not of type PhoenixScene! UI rendering is not possible");
 				return;
 			}
 

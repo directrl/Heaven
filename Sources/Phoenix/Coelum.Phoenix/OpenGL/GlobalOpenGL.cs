@@ -6,7 +6,7 @@ namespace Coelum.Phoenix.OpenGL {
 	
 	public class GlobalOpenGL {
 
-		public static GL Gl { get; private set; }
+		public static GL Gl;
 
 		public GlobalOpenGL(GL gl) {
 			Gl = gl;

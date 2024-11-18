@@ -135,9 +135,9 @@ namespace Coelum.Phoenix {
 		}
 
 		public override void OnUpdate(float delta) {
-			this.Process(SystemPhase.RENDER_PRE, delta);
+			this.Process(SystemPhase.UPDATE_PRE, delta);
 			base.OnUpdate(delta);
-			this.Process(SystemPhase.RENDER_POST, delta);
+			this.Process(SystemPhase.UPDATE_POST, delta);
 		}
 
 		public override void OnRender(float delta) {
