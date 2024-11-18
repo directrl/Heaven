@@ -1,14 +1,8 @@
 namespace Coelum.ECS {
 	
-	/*
-	 * TODO queries right now are just disguised foreach loops
-	 * and that could get quite slow with many nodes and systems because
-	 * each system will be running a foreach loop
-	 *
-	 * could there be a way to optimise all queries into a single "global" foreach loop?
-	 */
 	public partial class NodeRoot {
 		
+		[Obsolete("Use v2 queries")]
 		public Query<Node, TComponent> Query<TComponent>() where TComponent : INodeComponent {
 			return new(
 				each => {
@@ -28,6 +22,7 @@ namespace Coelum.ECS {
 			);
 		}
 		
+		[Obsolete("Use v2 queries")]
 		public Query<Node, TComponent1, TComponent2> Query<TComponent1, TComponent2>()
 			where TComponent1 : INodeComponent
 			where TComponent2 : INodeComponent {

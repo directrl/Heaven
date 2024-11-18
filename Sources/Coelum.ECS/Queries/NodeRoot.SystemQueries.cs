@@ -2,7 +2,8 @@ namespace Coelum.ECS {
 	
 	public partial class NodeRoot {
 		
-		public Query<string, List<EcsSystem>> QuerySystems() {
+		[Obsolete("Use GetSystems()")]
+		public Query<SystemPhase, List<EcsSystem>> QuerySystems() {
 			return new(
 				each => {
 					foreach((var phase, var systems) in _systems) {
@@ -12,9 +13,9 @@ namespace Coelum.ECS {
 			);
 		}
 
-		public T? QuerySystem<T>(string? phase = null) where T : EcsSystem {
+		public T? QuerySystem<T>(SystemPhase? phase = null) where T : EcsSystem {
 			if(phase != null) {
-				foreach(var system in _systems[phase]) {
+				foreach(var system in _systems[phase.Value]) {
 					if(system is T t) return t;
 				}
 			} else {

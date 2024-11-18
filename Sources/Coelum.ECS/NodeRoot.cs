@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Coelum.Debug;
 using Coelum.ECS.Tags;
 using Coelum.LanguageExtensions.Serialization;
@@ -10,10 +11,9 @@ namespace Coelum.ECS {
 		private ulong _lastId = 0; // TODO better way
 
 		private Dictionary<ulong, Node> _nodes = new();
+		private Dictionary<ulong, Node> _singletonNodes = new();
 		private Dictionary<string, Node> _pathNodeMap = new();
 		private Dictionary<Type, List<Node>> _componentNodeMap = new();
-
-		private Dictionary<string, List<EcsSystem>> _systems = new();
 
 		private List<Action> _futureActions = new();
 
@@ -23,39 +23,78 @@ namespace Coelum.ECS {
 			module.Load(this);
 		}
 
-		public void AddSystem(string phase, EcsSystem system) {
-			if(!_systems.ContainsKey(phase)) _systems[phase] = new();
-			_systems[phase].Add(system);
-			
-			Log.Debug($"[ECS] New system registered for phase {phase}");
-		}
+		public void Process(SystemPhase phase, float delta) {
+			_phaseDeltaTimes[phase] = delta;
 
-		public void RemoveSystem(EcsSystem system) {
-			RunLater(() => {
-				foreach(var systems in _systems.Values) {
-					if(systems.Contains(system)) {
-						systems.RemoveAll(s => s == system);
-					}
+		#region Child queries
+		#region Regular
+			bool queriesPresent = _childQueries.ContainsKey(phase);
+			bool systemQueriesPresent = _childQuerySystems.ContainsKey(phase);
+
+			if(systemQueriesPresent) {
+				foreach(var system in _childQuerySystems[phase]) {
+					system.Reset();
 				}
-			});
-		}
-
-		public void ReplaceSystem(EcsSystem what, EcsSystem with) {
-			RunLater(() => {
-				foreach(var systems in _systems.Values) {
-					for(int i = 0; i < systems.Count; i++) {
-						if(systems[i] == what) systems[i] = with;
-					}
-				}
-			});
-		}
-
-		public void Process(string phase, float delta) {
-			if(!_systems.ContainsKey(phase)) return;
-			foreach(var system in _systems[phase]) {
-				system.Invoke(this, delta);
 			}
 			
+			if(queriesPresent || systemQueriesPresent) {
+				foreach(var node in _nodes.Values) {
+					if(queriesPresent) {
+						foreach(var query in _childQueries[phase]) {
+							query.Call(this, node);
+						}
+					}
+				
+					if(systemQueriesPresent) {
+						foreach(var system in _childQuerySystems[phase]) {
+							system.Invoke(this, node);
+						}
+					}
+				}
+			}
+		#endregion
+
+		#region Parallel
+			queriesPresent = _childQueriesP.ContainsKey(phase);
+			systemQueriesPresent = _childQuerySystemsP.ContainsKey(phase);
+
+			if(systemQueriesPresent) {
+				foreach(var system in _childQuerySystemsP[phase]) {
+					system.Reset();
+				}
+			}
+
+			if(queriesPresent || systemQueriesPresent) {
+				Parallel.ForEach(_nodes.Values, new ParallelOptions() {
+					MaxDegreeOfParallelism =
+						Environment.ProcessorCount > 8
+						? Environment.ProcessorCount / 2
+						: Environment.ProcessorCount - 1
+				}, node => {
+					if(queriesPresent) {
+						foreach(var query in _childQueriesP[phase]) {
+							query.Call(this, node);
+						}
+					}
+
+					if(systemQueriesPresent) {
+						foreach(var system in _childQuerySystemsP[phase]) {
+							system.Invoke(this, node);
+						}
+					}
+				});
+			}
+		#endregion
+		#endregion
+
+		#region Regular systems
+			if(_systems.TryGetValue(phase, out var systems)) {
+				foreach(var system in systems) {
+					system.Invoke(this, delta);
+				}
+			}
+		#endregion
+
 			var a = _futureActions.ToArray();
 			foreach(var action in a) {
 				action.Invoke();
@@ -84,8 +123,12 @@ namespace Coelum.ECS {
 					_componentNodeMap[type] = new();
 				}
 
-				if(type == typeof(Singleton) && _componentNodeMap[type].Contains(node)) {
-					throw new InvalidOperationException("Cannot add more than one instance of a singleton node type");
+				if(type == typeof(Singleton)) {
+					if(_componentNodeMap[type].Contains(node)) {
+						throw new InvalidOperationException("Cannot add more than one instance of a singleton node type");
+					}
+
+					_singletonNodes[node.Id] = node;
 				}
 				
 				_componentNodeMap[type].Add(node);
@@ -114,10 +157,11 @@ namespace Coelum.ECS {
 
 			RunLater(() => {
 				foreach(var (oldNodePath, newNodePath) in pathsToReplace) {
-					var node = _pathNodeMap[oldNodePath];
-					_pathNodeMap.Remove(oldNodePath);
-					_pathNodeMap[newNodePath] = node;
+					if(!_pathNodeMap.Remove(oldNodePath, out var node)) {
+						continue;
+					}
 
+					_pathNodeMap[newNodePath] = node;
 					node._path = newNodePath;
 				}
 			});
@@ -128,9 +172,13 @@ namespace Coelum.ECS {
 			
 			_nodes.Remove(node.Id);
 			_pathNodeMap.Remove(node.Path);
-
+			
 			foreach(var type in node.Components.Keys) {
 				_componentNodeMap[type].Remove(node);
+
+				if(type == typeof(Singleton)) {
+					_singletonNodes.Remove(node.Id);
+				}
 			}
 			
 			node.Id = 0;
@@ -180,5 +228,25 @@ namespace Coelum.ECS {
 		public List<Node>? Get<TComponent>() where TComponent : INodeComponent {
 			return _componentNodeMap.GetValueOrDefault(typeof(TComponent));
 		}
+
+	#region Parallel add thing
+		private static void AddSpTP<T>(ref Dictionary<SystemPhase, List<T>> dict,
+		                        ref Dictionary<SystemPhase, List<T>> pDict,
+		                        SystemPhase sp, T t, bool p) {
+			if(p) {
+				if(!pDict.ContainsKey(sp)) {
+					pDict[sp] = new();
+				}
+				
+				pDict[sp].Add(t);
+			} else {
+				if(!dict.ContainsKey(sp)) {
+					dict[sp] = new();
+				}
+				
+				dict[sp].Add(t);
+			}
+		}
+	#endregion
 	}
 }

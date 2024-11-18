@@ -10,17 +10,17 @@ namespace Coelum.ECS {
 		/// </summary>
 		/// <typeparam name="TNode">The node type to match against</typeparam>
 		/// <returns>The singleton node (if exists)</returns>
-		public TNode? QuerySingleton<TNode>() where TNode : Node, new() {
+		public TNode? GetSingleton<TNode>() where TNode : Node, new() {
 			Tests.Assert(new TNode().HasComponent<Singleton>(), "Given node is not a singleton!");
 
-			foreach(var node in _nodes.Values) {
+			foreach(var node in _singletonNodes.Values) {
 				if(node is TNode proper) return proper;
 			}
 
 			return null;
 		}
 
-		public Node? QueryChild(ulong id) {
+		public Node? GetNode(ulong id) {
 			if(_nodes.TryGetValue(id, out var node)) {
 				return node;
 			}
@@ -28,6 +28,7 @@ namespace Coelum.ECS {
 			return node;
 		}
 		
+		// TODO make equivalent with v2 queries
 		/// <summary>
 		/// Creates a query for all children of the current NodeRoot
 		/// </summary>
@@ -60,6 +61,7 @@ namespace Coelum.ECS {
 			);
 		}
 		
+		// TODO make equivalent with v2 queries (depth)
 		/// <summary>
 		/// Creates a query for all children of the current NodeRoot of given type TNode
 		/// </summary>
@@ -93,6 +95,7 @@ namespace Coelum.ECS {
 			);
 		}
 
+		// TODO make equivalent with v2 queries
 		/// <summary>
 		/// Creates a query for all children of given node
 		/// </summary>

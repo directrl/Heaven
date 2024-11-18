@@ -74,12 +74,11 @@ namespace Coelum.Phoenix.Physics {
 		}
 
 		public bool GetBody(Node node, out BodyReference reference) {
-			if(!node.HasComponent<ActivePhysicsBody>()) {
+			if(!node.TryGetComponent<ActivePhysicsBody>(out var body)) {
 				reference = default;
 				return false;
 			}
 
-			var body = node.GetComponent<ActivePhysicsBody>();
 			return GetBody(body, out reference);
 		}
 	#endregion

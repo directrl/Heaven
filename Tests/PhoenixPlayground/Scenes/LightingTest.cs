@@ -2,6 +2,7 @@ using System.Drawing;
 using System.Numerics;
 using Coelum.Common.Input;
 using Coelum.ECS;
+using Coelum.ECS.Queries;
 using Coelum.LanguageExtensions;
 using Coelum.Phoenix;
 using Coelum.Phoenix.Camera;
@@ -62,7 +63,7 @@ namespace PhoenixPlayground.Scenes {
 				GouraudShading.OVERLAYS
 			});
 
-			_testCubeMove = new("cube move", (root, delta) => {
+			_testCubeMove = new("cube move", SystemPhase.UPDATE, (root, delta) => {
 				root.Query<Transform, Light>()
 				    .Each((node, t, l) => {
 					    if(t is not Transform3D t3d) return;
@@ -85,7 +86,7 @@ namespace PhoenixPlayground.Scenes {
 				    .Execute();
 			});
 			
-			_testCubeRotate = new("cube rotate", (root, delta) => {
+			/*_testCubeRotate = new("cube rotate", (root, delta) => {
 				root.Query<Transform, TestCubeRotate>()
 				    .Each((node, t, _) => {
 					    if(t is not Transform3D t3d) return;
@@ -94,7 +95,7 @@ namespace PhoenixPlayground.Scenes {
 					    t3d.Rotation -= new Vector3(rot, rot, -rot);
 				    })
 				    .Execute();
-			});
+			});*/
 		}
 
 		public override void OnLoad(SilkWindow window) {
@@ -184,8 +185,15 @@ namespace PhoenixPlayground.Scenes {
 				Add(light4);
 			}
 			
-			AddSystem("UpdatePre", _testCubeMove); // TODO phases should be enums or smth
-			AddSystem("UpdatePre", _testCubeRotate);
+			AddSystem(_testCubeMove); // TODO phases should be enums or smth
+			//AddSystem("UpdatePre", _testCubeRotate);
+			
+			AddQuery(new ComponentQuery<TestCubeRotate, Transform>(SystemPhase.UPDATE_PRE, (_, _, t) => {
+				if(t is not Transform3D t3d) return;
+					
+				float rot = (1/60f) * 0.6f;
+				t3d.Rotation -= new Vector3(rot, rot, -rot);
+			}));
 
 			var debugOverlay = new DebugOverlay(this);
 			debugOverlay.AdditionalInfo += _ => {

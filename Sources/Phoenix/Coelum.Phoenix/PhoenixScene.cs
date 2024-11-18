@@ -2,6 +2,7 @@ using System.Drawing;
 using Coelum.Common.Graphics;
 using Coelum.Common.Input;
 using Coelum.Debug;
+using Coelum.ECS;
 using Coelum.Phoenix.Camera;
 using Coelum.Phoenix.ECS;
 using Coelum.Phoenix.ECS.Nodes;
@@ -99,14 +100,14 @@ namespace Coelum.Phoenix {
 			
 			OnLoad((SilkWindow) window);
 			
-			AddSystem("RenderPre", new TransformSystem());
-			AddSystem("RenderPost", new ObjectRenderSystem(PrimaryShader));
-			AddSystem("RenderPost", new UISystem());
-			AddSystem("Render", new ViewportRenderSystem(PrimaryShader, DoRender));
+			AddSystem(new TransformSystem());
+			AddSystem(new ObjectRenderSystem(PrimaryShader));
+			AddSystem(new UISystem());
+			AddSystem(new ViewportRenderSystem(PrimaryShader, DoRender));
 			
 			if(PrimaryShader.HasOverlays(PhongShading.OVERLAYS)
 			   || PrimaryShader.HasOverlays(GouraudShading.OVERLAYS)) {
-				AddSystem("RenderPre", new LightingSystem(PrimaryShader));
+				AddSystem(new LightingSystem(PrimaryShader));
 			}
 
 			var pWindow = (SilkWindow) window;
@@ -134,13 +135,13 @@ namespace Coelum.Phoenix {
 		}
 
 		public override void OnUpdate(float delta) {
-			this.Process("UpdatePre", delta);
+			this.Process(SystemPhase.UPDATE_PRE, delta);
 			base.OnUpdate(delta);
-			this.Process("UpdatePost", delta);
+			this.Process(SystemPhase.UPDATE_POST, delta);
 		}
 
 		public override void OnRender(float delta) {
-			this.Process("Render", delta);
+			this.Process(SystemPhase.RENDER, delta);
 		}
 
 		protected virtual void DoRender(float delta) {
@@ -154,14 +155,14 @@ namespace Coelum.Phoenix {
 			
 			PrimaryShader.Bind();
 
-			var environment = QuerySingleton<SceneEnvironment>();
+			var environment = GetSingleton<SceneEnvironment>();
 			if(environment != null) {
 				environment.Load(PrimaryShader);
 			}
 
-			this.Process("RenderPre", delta);
+			this.Process(SystemPhase.RENDER_PRE, delta);
 			base.OnRender(delta);
-			this.Process("RenderPost", delta);
+			this.Process(SystemPhase.RENDER_POST, delta);
 		}
 
 		protected void UpdateKeyBindings() {

@@ -58,7 +58,7 @@ namespace PhoenixPlayground.Scenes {
 				Material.OVERLAYS
 			});
 
-			_moveStressTest = new("move test", (root, delta) => {
+			_moveStressTest = new("move test", SystemPhase.UPDATE, (root, delta) => {
 				root.Query<Transform>()
 				    .Parallel(true)
 				    .Each((node, t) => {
@@ -97,6 +97,8 @@ namespace PhoenixPlayground.Scenes {
 			_camera.GetComponent<Transform, Transform3D>().Position = new(0, 0, -5);
 			_player.Add(_camera);
 			
+			Add(new Viewport(_camera, window.Framebuffer));
+			
 			{
 				var size = 24;
 				var rootChild = new TestNode() {
@@ -123,7 +125,7 @@ namespace PhoenixPlayground.Scenes {
 				Add(rootChild);
 			}
 			
-			AddSystem("UpdatePre", _moveStressTest);
+			AddSystem(_moveStressTest);
 
 			var debugOverlay = new DebugOverlay(this);
 			debugOverlay.AdditionalInfo += (delta) => {

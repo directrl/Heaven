@@ -53,12 +53,12 @@ namespace Coelum.Common.Graphics {
 
 		public virtual void OnUpdate(float delta) {
 			Update?.Invoke(delta);
-			this.Process("Update", delta);
+			this.Process(SystemPhase.UPDATE, delta);
 		}
 
 		public virtual void OnFixedUpdate(float delta) {
 			FixedUpdate?.Invoke(delta);
-			this.Process("FixedUpdate", delta);
+			this.Process(SystemPhase.FIXED_UPDATE, delta);
 		}
 		
 		public virtual void OnRender(float delta) {

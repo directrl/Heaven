@@ -4,15 +4,19 @@ using Serilog;
 
 namespace Coelum.Phoenix.ECS.Systems {
 	
+	// TODO should UI elements/overlays be 2D nodes?
 	public class UISystem : EcsSystem {
 
-		public UISystem() : base("UI Render & Update") {
+		public override string Name => "UI Render & Update";
+		public override SystemPhase Phase => SystemPhase.RENDER_POST;
+
+		public UISystem() {
 			Action = ActionImpl;
 		}
 
 		private void ActionImpl(NodeRoot root, float delta) {
 			if(root is not PhoenixScene scene) {
-				Log.Warning($"Root [{root.GetType().Name}] is not of type PhoenixScene! UI rendering is not possible");
+				Log.Error($"Root [{root.GetType().Name}] is not of type PhoenixScene! UI rendering is not possible");
 				return;
 			}
 
