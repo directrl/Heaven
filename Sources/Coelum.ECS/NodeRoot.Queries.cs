@@ -10,5 +10,11 @@ namespace Coelum.ECS {
 		public void AddQuery(IChildQuery query)
 			=> AddSpTP(ref _childQueries, ref _childQueriesP,
 			           query.Phase, query, query.Parallel);
+
+		public void CallQuery(IChildQuery query) {
+			foreach(var node in _nodes.Values) {
+				query.Call(this, node);
+			}
+		}
 	}
 }

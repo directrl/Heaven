@@ -155,7 +155,7 @@ namespace Coelum.Phoenix {
 			
 			PrimaryShader.Bind();
 
-			var environment = QuerySingleton<SceneEnvironment>();
+			var environment = GetSingleton<SceneEnvironment>();
 			if(environment != null) {
 				environment.Load(PrimaryShader);
 			}

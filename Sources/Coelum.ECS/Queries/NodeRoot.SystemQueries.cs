@@ -2,6 +2,7 @@ namespace Coelum.ECS {
 	
 	public partial class NodeRoot {
 		
+		[Obsolete("Use GetSystems()")]
 		public Query<SystemPhase, List<EcsSystem>> QuerySystems() {
 			return new(
 				each => {
