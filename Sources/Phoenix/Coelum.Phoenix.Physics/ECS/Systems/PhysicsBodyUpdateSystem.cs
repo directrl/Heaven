@@ -24,7 +24,11 @@ namespace Coelum.Phoenix.Physics.ECS.Systems {
 				?? throw new Exception("Simulation must have a PhysicsStore assigned");
 
 			Query = new ComponentQuery<PhysicsBody, Transform>(Phase, QueryAction) {
+			#if DEBUG
+				Parallel = false
+			#else
 				Parallel = true
+			#endif
 			};
 		}
 
