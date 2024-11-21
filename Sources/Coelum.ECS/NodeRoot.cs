@@ -14,6 +14,7 @@ namespace Coelum.ECS {
 		private Dictionary<ulong, Node> _singletonNodes = new();
 		private Dictionary<string, Node> _pathNodeMap = new();
 		private Dictionary<Type, List<Node>> _componentNodeMap = new();
+		private Dictionary<Type, List<Node>> _typeNodeMap = new();
 
 		private List<Action> _futureActions = new();
 
@@ -25,67 +26,9 @@ namespace Coelum.ECS {
 
 		public void Process(SystemPhase phase, float delta) {
 			_phaseDeltaTimes[phase] = delta;
-
-		#region Child queries
-		#region Regular
-			bool queriesPresent = _childQueries.ContainsKey(phase);
-			bool systemQueriesPresent = _childQuerySystems.ContainsKey(phase);
-
-			if(systemQueriesPresent) {
-				foreach(var system in _childQuerySystems[phase]) {
-					system.Reset();
-				}
-			}
 			
-			if(queriesPresent || systemQueriesPresent) {
-				foreach(var node in _nodes.Values) {
-					if(queriesPresent) {
-						foreach(var query in _childQueries[phase]) {
-							query.Call(this, node);
-						}
-					}
-				
-					if(systemQueriesPresent) {
-						foreach(var system in _childQuerySystems[phase]) {
-							system.Invoke(this, node);
-						}
-					}
-				}
-			}
-		#endregion
-
-		#region Parallel
-			queriesPresent = _childQueriesP.ContainsKey(phase);
-			systemQueriesPresent = _childQuerySystemsP.ContainsKey(phase);
-
-			if(systemQueriesPresent) {
-				foreach(var system in _childQuerySystemsP[phase]) {
-					system.Reset();
-				}
-			}
-
-			if(queriesPresent || systemQueriesPresent) {
-				Parallel.ForEach(_nodes.Values, new ParallelOptions() {
-					MaxDegreeOfParallelism =
-						Environment.ProcessorCount > 8
-						? Environment.ProcessorCount / 2
-						: Environment.ProcessorCount - 1
-				}, node => {
-					if(queriesPresent) {
-						foreach(var query in _childQueriesP[phase]) {
-							query.Call(this, node);
-						}
-					}
-
-					if(systemQueriesPresent) {
-						foreach(var system in _childQuerySystemsP[phase]) {
-							system.Invoke(this, node);
-						}
-					}
-				});
-			}
-		#endregion
-		#endregion
+			SystemProcess(phase);
+			ParallelSystemProcess(phase);
 
 		#region Regular systems
 			if(_systems.TryGetValue(phase, out var systems)) {
@@ -117,6 +60,12 @@ namespace Coelum.ECS {
 			
 			_nodes[node.Id] = node;
 			_pathNodeMap[node.Path] = node;
+
+			if(!_typeNodeMap.ContainsKey(node.GetType())) {
+				_typeNodeMap[node.GetType()] = new();
+			}
+			
+			_typeNodeMap[node.GetType()].Add(node);
 
 			foreach(var type in node.Components.Keys) {
 				if(!_componentNodeMap.ContainsKey(type)) {
@@ -172,6 +121,7 @@ namespace Coelum.ECS {
 			
 			_nodes.Remove(node.Id);
 			_pathNodeMap.Remove(node.Path);
+			_typeNodeMap[node.GetType()].Remove(node);
 			
 			foreach(var type in node.Components.Keys) {
 				_componentNodeMap[type].Remove(node);
@@ -223,16 +173,13 @@ namespace Coelum.ECS {
 			_systems.Clear();
 		}
 
-		public Node? Get(ulong id) => _nodes.GetValueOrDefault(id);
-		public Node? Get(string path) => _pathNodeMap.GetValueOrDefault(path);
-		public List<Node>? Get<TComponent>() where TComponent : INodeComponent {
-			return _componentNodeMap.GetValueOrDefault(typeof(TComponent));
-		}
-
 	#region Parallel add thing
-		private static void AddSpTP<T>(ref Dictionary<SystemPhase, List<T>> dict,
-		                        ref Dictionary<SystemPhase, List<T>> pDict,
-		                        SystemPhase sp, T t, bool p) {
+		private static void AddSpTP<K, T>(ref Dictionary<K, List<T>> dict,
+		                        ref Dictionary<K, List<T>> pDict,
+		                        K sp, T t, bool p)
+			where K : notnull
+			where T : notnull {
+			
 			if(p) {
 				if(!pDict.ContainsKey(sp)) {
 					pDict[sp] = new();

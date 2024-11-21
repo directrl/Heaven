@@ -15,7 +15,7 @@ namespace Coelum.Phoenix.ECS.Systems {
 		private int _spotIndex;
 		
 		public override string Name => "Light Uniform Loader";
-		public override SystemPhase Phase => SystemPhase.RENDER_PRE;
+		public override SystemPhase Phase => SystemPhase.RENDER_POST;
 
 		public LightingSystem(ShaderProgram shader) {
 			_ubo = shader.CreateBufferBinding<Lights>();

@@ -143,7 +143,7 @@ namespace Coelum.Phoenix.UI {
 
 						string label
 							= system is QuerySystem qs1
-								? $"{timeUs:F2}us ({(qs1.SingleExecutionTime.TotalMilliseconds * 1_000):F2}us/Q - {qs1.QueryMatches}Q)"
+								? $"{timeUs:F2}us ({(qs1.SingleExecutionTime.TotalMilliseconds * 1_000):F2}us/it - {qs1.QueryMatches}it)"
 								: $"{timeUs:F2}us";
 						
 						ImGui.PlotHistogram(label,

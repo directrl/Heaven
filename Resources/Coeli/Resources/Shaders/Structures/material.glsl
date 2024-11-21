@@ -8,9 +8,9 @@ struct Material {
 	float reflectivity;
 	
 	bool has_textures;
-
-	sampler2D tex_diffuse;
-	sampler2D tex_specular;
-	sampler2D tex_normal;
-	sampler2D tex_height;
 };
+
+uniform sampler2D u_material_tex_diffuse;
+uniform sampler2D u_material_tex_specular;
+uniform sampler2D u_material_tex_normal;
+uniform sampler2D u_material_tex_height;

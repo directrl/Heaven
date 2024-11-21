@@ -19,14 +19,6 @@ namespace Coelum.ECS {
 
 			return null;
 		}
-
-		public Node? GetNode(ulong id) {
-			if(_nodes.TryGetValue(id, out var node)) {
-				return node;
-			}
-
-			return node;
-		}
 		
 		// TODO make equivalent with v2 queries
 		/// <summary>

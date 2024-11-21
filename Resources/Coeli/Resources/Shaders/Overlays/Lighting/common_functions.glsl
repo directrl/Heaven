@@ -16,7 +16,7 @@ vec4 calc_light_specular(vec4 light_specular, Material mat,
 						 vec2 tex_coords) {
 
 	float spec = pow(max(dot(view_dir, reflect_dir), 0.0), mat.shininess * 256);
-	vec4 specular = light_specular * spec * texture(mat.tex_specular, tex_coords);
+	vec4 specular = light_specular * spec * texture(u_material_tex_specular, tex_coords);
 	
 	return specular;
 }

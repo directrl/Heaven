@@ -101,14 +101,14 @@ namespace Coelum.Phoenix {
 			OnLoad((SilkWindow) window);
 			
 			AddSystem(new TransformSystem());
-			AddSystem(new ObjectRenderSystem(PrimaryShader));
-			AddSystem(new UISystem());
-			AddSystem(new ViewportRenderSystem(PrimaryShader, DoRender));
 			
 			if(PrimaryShader.HasOverlays(PhongShading.OVERLAYS)
 			   || PrimaryShader.HasOverlays(GouraudShading.OVERLAYS)) {
 				AddSystem(new LightingSystem(PrimaryShader));
 			}
+			
+			AddSystem(new ObjectRenderSystem(PrimaryShader));
+			AddSystem(new UISystem());
 
 			var pWindow = (SilkWindow) window;
 
@@ -142,27 +142,37 @@ namespace Coelum.Phoenix {
 
 		public override void OnRender(float delta) {
 			this.Process(SystemPhase.RENDER, delta);
-		}
 
-		protected virtual void DoRender(float delta) {
-			void Clear() {
-				Gl.Clear((uint) (ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit));
-				Gl.ClearColor(ClearColor);
-			}
+			var viewports = GetChildren<Viewport>();
+			if(viewports is null) return;
 
-			Clear();
-			GLManager.SetDefaults();
+			foreach(Viewport viewport in viewports) {
+				if(!viewport.Enabled) continue;
+				
+				viewport.Framebuffer.Bind();
+				viewport.Camera.Load(PrimaryShader);
+
+			#region Render scene
+				void Clear() {
+					Gl.Clear((uint) (ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit));
+					Gl.ClearColor(ClearColor);
+				}
+
+				Clear();
+				GLManager.SetDefaults();
 			
-			PrimaryShader.Bind();
+				PrimaryShader.Bind();
 
-			var environment = GetSingleton<SceneEnvironment>();
-			if(environment != null) {
-				environment.Load(PrimaryShader);
+				var environment = GetSingleton<SceneEnvironment>();
+				if(environment != null) {
+					environment.Load(PrimaryShader);
+				}
+
+				this.Process(SystemPhase.RENDER_PRE, delta);
+				base.OnRender(delta);
+				this.Process(SystemPhase.RENDER_POST, delta);
+			#endregion
 			}
-
-			this.Process(SystemPhase.RENDER_PRE, delta);
-			base.OnRender(delta);
-			this.Process(SystemPhase.RENDER_POST, delta);
 		}
 
 		protected void UpdateKeyBindings() {

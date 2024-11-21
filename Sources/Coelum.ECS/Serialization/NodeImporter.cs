@@ -35,7 +35,7 @@ namespace Coelum.ECS.Serialization {
 				// we run it at a later time to make sure all nodes are imported
 				node.Root.RunLater(() => {
 					var pId = json["parent"]["id"].GetValue<ulong>();
-					var p = node.Root.GetNode(pId);
+					var p = node.Root.GetChild(pId);
 
 					if(p is null) {
 						Log.Warning($"[NodeImporter] Could not find parent with ID {pId} for {node}");
@@ -87,7 +87,7 @@ namespace Coelum.ECS.Serialization {
 				}
 			}
 			
-			if(node.Root.GetNode(node.Id) is null) {
+			if(node.Root.GetChild(node.Id) is null) {
 				node.Root.Add(node);
 			}
 		}

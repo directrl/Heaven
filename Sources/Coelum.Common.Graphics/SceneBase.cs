@@ -63,7 +63,7 @@ namespace Coelum.Common.Graphics {
 		
 		public virtual void OnRender(float delta) {
 			Render?.Invoke(delta);
-			//this.Process("Render", delta);
+			this.Process(SystemPhase.RENDER, delta);
 		}
 	}
 }

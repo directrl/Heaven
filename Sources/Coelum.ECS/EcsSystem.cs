@@ -39,14 +39,20 @@ namespace Coelum.ECS {
 		
 		public virtual void Invoke(NodeRoot root, float delta) {
 			if(!Enabled && StepCount <= 0) return;
-			
+
+		#if DEBUG
 			Timer.Restart();
+		#endif
 			Action.Invoke(root, delta);
+		#if DEBUG
 			Timer.Stop();
+		#endif
 
 			if(StepCount > 0) StepCount--;
 
+		#if DEBUG
 			ExecutionTime = Timer.Elapsed;
+		#endif
 		}
 		
 		public virtual void Reset() { }
@@ -68,11 +74,13 @@ namespace Coelum.ECS {
 		}
 		
 		public override void Reset() {
-			base.Reset();
-			
+		#if DEBUG
 			Timer.Reset();
 			ExecutionTime = TimeSpan.Zero;
 			QueryMatches = 0;
+		#endif
+			
+			if(StepCount > 0) StepCount--;
 		}
 	}
 
@@ -91,22 +99,26 @@ namespace Coelum.ECS {
 		public bool Invoke(NodeRoot root, Node child) {
 			if(!Enabled && StepCount <= 0) return false;
 			bool ret = false;
-			
+
+		#if DEBUG
 			Timer.Start();
 			SingleTimer.Restart();
-			
-			if(Query.Call(root, child)) {
-				QueryMatches++;
-				ret = true;
-			}
-			
-			Timer.Stop();
-			SingleTimer.Stop();
+		#endif
 
+			ret = Query.Call(root, child);
+		#if DEBUG
+			if(ret) QueryMatches++;
+		#endif
+			
 			if(StepCount > 0) StepCount--;
 
+		#if DEBUG
+			Timer.Stop();
+			SingleTimer.Stop();
+			
 			ExecutionTime = Timer.Elapsed;
 			SingleExecutionTime = SingleTimer.Elapsed;
+		#endif
 
 			return ret;
 		}

@@ -24,11 +24,11 @@ namespace PhoenixPlayground.Scenes {
 			Add(new Viewport(PrimaryCamera, _fbo));
 		}
 
-		protected override void DoRender(float delta) {
-			base.DoRender(delta);
-			
-			Window.Framebuffer.Bind();
-			_fbo.Render();
-		}
+		// protected override void DoRender(float delta) {
+		// 	base.DoRender(delta);
+		// 	
+		// 	Window.Framebuffer.Bind();
+		// 	_fbo.Render();
+		// }
 	}
 }

@@ -6,6 +6,7 @@ using Coelum.Debug;
 using Coelum.LanguageExtensions;
 using Coelum.LanguageExtensions.Serialization;
 using Coelum.Phoenix.OpenGL;
+using Coelum.Phoenix.OpenGL.UBO;
 using Coelum.Phoenix.Texture;
 using Coelum.Resources;
 using Silk.NET.Assimp;
@@ -16,6 +17,8 @@ using ShadingModel = Silk.NET.OpenGL.ShadingModel;
 namespace Coelum.Phoenix {
 	
 	public class Material : ISerializable<Material> {
+
+		public const bool EXPERIMENT_MATERIAL_AS_UBO = false;
 		
 		public enum TextureType {
 			
@@ -27,10 +30,10 @@ namespace Coelum.Phoenix {
 		}
 		
 		private static readonly Dictionary<TextureType, string> _UNIFORM_NAMES = new() {
-			{ TextureType.Diffuse, "material.tex_diffuse" },
-			{ TextureType.Specular, "material.tex_specular" },
-			{ TextureType.Normal, "material.tex_normal" },
-			{ TextureType.Height, "material.tex_height" },
+			{ TextureType.Diffuse, "material_tex_diffuse" },
+			{ TextureType.Specular, "material_tex_specular" },
+			{ TextureType.Normal, "material_tex_normal" },
+			{ TextureType.Height, "material_tex_height" },
 		};
 
 		public Vector4 Albedo = new(1, 1, 1, 1);
@@ -47,24 +50,35 @@ namespace Coelum.Phoenix {
 
 		// TODO convert to UBO?
 		public void Load(ShaderProgram shader) {
-			shader.SetUniform("material.albedo", Albedo);
-			shader.SetUniform("material.ambient_color", AmbientColor);
-			shader.SetUniform("material.diffuse_color", DiffuseColor);
-			shader.SetUniform("material.specular_color", SpecularColor);
+			if(EXPERIMENT_MATERIAL_AS_UBO) {
+				var ubo = shader.CreateBufferBinding<MaterialUBO>();
 
-			shader.SetUniform("material.shininess", Shininess);
-			shader.SetUniform("material.reflectivity", Reflectivity);
+				ubo.Material.Albedo = Albedo;
+				ubo.Material.AmbientColor = AmbientColor;
+				ubo.Material.DiffuseColor = DiffuseColor;
+				ubo.Material.SpecularColor = SpecularColor;
+
+				ubo.Material.Shininess = Shininess;
+				ubo.Material.Reflectivity = Reflectivity;
+
+				ubo.Material.HasTextures = Textures.Count > 0;
 			
-			shader.SetUniform("material.has_textures", Textures.Count > 0);
+				ubo.Upload();
+			} else {
+				shader.SetUniform("material.albedo", Albedo);
+				shader.SetUniform("material.ambient_color", AmbientColor);
+				shader.SetUniform("material.diffuse_color", DiffuseColor);
+				shader.SetUniform("material.specular_color", SpecularColor);
+
+				shader.SetUniform("material.shininess", Shininess);
+				shader.SetUniform("material.reflectivity", Reflectivity);
+			
+				shader.SetUniform("material.has_textures", Textures.Count > 0);
+			}
 			
 			int textureUnit = 0;
 
 			if(Textures.Count == 0) {
-				// for(int i = 0; i < 10; i++) {
-				// 	Gl.ActiveTexture(TextureUnit.Texture0 + i);
-				// 	Gl.BindTexture(TextureTarget.Texture2D, 0);
-				// }
-				
 				Gl.BindTexture(TextureTarget.Texture2D, 0);
 			}
 			
