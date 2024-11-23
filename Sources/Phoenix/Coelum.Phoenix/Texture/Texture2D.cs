@@ -13,7 +13,7 @@ namespace Coelum.Phoenix.Texture {
 	public class Texture2D : Texture<Vector2> {
 		
 		public static Texture2D DefaultTexture {
-			get => Load(Module.RESOURCES[ResourceType.TEXTURE, "default"]);
+			get => Load(Module.RESOURCES[ResourceType.TEXTURE, "default.png"]);
 		}
 		
 		public Texture2D(Vector2 size) : base(TextureTarget.Texture2D, size) { }

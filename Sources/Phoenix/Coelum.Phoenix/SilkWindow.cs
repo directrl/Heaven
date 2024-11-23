@@ -156,10 +156,6 @@ namespace Coelum.Phoenix {
 						monitorCenter.Y - defaults.Size.Y / 2
 					);
 				}
-
-				// if(defaults.Size == Vector2D<int>.Zero) {
-				// 	defaults.Size = new(1280, 720);
-				// }
 			}
 			
 			if(_sharedContext != null) defaults.SharedContext = _sharedContext;

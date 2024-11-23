@@ -150,8 +150,6 @@ namespace Coelum.Phoenix {
 				Gl.Clear((uint) (ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit));
 				Gl.ClearColor(ClearColor);
 			}
-
-			Clear();
 			
 			var viewports = GetChildren<Viewport>();
 			if(viewports is null) return;
