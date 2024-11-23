@@ -11,6 +11,7 @@ using Silk.NET.Input;
 using Silk.NET.Maths;
 using Silk.NET.OpenGL;
 using Silk.NET.Windowing;
+using Monitor = Silk.NET.Windowing.Monitor;
 
 namespace Coelum.Phoenix {
 	
@@ -93,6 +94,7 @@ namespace Coelum.Phoenix {
 
 			if(!SilkImpl.IsClosing) SilkImpl.DoUpdate();
 			if(SilkImpl.IsClosing) {
+				DoUpdates = false;
 				Close();
 				return false;
 			}
@@ -111,8 +113,13 @@ namespace Coelum.Phoenix {
 
 		public override void Close() {
 			base.Close();
-			SilkImpl.Close();
-			SilkImpl.Dispose();
+
+			if(DoUpdates) {
+				SilkImpl.IsClosing = true;
+			} else {
+				SilkImpl.Close();
+				SilkImpl.Dispose();
+			}
 		}
 
 	#region Input additions
@@ -141,11 +148,21 @@ namespace Coelum.Phoenix {
 				defaults.TransparentFramebuffer = true;
 				defaults.ShouldSwapAutomatically = true;
 
-				if(_sharedContext != null) {
-					defaults.SharedContext = _sharedContext;
+				if(defaults.Position == new Vector2D<int>(-1, -1)) {
+					var monitorCenter = Monitor.GetMainMonitor(null).Bounds.Center;
+					
+					defaults.Position = new(
+						monitorCenter.X - defaults.Size.X / 2,
+						monitorCenter.Y - defaults.Size.Y / 2
+					);
 				}
-			}
 
+				// if(defaults.Size == Vector2D<int>.Zero) {
+				// 	defaults.Size = new(1280, 720);
+				// }
+			}
+			
+			if(_sharedContext != null) defaults.SharedContext = _sharedContext;
 			if(debug) api.Flags |= ContextFlags.Debug;
 			
 			defaults.API = api;

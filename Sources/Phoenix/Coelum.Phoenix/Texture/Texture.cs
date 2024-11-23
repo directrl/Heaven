@@ -7,24 +7,24 @@ namespace Coelum.Phoenix.Texture {
 		public TextureTarget Target { get; }
 
 		public string Name { get; internal set; } = "";
-		public uint Id { get; init; }
+		public uint Handle { get; init; }
 		public TSize Size { get; init; }
 
 		protected Texture(TextureTarget target, TSize size) {
 			Target = target;
 
-			Id = Gl.GenTexture();
+			Handle = Gl.GenTexture();
 			Size = size;
 		}
 
 		public void Bind(int unit = 0) {
 			Gl.ActiveTexture((TextureUnit) ((int) TextureUnit.Texture0 + unit));
-			Gl.BindTexture(Target, Id);
+			Gl.BindTexture(Target, Handle);
 		}
 
 		public void Dispose() {
 			GC.SuppressFinalize(this);
-			Gl.DeleteTexture(Id);
+			Gl.DeleteTexture(Handle);
 		}
 	}
 }

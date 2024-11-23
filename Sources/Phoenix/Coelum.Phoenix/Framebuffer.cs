@@ -92,6 +92,7 @@ namespace Coelum.Phoenix {
 
 		public float AutoResizeFactor { get; set; } = 1.0f;
 		
+		// TODO transparency in framebuffer (Rgba)
 		public unsafe Framebuffer(Vector2D<int> size,
 		                          SilkWindow? window = null,
 		                          FramebufferTarget target = FramebufferTarget.Framebuffer) {
@@ -126,7 +127,7 @@ namespace Coelum.Phoenix {
 			
 			// attach texture to framebuffer
 			Gl.FramebufferTexture2D(Target, FramebufferAttachment.ColorAttachment0, TextureTarget.Texture2D,
-			                        Texture.Id, 0);
+			                        Texture.Handle, 0);
 
 			// create depth and stencil buffer
 			uint rbo = Gl.GenRenderbuffer();

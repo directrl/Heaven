@@ -12,8 +12,7 @@ namespace Coelum.Core {
 	
 	public abstract class Heaven : IDisposable {
 		
-		public static string Id { get; private set; }
-		public static bool Running { get; protected set; }
+		public static Heaven CurrentApplication { get; private set; }
 		
 		internal static Logger EngineLogger { get; private set; }
 		public static Logger? AppLogger { get; protected set; }
@@ -23,8 +22,17 @@ namespace Coelum.Core {
 		public static ResourceManager AppResources { get; protected set; }
 		
 		public static List<WindowBase> Windows { get; private set; }
+		
+		private List<Action> _futureActions;
+		
+		public string Id { get; private set; }
+		public bool Running { get; protected set; }
 
 		protected Heaven(string id) {
+			_futureActions = new();
+
+			CurrentApplication = this;
+			
 			Id = id;
 			Windows = new();
 			
@@ -88,9 +96,8 @@ namespace Coelum.Core {
 			Tests.Assert(Windows.Count > 0);
 			
 			WindowBase? toRemove = null;
-			var primaryWindow = Windows[0];
 			
-			while(primaryWindow.DoUpdates && Running) {
+			while(Windows.Count > 0 && Windows[0].DoUpdates && Running) {
 				foreach(var window in Windows) {
 					if(!window.DoUpdates) continue;
 					if(!window.Update()) toRemove = window;
@@ -99,16 +106,33 @@ namespace Coelum.Core {
 				if(toRemove != null) {
 					Windows.Remove(toRemove);
 					toRemove = null;
+				}
 
-					if(Windows.Count <= 0) Running = false;
+				var a = new List<Action>(_futureActions);
+				foreach(var action in a) {
+					action.Invoke();
+					_futureActions.Remove(action);
 				}
 			}
 
-			Stop();
+			Dispose();
 		}
 
 		public void Stop() {
-			if(!Running) return;
+			Running = false;
+		}
+
+		/// <summary>
+		/// Schedules an action to run in the main application thread
+		/// </summary>
+		/// <param name="action">The action to run</param>
+		public void RunLater(Action action) {
+			_futureActions.Add(action);
+		}
+
+		public void Dispose() {
+			GC.SuppressFinalize(this);
+
 			Running = false;
 			
 			EngineLogger.Information("Shutting down");
@@ -117,11 +141,6 @@ namespace Coelum.Core {
 			foreach(var window in Windows) {
 				window.Close();
 			}
-		}
-
-		public void Dispose() {
-			GC.SuppressFinalize(this);
-			Stop();
 		}
 	}
 }

@@ -28,7 +28,7 @@ namespace Coelum.Phoenix.Editor {
 
 		public static ResourceManager EditorResources { get; private set; }
 		
-		public EditorApplication(Assembly assembly, PhoenixScene scene) : base(Id) {
+		public EditorApplication(Assembly assembly, PhoenixScene scene) : base(CurrentApplication.Id) {
 			TargetAssembly = assembly;
 			_targetScene = scene;
 

@@ -10,7 +10,7 @@ namespace Coelum.Phoenix.UI {
 
 		private static Dictionary<PhoenixScene, ImGuiController> _controllers = new();
 
-		public static ImGuiController CreateController(PhoenixScene scene) {
+		public static ImGuiController CreateController(PhoenixScene scene, Action? onConfigureIo = null) {
 			if(_controllers.TryGetValue(scene, out var controller)) {
 				return controller;
 			}
@@ -19,6 +19,7 @@ namespace Coelum.Phoenix.UI {
 			
 			controller = new(Gl, scene.Window.SilkImpl, scene.Window.Input, onConfigureIO: () => {
 				SetDefaults(ImGui.GetIO(), iniPath);
+				onConfigureIo?.Invoke();
 			});
 			_controllers[scene] = controller;
 

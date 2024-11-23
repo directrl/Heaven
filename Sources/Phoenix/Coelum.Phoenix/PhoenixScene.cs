@@ -14,6 +14,7 @@ using Coelum.Phoenix.UI;
 using Coelum.Resources;
 using Silk.NET.Maths;
 using Silk.NET.OpenGL;
+using Silk.NET.Windowing;
 
 namespace Coelum.Phoenix {
 	
@@ -60,6 +61,33 @@ namespace Coelum.Phoenix {
 
 		public virtual void OnLoad(SilkWindow window) {
 			base.Window = window;
+			
+			// TODO should this really be set each time a scene is changed?
+			window.SilkImpl.Size = new(
+				Options.GetOrDefault("window_width", window.SilkImpl.Size.X),
+				Options.GetOrDefault("window_height", window.SilkImpl.Size.Y)
+			);
+
+			window.SilkImpl.Position = new(
+				Options.GetOrDefault("window_x", window.SilkImpl.Position.X),
+				Options.GetOrDefault("window_y", window.SilkImpl.Position.Y)
+			);
+
+			window.SilkImpl.WindowState = (WindowState) Options.GetOrDefault("window_state", 0);
+			
+			window.SilkImpl.Resize += newSize => {
+				Options.Set("window_width", newSize.X);
+				Options.Set("window_height", newSize.Y);
+			};
+
+			window.SilkImpl.Move += newPosition => {
+				Options.Set("window_x", newPosition.X);
+				Options.Set("window_y", newPosition.Y);
+			};
+
+			window.SilkImpl.StateChanged += newState => {
+				Options.Set("window_state", (int) newState);
+			};
 		}
 		
 		public override void OnLoad(WindowBase window) {
@@ -109,29 +137,6 @@ namespace Coelum.Phoenix {
 			
 			AddSystem(new ObjectRenderSystem(PrimaryShader));
 			AddSystem(new UISystem());
-
-			var pWindow = (SilkWindow) window;
-
-			// TODO should this really be set each time a scene is changed?
-			pWindow.SilkImpl.Size = new(
-				Options.GetOrDefault("window_width", pWindow.SilkImpl.Size.X),
-				Options.GetOrDefault("window_height", pWindow.SilkImpl.Size.Y)
-			);
-
-			pWindow.SilkImpl.Position = new(
-				Options.GetOrDefault("window_x", pWindow.SilkImpl.Position.X),
-				Options.GetOrDefault("window_y", pWindow.SilkImpl.Position.Y)
-			);
-
-			pWindow.SilkImpl.Resize += newSize => {
-				Options.Set("window_width", newSize.X);
-				Options.Set("window_height", newSize.Y);
-			};
-
-			pWindow.SilkImpl.Move += newPosition => {
-				Options.Set("window_x", newPosition.X);
-				Options.Set("window_y", newPosition.Y);
-			};
 		}
 
 		public override void OnUpdate(float delta) {
@@ -141,8 +146,13 @@ namespace Coelum.Phoenix {
 		}
 
 		public override void OnRender(float delta) {
-			this.Process(SystemPhase.RENDER, delta);
+			void Clear() {
+				Gl.Clear((uint) (ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit));
+				Gl.ClearColor(ClearColor);
+			}
 
+			Clear();
+			
 			var viewports = GetChildren<Viewport>();
 			if(viewports is null) return;
 
@@ -153,20 +163,13 @@ namespace Coelum.Phoenix {
 				viewport.Camera.Load(PrimaryShader);
 
 			#region Render scene
-				void Clear() {
-					Gl.Clear((uint) (ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit));
-					Gl.ClearColor(ClearColor);
-				}
-
 				Clear();
 				GLManager.SetDefaults();
 			
 				PrimaryShader.Bind();
 
 				var environment = GetSingleton<SceneEnvironment>();
-				if(environment != null) {
-					environment.Load(PrimaryShader);
-				}
+				environment?.Load(PrimaryShader);
 
 				this.Process(SystemPhase.RENDER_PRE, delta);
 				base.OnRender(delta);

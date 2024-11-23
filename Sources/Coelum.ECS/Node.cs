@@ -81,7 +81,10 @@ namespace Coelum.ECS {
 			
 			foreach(var node in nodes) {
 				node.Parent = this;
-				Root.Add(node);
+
+				if(Root.GetChild(node.Id) is null) {
+					Root.Add(node);
+				}
 			}
 		}
 

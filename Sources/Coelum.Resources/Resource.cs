@@ -17,7 +17,7 @@ namespace Coelum.Resources {
 
 		public bool Cache { get; set; } = false;
 
-		internal Resource(ResourceType type, string _namespace, string name, Assembly? assembly = null) {
+		internal Resource(ResourceType type, string @namespace, string name, Assembly? assembly = null) {
 			if(assembly == null) {
 				Assembly = Assembly.GetCallingAssembly();
 			} else {
@@ -25,14 +25,37 @@ namespace Coelum.Resources {
 			}
 			
 			Type = type;
-			Namespace = _namespace;
-			Name = name;
+			Namespace = @namespace;
+			Name = name.Replace('/', '.');
 
-			FullPath = _namespace;
+			FullPath = @namespace;
 			if(!string.IsNullOrWhiteSpace(type.Path)) FullPath += "." + type.Path;
-			FullPath += "." + name + type.Extension;
+			FullPath += "." + Name + type.Extension;
 			
-			UID = _namespace + "/" + type.Path + "/" + name + type.Extension;
+			UID = @namespace + "/" + type.Path + "/" + Name + type.Extension;
+		}
+
+		public Resource(ResourceType type, string path, Assembly? assembly = null) {
+			if(assembly == null) {
+				Assembly = Assembly.GetCallingAssembly();
+			} else {
+				Assembly = assembly;
+			}
+
+			Type = type;
+			Namespace = Assembly.GetName().Name + ".Resources" ?? "";
+			Name = path.Replace(Namespace + ".", "").Replace('/', '.');
+			
+			if(!string.IsNullOrWhiteSpace(type.Path)) {
+				Name = Name.Replace(type.Path + ".", "");
+			}
+			
+			if(!string.IsNullOrWhiteSpace(type.Extension)) {
+				Name = Name.Replace(type.Extension, "");
+			}
+			
+			FullPath = path;
+			UID = Namespace + "/" + type.Path + "/" + Name + type.Extension;
 		}
 
 		public Stream? GetStream() {

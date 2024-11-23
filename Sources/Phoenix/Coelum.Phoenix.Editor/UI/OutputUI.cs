@@ -81,7 +81,7 @@ namespace Coelum.Phoenix.Editor.UI {
 				}
 				
 				ImGui.Image(
-					new ImTextureID(_output.OutputFramebuffer.Texture.Id),
+					new ImTextureID(_output.OutputFramebuffer.Texture.Handle),
 					size,
 					new Vector2(0, 1), new Vector2(1, 0)
 				);
